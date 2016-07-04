@@ -4,12 +4,16 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
 
-public class Manager : MonoBehaviour 
+public class manager : MonoBehaviour 
 {
 	private GameObject currentObject = null;
 	public GameObject target;
+	public muscle musclePrefab;
 	private List<GameObject> list;
 	private bool searchParent = false;
+	private bool firstAttach = false;
+	private bool secondAttach = false;
+	private Vector3[] attaches = null;
 	public InputField positionX;
 	public InputField positionY;
 	public InputField positionZ;
@@ -58,12 +62,25 @@ public class Manager : MonoBehaviour
 			currentObject.transform.parent = null;
 	}
 
+	public void addMuscle()
+	{
+		if (currentObject)
+		{
+			attaches = new Vector3[2];
+			secondAttach = false;
+			searchParent = false;
+			firstAttach = true;
+		}
+	}
+
 	public void setParent()
 	{
 		if (currentObject)
 		{
 //			currentObject.GetComponent<Renderer> ().material.color = Color.red;
 			searchParent = true;
+			firstAttach = false;
+			secondAttach = false;
 		}
 	}
 
@@ -87,11 +104,30 @@ public class Manager : MonoBehaviour
 			float.TryParse(positionX.text, out tmpX);
 			float.TryParse(positionY.text, out tmpY);
 			float.TryParse(positionZ.text, out tmpZ);
+			musclesController tmpController = currentObject.GetComponent<musclesController> ();
+			for (int i = 0; i < tmpController.listMuscles.Count; i++)
+				tmpController.listMuscles [i].changePosition (tmpController.listIndex [i], new Vector3 (tmpX, tmpY, tmpZ));
 			currentObject.transform.position = new Vector3 (tmpX, tmpY, tmpZ);
-
 		}
 	}
-		
+
+	void changeFocus()
+	{
+		currentObject.GetComponent<Renderer> ().material.color = Color.green;
+		List<Renderer> tmpList = currentObject.GetComponentsInChildren<Renderer> ().ToList();
+		for (int i = 0; i < list.Count; i++)
+		{
+			if (list [i] != currentObject)
+			{
+				Renderer tmp = list [i].GetComponent<Renderer> ();
+				if (tmpList.Contains (tmp))
+					tmp.material.color = Color.red;
+				else
+					tmp.material.color = Vector4.one;	
+			}
+		}
+	}
+
 	void Update () 
 	{
 		if (Input.GetMouseButtonDown (0)) 
@@ -103,31 +139,32 @@ public class Manager : MonoBehaviour
 				if (searchParent && currentObject)
 				{
 					currentObject.transform.parent = hit.collider.gameObject.transform;
-//					currentObject.GetComponent<Renderer> ().material.color = Color.red;
 					searchParent = false;
+				} 
+				else if (firstAttach)
+				{
+					attaches [0] = hit.point;
+					firstAttach = false;
+					secondAttach = true;
+					currentObject = hit.collider.gameObject;
+					changeFocus ();
+				} 
+				else if (secondAttach)
+				{
+					attaches [1] = hit.point;
+					secondAttach = false;
+					muscle tmp = Instantiate (musclePrefab, attaches[0] + (attaches[1] - attaches[0]), Quaternion.identity) as muscle;
+					tmp.setLimits (attaches);
+					currentObject.GetComponent<musclesController> ().addMuscle (tmp);
+					currentObject = hit.collider.gameObject;
+					changeFocus ();
+					currentObject.GetComponent<musclesController> ().setMuscle (tmp);
 				}
 				else
 				{
-//					if (currentObject)
-//						currentObject.GetComponent<Renderer> ().material.color = Vector4.one;
 					Debug.Log ("You selected the " + hit.transform.name);
 					currentObject = hit.collider.gameObject;
-					currentObject.GetComponent<Renderer> ().material.color = Color.green;
-//					if (currentObject.GetComponentsInChildren<GameObject> ().Length > 0)
-//					{
-						List<Renderer> tmpList = currentObject.GetComponentsInChildren<Renderer> ().ToList();
-						for (int i = 0; i < list.Count; i++)
-						{
-							if (list [i] != currentObject)
-							{
-								Renderer tmp = list [i].GetComponent<Renderer> ();
-								if (tmpList.Contains (tmp))
-									tmp.material.color = Color.red;
-								else
-									tmp.material.color = Vector4.one;	
-							}
-						}
-//					}
+					changeFocus ();
 					positionX.text = currentObject.transform.position.x.ToString ();
 					positionY.text = currentObject.transform.position.y.ToString ();
 					positionZ.text = currentObject.transform.position.z.ToString ();
