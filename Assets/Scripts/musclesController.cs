@@ -4,9 +4,7 @@ using System.Collections.Generic;
 
 public class musclesController : MonoBehaviour 
 {
-	private ConfigurableJoint joint = null;
-	public List<muscle> listMuscles;
-	public List<int> listIndex;
+	public ConfigurableJoint joint = null;
 	// Use this for initialization
 	void Start () 
 	{
@@ -17,15 +15,6 @@ public class musclesController : MonoBehaviour
 		if (!joint)
 			joint = gameObject.AddComponent<ConfigurableJoint> ();
 		tmp.setController (this);
-//		tmp.setLimits (attaches);
-		listMuscles.Add (tmp);
-		listIndex.Add (0);
-	}
-
-	public void setMuscle(muscle current)
-	{
-		listMuscles.Add (current);
-		listIndex.Add (1);
 	}
 
 	public void setForce()

@@ -6,6 +6,7 @@ using System.Linq;
 
 public class manager : MonoBehaviour 
 {
+	public GameObject anchor;
 	private GameObject currentObject = null;
 	public GameObject target;
 	public muscle musclePrefab;
@@ -27,6 +28,12 @@ public class manager : MonoBehaviour
 	void Start ()
 	{
 		list = new List<GameObject> ();
+	}
+
+	public void play()
+	{
+		for (int i = 0; i < list.Count; i++)
+			list [i].GetComponent<Rigidbody> ().isKinematic = false;
 	}
 
 	public void updateScale()
@@ -104,9 +111,6 @@ public class manager : MonoBehaviour
 			float.TryParse(positionX.text, out tmpX);
 			float.TryParse(positionY.text, out tmpY);
 			float.TryParse(positionZ.text, out tmpZ);
-			musclesController tmpController = currentObject.GetComponent<musclesController> ();
-			for (int i = 0; i < tmpController.listMuscles.Count; i++)
-				tmpController.listMuscles [i].changePosition (tmpController.listIndex [i], new Vector3 (tmpX, tmpY, tmpZ));
 			currentObject.transform.position = new Vector3 (tmpX, tmpY, tmpZ);
 		}
 	}
@@ -155,10 +159,21 @@ public class manager : MonoBehaviour
 					secondAttach = false;
 					muscle tmp = Instantiate (musclePrefab, attaches[0] + (attaches[1] - attaches[0]), Quaternion.identity) as muscle;
 					tmp.setLimits (attaches);
-					currentObject.GetComponent<musclesController> ().addMuscle (tmp);
+					musclesController tmpController = currentObject.GetComponent<musclesController> ();
+					tmpController.addMuscle (tmp);
+					tmp.setAnchor (tmpController.gameObject);
 					currentObject = hit.collider.gameObject;
 					changeFocus ();
-					currentObject.GetComponent<musclesController> ().setMuscle (tmp);
+					tmp.setAnchor (currentObject);
+					tmpController.joint.connectedBody = currentObject.GetComponent<Rigidbody> ();
+//					tmpController.joint.anchor = tmpController.transform.position - currentObject.transform.position;
+//					tmpController.joint.connectedAnchor = tmpController.transform.position - currentObject.transform.position;
+					tmpController.joint.enableCollision = true;
+//					SoftJointLimit tmpJoint = tmpController.joint.linearLimit;
+//					tmpJoint.contactDistance = Vector3.Distance(tmpController.transform.position, currentObject.transform.position);
+//					tmpController.joint.linearLimit = tmpJoint;
+//					Instantiate (anchor, tmpController.joint.anchor, Quaternion.identity);
+//					Instantiate (anchor, tmpController.joint.connectedAnchor, Quaternion.identity);
 				}
 				else
 				{
