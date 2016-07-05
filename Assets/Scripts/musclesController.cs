@@ -1,16 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class musclesController : MonoBehaviour 
 {
 	private ConfigurableJoint joint = null;
 	public GameObject anchorPrefab;
+	public List<muscle> listMuscles;
 	private GameObject[] anchors;
 	// Use this for initialization
 	void Start () 
 	{
 		anchors = new GameObject[2];
+		listMuscles = new List<muscle> ();
 	}
 
 	void addRigidBody(Rigidbody rb)
@@ -29,6 +32,11 @@ public class musclesController : MonoBehaviour
 		joint.angularZMotion = ConfigurableJointMotion.Free;
 	}
 
+	public void setMuscle(muscle current)
+	{
+		listMuscles.Add (current);
+	}
+
 	public void addMuscle(muscle tmp, Rigidbody rb)
 	{
 		if (!joint)
@@ -37,6 +45,7 @@ public class musclesController : MonoBehaviour
 			addRigidBody (rb);
 		}
 		tmp.setController (this);
+		listMuscles.Add (tmp);
 	}
 
 	public void setForce()

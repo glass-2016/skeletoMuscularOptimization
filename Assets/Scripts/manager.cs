@@ -112,6 +112,34 @@ public class manager : MonoBehaviour
 		}
 	}
 
+	public void delete()
+	{
+		if (currentObject)
+		{
+			musclesController tmpController = currentObject.GetComponent<musclesController> ();
+			while (tmpController.listMuscles.Count > 0)
+			{
+				muscle tmp = tmpController.listMuscles[tmpController.listMuscles.Count - 1];
+				list.Remove (tmp.gameObject);
+				if (tmp.controller == tmpController)
+				{
+					if (tmp.anchors [0].GetComponent<musclesController> () == tmpController)
+						tmp.anchors [1].GetComponent<musclesController> ().listMuscles.Remove (tmp);
+					else
+						tmp.anchors [0].GetComponent<musclesController> ().listMuscles.Remove (tmp);
+				}
+				else
+					tmp.controller.listMuscles.Remove (tmp);
+				tmpController.listMuscles.Remove (tmp);
+				Destroy (tmp.gameObject);
+			}
+			Destroy (tmpController.gameObject);
+			list.Remove (currentObject);
+			Destroy (currentObject.gameObject);
+			currentObject = null;
+		}	
+	}
+
 	public void updatePosition()
 	{
 		if (currentObject)
@@ -220,6 +248,7 @@ public class manager : MonoBehaviour
 					tmp.setAnchor (tmpController.gameObject);
 					currentObject = hit.collider.gameObject;
 					tmpController.addMuscle (tmp, currentObject.GetComponent<Rigidbody> ());
+					currentObject.GetComponent<musclesController> ().setMuscle (tmp);
 					tmp.setLimits (attaches, tmpController.gameObject.transform.position, currentObject.transform.position);
 					changeFocus ();
 					tmp.setAnchor (currentObject);

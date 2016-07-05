@@ -42,7 +42,7 @@ public class muscle : MonoBehaviour
 		offsets [0] = attaches [0] - pos1;
 		offsets [1] = attaches [1] - pos2;
 		transform.position = attaches[1] + ((attaches [0] - attaches [1]) / 2.0f);
-		transform.localScale = new Vector3(transform.localScale.x, (attachPoints [1].y - attachPoints [0].y) * 0.6f, transform.localScale.z);
+		transform.localScale = new Vector3(transform.localScale.x, (attachPoints [1].y - attachPoints [0].y) * 0.5f, transform.localScale.z);
 		transform.localRotation = Quaternion.FromToRotation(Vector3.up, attachPoints[0] - attachPoints[1]);
 	}
 
