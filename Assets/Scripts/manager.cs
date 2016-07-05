@@ -29,6 +29,7 @@ public class manager : MonoBehaviour
 
 	//either "none", "bone", "muscle" or "joint"
 	public string itemSelected;
+	public bool isPlaying;
 
 	void Start ()
 	{
