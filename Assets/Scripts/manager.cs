@@ -6,7 +6,6 @@ using System.Linq;
 
 public class manager : MonoBehaviour 
 {
-	public GameObject anchor;
 	private GameObject currentObject = null;
 	public GameObject target;
 	public muscle musclePrefab;
@@ -15,6 +14,9 @@ public class manager : MonoBehaviour
 	private bool firstAttach = false;
 	private bool secondAttach = false;
 	private Vector3[] attaches = null;
+	private Vector3 oldPosition;
+	private Quaternion oldRotation;
+	private Vector3 oldScale;
 	public InputField positionX;
 	public InputField positionY;
 	public InputField positionZ;
@@ -33,7 +35,10 @@ public class manager : MonoBehaviour
 	public void play()
 	{
 		for (int i = 0; i < list.Count; i++)
-			list [i].GetComponent<Rigidbody> ().isKinematic = false;
+		{
+			if (list[i].tag == "bones")
+				list [i].GetComponent<Rigidbody> ().isKinematic = false;
+		}
 	}
 
 	public void updateScale()
@@ -115,9 +120,39 @@ public class manager : MonoBehaviour
 		}
 	}
 
+	void resetValues()
+	{
+		positionX.text = "0.0";
+		positionY.text = "0.0";
+		positionZ.text = "0.0";
+		rotationX.text = "0.0";
+		rotationY.text = "0.0";
+		rotationZ.text = "0.0";
+		scaleX.text = "0.0";
+		scaleY.text = "0.0";
+		scaleZ.text = "0.0";
+	}
+
+	void updateValues()
+	{
+		positionX.text = currentObject.transform.position.x.ToString ();
+		positionY.text = currentObject.transform.position.y.ToString ();
+		positionZ.text = currentObject.transform.position.z.ToString ();
+		rotationX.text = currentObject.transform.rotation.x.ToString ();
+		rotationY.text = currentObject.transform.rotation.y.ToString ();
+		rotationZ.text = currentObject.transform.rotation.z.ToString ();
+		scaleX.text = currentObject.transform.localScale.x.ToString ();
+		scaleY.text = currentObject.transform.localScale.y.ToString ();
+		scaleZ.text = currentObject.transform.localScale.z.ToString ();
+	}
+
 	void changeFocus()
 	{
 		currentObject.GetComponent<Renderer> ().material.color = Color.green;
+		oldPosition = currentObject.transform.position;
+		oldRotation = currentObject.transform.rotation;
+		oldScale = currentObject.transform.localScale;
+		updateValues ();
 		List<Renderer> tmpList = currentObject.GetComponentsInChildren<Renderer> ().ToList();
 		for (int i = 0; i < list.Count; i++)
 		{
@@ -132,13 +167,31 @@ public class manager : MonoBehaviour
 		}
 	}
 
+	void LateUpdate()
+	{
+		if (currentObject && 
+			(oldPosition != currentObject.transform.position ||
+			oldRotation != currentObject.transform.rotation ||
+			oldScale != currentObject.transform.localScale))
+		{
+			updateValues ();
+			oldPosition = currentObject.transform.position;
+			oldRotation = currentObject.transform.rotation;
+			oldScale = currentObject.transform.localScale;
+		}
+		else if (!currentObject)
+		{
+			resetValues ();
+		}
+	}
+
 	void Update () 
 	{
 		if (Input.GetMouseButtonDown (0)) 
 		{
 			RaycastHit hit; 
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
-			if (Physics.Raycast (ray, out hit) && hit.collider.tag == "objects")
+			if (Physics.Raycast (ray, out hit) && (hit.collider.tag == "bones" || hit.collider.tag == "muscles"))
 			{
 				if (searchParent && currentObject)
 				{
@@ -158,58 +211,29 @@ public class manager : MonoBehaviour
 					attaches [1] = hit.point;
 					secondAttach = false;
 					muscle tmp = Instantiate (musclePrefab, attaches[0] + (attaches[1] - attaches[0]), Quaternion.identity) as muscle;
-					tmp.setLimits (attaches);
+					list.Add (tmp.gameObject);
 					musclesController tmpController = currentObject.GetComponent<musclesController> ();
-					tmpController.addMuscle (tmp);
 					tmp.setAnchor (tmpController.gameObject);
 					currentObject = hit.collider.gameObject;
+					tmpController.addMuscle (tmp, currentObject.GetComponent<Rigidbody> ());
+					tmp.setLimits (attaches, tmpController.gameObject.transform.position, currentObject.transform.position);
 					changeFocus ();
 					tmp.setAnchor (currentObject);
-					tmpController.joint.connectedBody = currentObject.GetComponent<Rigidbody> ();
-//					tmpController.joint.anchor = tmpController.transform.position - currentObject.transform.position;
-//					tmpController.joint.connectedAnchor = tmpController.transform.position - currentObject.transform.position;
-					tmpController.joint.enableCollision = true;
-//					SoftJointLimit tmpJoint = tmpController.joint.linearLimit;
-//					tmpJoint.contactDistance = Vector3.Distance(tmpController.transform.position, currentObject.transform.position);
-//					tmpController.joint.linearLimit = tmpJoint;
-//					Instantiate (anchor, tmpController.joint.anchor, Quaternion.identity);
-//					Instantiate (anchor, tmpController.joint.connectedAnchor, Quaternion.identity);
 				}
 				else
 				{
 					Debug.Log ("You selected the " + hit.transform.name);
 					currentObject = hit.collider.gameObject;
 					changeFocus ();
-					positionX.text = currentObject.transform.position.x.ToString ();
-					positionY.text = currentObject.transform.position.y.ToString ();
-					positionZ.text = currentObject.transform.position.z.ToString ();
-					rotationX.text = currentObject.transform.rotation.x.ToString ();
-					rotationY.text = currentObject.transform.rotation.y.ToString ();
-					rotationZ.text = currentObject.transform.rotation.z.ToString ();
-					scaleX.text = currentObject.transform.localScale.x.ToString ();
-					scaleY.text = currentObject.transform.localScale.y.ToString ();
-					scaleZ.text = currentObject.transform.localScale.z.ToString ();
 				}
 			}
-			if (Input.GetKeyDown (KeyCode.C))
-			{
-//				currentObject.GetComponent<Renderer> ().material.color = Vector4.one;
-				currentObject = null;
-				for (int i = 0; i < list.Count; i++)
-					list [i].GetComponent<Renderer> ().material.color = Vector4.one;
-			}
-			if (currentObject == null)
-			{
-				positionX.text = "0.0";
-				positionY.text = "0.0";
-				positionZ.text = "0.0";
-				rotationX.text = "0.0";
-				rotationY.text = "0.0";
-				rotationZ.text = "0.0";
-				scaleX.text = "0.0";
-				scaleY.text = "0.0";
-				scaleZ.text = "0.0";
-			}
+		}
+		if (Input.GetKeyDown (KeyCode.C))
+		{
+			//				currentObject.GetComponent<Renderer> ().material.color = Vector4.one;
+			currentObject = null;
+			for (int i = 0; i < list.Count; i++)
+				list [i].GetComponent<Renderer> ().material.color = Vector4.one;
 		}
 	}
 }

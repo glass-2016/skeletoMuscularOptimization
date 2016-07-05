@@ -4,17 +4,17 @@ using System.Collections.Generic;
 
 public class muscle : MonoBehaviour 
 {
-	private LineRenderer line;
 	public musclesController controller;
 	public List<GameObject> anchors;
 	private Vector3[] attachPoints;
+	private Vector3[] offsets;
 	private Vector3[] position;
 	// Use this for initialization
 	void Awake () 
 	{
-		line = GetComponent<LineRenderer> ();
 		anchors = new List<GameObject> ();
 		position = new Vector3[2];
+		offsets = new Vector3[2];
 	}
 
 	public void setAnchor(GameObject current)
@@ -30,14 +30,20 @@ public class muscle : MonoBehaviour
 
 	void changePosition(int index, Vector3 value)
 	{
-		attachPoints [index] += value - attachPoints[index];
-		line.SetPositions (attachPoints);
+		attachPoints [index] += value - attachPoints[index] + offsets[index];
+		transform.position = attachPoints[1] + (attachPoints [0] - attachPoints [1]) / 2.0f;
+//		transform.localScale = new Vector3(transform.localScale.x, (attachPoints [1].y - attachPoints [0].y) * 0.6f, transform.localScale.z);
+		transform.localRotation = Quaternion.FromToRotation(Vector3.up, attachPoints[0] - attachPoints[1]);
 	}
 
-	public void setLimits(Vector3[] attaches)
+	public void setLimits(Vector3[] attaches, Vector3 pos1, Vector3 pos2)
 	{
 		attachPoints = attaches;
-		line.SetPositions(attaches);
+		offsets [0] = attaches [0] - pos1;
+		offsets [1] = attaches [1] - pos2;
+		transform.position = attaches[1] + ((attaches [0] - attaches [1]) / 2.0f);
+		transform.localScale = new Vector3(transform.localScale.x, (attachPoints [1].y - attachPoints [0].y) * 0.6f, transform.localScale.z);
+		transform.localRotation = Quaternion.FromToRotation(Vector3.up, attachPoints[0] - attachPoints[1]);
 	}
 
 	// Update is called once per frame

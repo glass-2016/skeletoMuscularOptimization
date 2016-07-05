@@ -12,10 +12,11 @@ public class cameraPosition : MonoBehaviour
 	public float xSpeed = 1f;
 	public float ySpeed = 1f;
 	private Vector3 distanceVector;
+
 	// Use this for initialization
 	void Start () 
 	{
-		distanceVector = new Vector3(0.0f,0.0f,-10.0f);
+		distanceVector = new Vector3(0.0f, 0.0f, -10.0f);
 		Vector2 angles = this.transform.localEulerAngles;
 		currentAngleX = angles.x;
 		currentAngleY = angles.y;
