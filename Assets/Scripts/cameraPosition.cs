@@ -7,24 +7,37 @@ public class cameraPosition : MonoBehaviour
 	public GameObject debugPrefab;
 	public bool debug = false;
 	private GameObject instance;
+	private float currentAngleX = 0;
+	private float currentAngleY = 0;
+	public float xSpeed = 1f;
+	public float ySpeed = 1f;
+	private Vector3 distanceVector;
 	// Use this for initialization
 	void Start () 
 	{
-//		if (debug)
-//			instance = Instantiate (debugPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+		distanceVector = new Vector3(0.0f,0.0f,-10.0f);
+		Vector2 angles = this.transform.localEulerAngles;
+		currentAngleX = angles.x;
+		currentAngleY = angles.y;
+		Rotate (currentAngleX, currentAngleY);
+	}
+
+	void Rotate(float x, float y)
+	{
+		Quaternion rotation = Quaternion.Euler(y, x, 0.0f);
+		Vector3 position = rotation * distanceVector + Vector3.forward;
+		transform.rotation = rotation;
+		transform.position = position;
 	}
 
 	// Update is called once per frame
 	void Update () 
 	{
-//		if (debug)
-//			instance.transform.position = transform.position + Vector3.forward * 10.0f;
-		if (Input.GetMouseButton (0) && Input.mousePosition != oldPosition) 
+		if (Input.GetMouseButton (0) && Input.GetKey(KeyCode.LeftAlt) && Input.mousePosition != oldPosition) 
 		{
-			Camera.main.transform.RotateAround (transform.position + Vector3.forward, new Vector3 (0.0f, 1.0f, 0.0f), (oldPosition.x - Input.mousePosition.x));	
-//			Camera.main.transform.RotateAround (Vector3.zero, new Vector3 (Mathf.Abs(Mathf.Cos(Camera.main.transform.rotation.eulerAngles.y * Mathf.Deg2Rad)), 0.0f, 0.0f), (oldPosition.y - Input.mousePosition.y));
-//			Camera.main.transform.RotateAround (Vector3.zero, new Vector3 (0.0f, 0.0f, Mathf.Abs(Mathf.Sin(Camera.main.transform.rotation.eulerAngles.y * Mathf.Deg2Rad))), (oldPosition.z - Input.mousePosition.z));
-
+			currentAngleX += Input.GetAxis("Mouse X") * xSpeed;
+			currentAngleY += -Input.GetAxis("Mouse Y")* ySpeed;
+			Rotate (currentAngleX, currentAngleY);
 		}
 		if (Input.GetKey (KeyCode.LeftArrow))
 			transform.Translate(Vector3.left * 0.1f, Space.Self);
