@@ -27,6 +27,9 @@ public class manager : MonoBehaviour
 	public InputField scaleY;
 	public InputField scaleZ;
 
+	//either "none", "bone", "muscle" or "joint"
+	public string itemSelected;
+
 	void Start ()
 	{
 		list = new List<GameObject> ();
