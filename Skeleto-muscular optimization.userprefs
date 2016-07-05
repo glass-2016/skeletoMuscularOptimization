@@ -2,8 +2,10 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\UImanager.cs">
     <Files>
-      <File FileName="Assets\Scripts\manager.cs" Line="28" Column="46" />
-      <File FileName="Assets\Scripts\UImanager.cs" Line="17" Column="7" />
+      <File FileName="Assets\Scripts\cameraPosition.cs" Line="14" Column="26" />
+      <File FileName="Assets\Scripts\manager.cs" Line="39" Column="18" />
+      <File FileName="Assets\Scripts\UImanager.cs" Line="13" Column="3" />
+      <File FileName="Assets\Scripts\musclesController.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
