@@ -23,7 +23,7 @@ public class musclesController : MonoBehaviour
 
 	public void addDirection(vec3i dir)
 	{
-		joint.axis += new Vector3 (dir.z, dir.x, dir.y);
+		joint.axis += new Vector3 (dir.z, dir.y, dir.x);
 		joint.targetRotation = Quaternion.Euler(joint.axis);
 	}
 
