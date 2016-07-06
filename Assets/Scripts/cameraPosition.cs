@@ -9,11 +9,17 @@ public class cameraPosition : MonoBehaviour
 	public float xSpeed = 1f;
 	public float ySpeed = 1f;
 	public float zSpeed = 50f;
+
+	//camera zoom cap parameters
+	public float zMax = 50f;
+	public float zMin = -50f;
+
 	private Vector3 distanceVector;
 
 	// Use this for initialization
 	void Start () 
 	{
+
 		distanceVector = new Vector3(0.0f, 0.0f, -10.0f);
 		Vector2 angles = this.transform.localEulerAngles;
 		currentAngleX = angles.x;
@@ -32,6 +38,7 @@ public class cameraPosition : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+
 		if (Input.GetMouseButton (1)) 
 		{
 			// rotate camera around point
@@ -48,7 +55,27 @@ public class cameraPosition : MonoBehaviour
 			transform.Translate(Vector3.forward * 0.1f, Space.Self);
 		if (Input.GetKey (KeyCode.DownArrow))
 			transform.Translate(-Vector3.forward * 0.1f, Space.Self);
+		
 		// zoom
-		transform.Translate(Vector3.forward * Input.GetAxis("Mouse ScrollWheel")*zSpeed, Space.Self);
+		float zoomAmount = Input.GetAxis ("Mouse ScrollWheel") * zSpeed;
+
+		float zPos = transform.position.z;
+
+		//zoom capping
+		if (zPos >= zMin && zPos <= zMax) 
+		{
+			transform.Translate (Vector3.forward * zoomAmount, Space.Self);
+
+		}
+		if (zPos > zMax) 
+		{
+			//transform.Translate (Vector3.forward, zMax);
+		}
+
+		if (zPos < zMin) 
+		{
+			//transform.Translate (Vector3.forward, zMin);
+		}
+
 	}
 }
