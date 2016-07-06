@@ -6,10 +6,16 @@ public class UImanager : MonoBehaviour
 	//buttons
 	public GameObject setparent;
 	public GameObject resetparent;
+	public GameObject delete;
+
 	public GameObject bonescale;
 	public GameObject boneposition;
 	public GameObject bonerotation;
-	public GameObject delete;
+
+	public GameObject muscleparameters;
+
+	public GameObject articulationparameters;
+
 	public GameObject playreset;
 
 
@@ -39,6 +45,8 @@ public class UImanager : MonoBehaviour
 				bonescale.SetActive (true);
 				boneposition.SetActive (true);
 				bonerotation.SetActive (true);
+				muscleparameters.SetActive (false);
+				articulationparameters.SetActive (false);
 				break;
 
 			case "muscle":
@@ -47,7 +55,8 @@ public class UImanager : MonoBehaviour
 				bonescale.SetActive (false);
 				boneposition.SetActive (false);
 				bonerotation.SetActive (false);
-				
+				muscleparameters.SetActive (true);
+				articulationparameters.SetActive (false);
 				break;
 
 			case "boneHasParent":
@@ -56,6 +65,9 @@ public class UImanager : MonoBehaviour
 				bonescale.SetActive (true);
 				boneposition.SetActive (true);
 				bonerotation.SetActive (true);
+				muscleparameters.SetActive (false);
+				articulationparameters.SetActive (false);
+
 				break;
 
 			case "muscleHasParent":
@@ -64,7 +76,21 @@ public class UImanager : MonoBehaviour
 				bonescale.SetActive (false);
 				boneposition.SetActive (false);
 				bonerotation.SetActive (false);
+				muscleparameters.SetActive (true);
+				articulationparameters.SetActive (false);
 				break;
+
+			case "articulation":
+				setparent.SetActive (false);
+				resetparent.SetActive (false);
+				delete.SetActive (false);
+				bonescale.SetActive (false);
+				boneposition.SetActive (false);
+				bonerotation.SetActive (false);
+				muscleparameters.SetActive (false);
+				articulationparameters.SetActive (true);
+				break;
+				
 
 			case "none":
 				setparent.SetActive (false);
@@ -73,11 +99,19 @@ public class UImanager : MonoBehaviour
 				bonescale.SetActive (false);
 				boneposition.SetActive (false);
 				bonerotation.SetActive (false);
-				
+				muscleparameters.SetActive (false);
+				articulationparameters.SetActive (false);
 				break;
 
 			default:
-				
+				setparent.SetActive (false);
+				resetparent.SetActive (false);
+				delete.SetActive (false);
+				bonescale.SetActive (false);
+				boneposition.SetActive (false);
+				bonerotation.SetActive (false);
+				muscleparameters.SetActive (false);
+				articulationparameters.SetActive (false);
 				break;
 
 			}

@@ -33,6 +33,7 @@ public class manager : MonoBehaviour
 	public InputField scaleX;
 	public InputField scaleY;
 	public InputField scaleZ;
+	public InputField muscleForce;
 
 	// those are here to be read by other scripts
 	public string itemSelected; 	//either "none", "bone", "muscle"
@@ -63,6 +64,19 @@ public class manager : MonoBehaviour
 			float.TryParse(scaleY.text, out tmpY);
 			float.TryParse(scaleZ.text, out tmpZ);
 			currentObject.transform.localScale = new Vector3(tmpX, tmpY, tmpZ);
+
+			if(currentObject.tag == "muscles")
+			{
+				if (currentObject.gameObject.GetComponent<muscle> () == null) {
+					return;
+				} else {
+
+					float force = currentObject.gameObject.GetComponent<muscle> ().force;
+					float.TryParse (muscleForce.text, out force);
+					currentObject.gameObject.GetComponent<muscle> ().force = force;
+				}
+			
+			}
 		}
 	}
 
