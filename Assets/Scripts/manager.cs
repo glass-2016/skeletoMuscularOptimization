@@ -188,26 +188,6 @@ public class manager : MonoBehaviour
 		scaleY.text = currentObject.transform.localScale.y.ToString ();
 		scaleZ.text = currentObject.transform.localScale.z.ToString ();
 
-		switch(currentObject.tag)
-		{
-		case "bones":
-			itemSelected = "bone";
-			if (currentObject.gameObject.transform.parent != null) {
-				itemSelected = "boneHasParent";
-			}
-			break;
-
-		case "muscles":
-			itemSelected = "muscle";
-			if (currentObject.gameObject.transform.parent != null) {
-				itemSelected = "muscleHasParent";
-			}
-			break;
-
-		default :
-			itemSelected = "none";
-			break;
-		}
 	}
 
 	// change colors and parameters value to newly selected object
@@ -231,10 +211,41 @@ public class manager : MonoBehaviour
 			}
 		}
 	}
+
+	void updatePublicItem()
+	{
+		if (currentObject != null) {
+			switch (currentObject.tag) {
+			case "bones":
+				itemSelected = "bone";
+				if (currentObject.gameObject.transform.parent != null) {
+					itemSelected = "boneHasParent";
+				}
+				break;
+
+			case "muscles":
+				itemSelected = "muscle";
+				if (currentObject.gameObject.transform.parent != null) {
+					itemSelected = "muscleHasParent";
+				}
+				break;
+
+			default :
+				itemSelected = "none";
+				break;
+			}
+		} 
+		else 
+		{
+			itemSelected = "none";
+		}
+	}
 		
 
 	void Update () 
 	{
+		updatePublicItem ();
+
 		if (Input.GetMouseButtonDown (0)) 
 		{
 			RaycastHit hit; 
