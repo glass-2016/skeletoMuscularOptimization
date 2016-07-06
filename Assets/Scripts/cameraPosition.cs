@@ -3,12 +3,9 @@ using System.Collections;
 
 public class cameraPosition : MonoBehaviour 
 {
-	private Vector3 oldPosition;
-	public GameObject debugPrefab;
-	public bool debug = false;
-	private GameObject instance;
 	private float currentAngleX = 0;
 	private float currentAngleY = 0;
+	// speed axis
 	public float xSpeed = 1f;
 	public float ySpeed = 1f;
 	public float zSpeed = 50f;
@@ -35,12 +32,14 @@ public class cameraPosition : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		if (Input.GetMouseButton (1) && Input.mousePosition != oldPosition) 
+		if (Input.GetMouseButton (1)) 
 		{
+			// rotate camera around point
 			currentAngleX += Input.GetAxis("Mouse X") * xSpeed;
 			currentAngleY += -Input.GetAxis("Mouse Y")* ySpeed;
 			Rotate (currentAngleX, currentAngleY);
 		}
+		// translate camera
 		if (Input.GetKey (KeyCode.LeftArrow))
 			transform.Translate(Vector3.left * 0.1f, Space.Self);
 		if (Input.GetKey (KeyCode.RightArrow))
@@ -49,8 +48,7 @@ public class cameraPosition : MonoBehaviour
 			transform.Translate(Vector3.forward * 0.1f, Space.Self);
 		if (Input.GetKey (KeyCode.DownArrow))
 			transform.Translate(-Vector3.forward * 0.1f, Space.Self);
+		// zoom
 		transform.Translate(Vector3.forward * Input.GetAxis("Mouse ScrollWheel")*zSpeed, Space.Self);
-		oldPosition = Input.mousePosition;
-
 	}
 }

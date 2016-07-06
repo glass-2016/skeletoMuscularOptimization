@@ -6,7 +6,9 @@ using System.Linq;
 public class musclesController : MonoBehaviour 
 {
 	private ConfigurableJoint joint = null;
+	// anchor prefab for joint anchors only for debug
 	public GameObject anchorPrefab;
+	public bool debug = false;
 	public List<muscle> listMuscles;
 	private GameObject[] anchors;
 	// Use this for initialization
@@ -16,14 +18,18 @@ public class musclesController : MonoBehaviour
 		listMuscles = new List<muscle> ();
 	}
 
+	// configure ConfigurableJoint
 	void addRigidBody(Rigidbody rb)
 	{
 		joint.connectedBody = rb;
 		joint.enableCollision = true;
 		joint.anchor = rb.transform.position - transform.position;
 		joint.connectedAnchor = rb.transform.position - transform.position;
-//		anchors[0] = Instantiate (anchorPrefab, joint.anchor, Quaternion.identity) as GameObject;
-//		anchors[1] = Instantiate (anchorPrefab, joint.connectedAnchor, Quaternion.identity) as GameObject;
+		if (debug)
+		{
+			anchors[0] = Instantiate (anchorPrefab, joint.anchor, Quaternion.identity) as GameObject;
+			anchors[1] = Instantiate (anchorPrefab, joint.connectedAnchor, Quaternion.identity) as GameObject;
+		}
 		joint.xMotion = ConfigurableJointMotion.Limited;
 		joint.yMotion = ConfigurableJointMotion.Limited;
 		joint.zMotion = ConfigurableJointMotion.Limited;
@@ -32,11 +38,13 @@ public class musclesController : MonoBehaviour
 		joint.angularZMotion = ConfigurableJointMotion.Free;
 	}
 
+	// add connected muscle but isn't his controller
 	public void setMuscle(muscle current)
 	{
 		listMuscles.Add (current);
 	}
 
+	// add muscle, set as controller and create joint if needed
 	public void addMuscle(muscle tmp, Rigidbody rb)
 	{
 		if (!joint)
@@ -47,7 +55,7 @@ public class musclesController : MonoBehaviour
 		tmp.setController (this);
 		listMuscles.Add (tmp);
 	}
-
+		
 	public void setForce()
 	{
 	}

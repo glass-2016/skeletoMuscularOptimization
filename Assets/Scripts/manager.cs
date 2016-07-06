@@ -6,17 +6,24 @@ using System.Linq;
 
 public class manager : MonoBehaviour 
 {
+	// selected object
 	private GameObject currentObject = null;
-	public GameObject target;
+	// bone prefab
+	public GameObject bone;
 	public muscle musclePrefab;
+	// list of all objects added to scene
 	private List<GameObject> list;
+	// boolean to indicate parent mode
 	private bool searchParent = false;
+	// muscles attaches
 	private bool firstAttach = false;
 	private bool secondAttach = false;
 	private Vector3[] attaches = null;
+	// indicator to update values of fields parameters
 	private Vector3 oldPosition;
 	private Quaternion oldRotation;
 	private Vector3 oldScale;
+	// parameters fields
 	public InputField positionX;
 	public InputField positionY;
 	public InputField positionZ;
@@ -36,6 +43,7 @@ public class manager : MonoBehaviour
 		list = new List<GameObject> ();
 	}
 
+	// play mode
 	public void play()
 	{
 		for (int i = 0; i < list.Count; i++)
@@ -57,6 +65,7 @@ public class manager : MonoBehaviour
 		}
 	}
 
+	// reset parameters to current parent
 	public void resetLocalPosition()
 	{
 		if (currentObject)
@@ -67,9 +76,10 @@ public class manager : MonoBehaviour
 		}
 	}
 
+	// add bone
 	public void spawn()
 	{
-		list.Add(Instantiate (target));
+		list.Add(Instantiate (bone));
 	}
 
 	public void removeParent()
@@ -93,7 +103,6 @@ public class manager : MonoBehaviour
 	{
 		if (currentObject)
 		{
-//			currentObject.GetComponent<Renderer> ().material.color = Color.red;
 			searchParent = true;
 			firstAttach = false;
 			secondAttach = false;
@@ -112,6 +121,7 @@ public class manager : MonoBehaviour
 		}
 	}
 
+	// delete current selected object
 	public void delete()
 	{
 		if (currentObject)
@@ -178,6 +188,7 @@ public class manager : MonoBehaviour
 		scaleZ.text = currentObject.transform.localScale.z.ToString ();
 	}
 
+	// change colors and parameters value to newly selected object
 	void changeFocus()
 	{
 		currentObject.GetComponent<Renderer> ().material.color = Color.green;
@@ -199,24 +210,6 @@ public class manager : MonoBehaviour
 		}
 	}
 
-	void LateUpdate()
-	{
-		if (currentObject && 
-			(oldPosition != currentObject.transform.position ||
-			oldRotation != currentObject.transform.rotation ||
-			oldScale != currentObject.transform.localScale))
-		{
-			updateValues ();
-			oldPosition = currentObject.transform.position;
-			oldRotation = currentObject.transform.rotation;
-			oldScale = currentObject.transform.localScale;
-		}
-		else if (!currentObject)
-		{
-			resetValues ();
-		}
-	}
-
 	void Update () 
 	{
 		if (Input.GetMouseButtonDown (0)) 
@@ -227,11 +220,13 @@ public class manager : MonoBehaviour
 			{
 				if (searchParent && currentObject)
 				{
+					// add parent to current object
 					currentObject.transform.parent = hit.collider.gameObject.transform;
 					searchParent = false;
 				} 
 				else if (firstAttach)
 				{
+					// add first attach to object clicked
 					attaches [0] = hit.point;
 					firstAttach = false;
 					secondAttach = true;
@@ -240,6 +235,7 @@ public class manager : MonoBehaviour
 				} 
 				else if (secondAttach)
 				{
+					// add second attach to object clicked and add muscle
 					attaches [1] = hit.point;
 					secondAttach = false;
 					muscle tmp = Instantiate (musclePrefab, attaches[0] + (attaches[1] - attaches[0]), Quaternion.identity) as muscle;
@@ -255,7 +251,7 @@ public class manager : MonoBehaviour
 				}
 				else
 				{
-					Debug.Log ("You selected the " + hit.transform.name);
+					// select object
 					currentObject = hit.collider.gameObject;
 					changeFocus ();
 				}
@@ -263,10 +259,25 @@ public class manager : MonoBehaviour
 		}
 		if (Input.GetKeyDown (KeyCode.C))
 		{
-			//				currentObject.GetComponent<Renderer> ().material.color = Vector4.one;
+			// deselect current object
 			currentObject = null;
 			for (int i = 0; i < list.Count; i++)
 				list [i].GetComponent<Renderer> ().material.color = Vector4.one;
+		}
+		if (currentObject && 
+			(oldPosition != currentObject.transform.position ||
+				oldRotation != currentObject.transform.rotation ||
+				oldScale != currentObject.transform.localScale))
+		{
+			// update parameters when they change
+			updateValues ();
+			oldPosition = currentObject.transform.position;
+			oldRotation = currentObject.transform.rotation;
+			oldScale = currentObject.transform.localScale;
+		}
+		else if (!currentObject)
+		{
+			resetValues ();
 		}
 	}
 }

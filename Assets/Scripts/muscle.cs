@@ -7,6 +7,7 @@ public class muscle : MonoBehaviour
 	public musclesController controller;
 	public List<GameObject> anchors;
 	private Vector3[] attachPoints;
+	// keep positions on bones models
 	private Vector3[] offsets;
 	private Vector3[] position;
 	// Use this for initialization
@@ -17,17 +18,20 @@ public class muscle : MonoBehaviour
 		offsets = new Vector3[2];
 	}
 
+	// add bone as muscle anchor
 	public void setAnchor(GameObject current)
 	{
 		position [anchors.Count] = current.transform.position;
 		anchors.Add(current);
 	}
 
+	// set controller for configurableJoint
 	public void setController(musclesController currentController)
 	{
 		controller = currentController;
 	}
 
+	// update position with bone movement
 	void changePosition(int index, Vector3 value)
 	{
 		attachPoints [index] += value - attachPoints[index] + offsets[index];
@@ -36,6 +40,7 @@ public class muscle : MonoBehaviour
 		transform.localRotation = Quaternion.FromToRotation(Vector3.up, attachPoints[0] - attachPoints[1]);
 	}
 
+	// configure prefabs to get attach to bones
 	public void setLimits(Vector3[] attaches, Vector3 pos1, Vector3 pos2)
 	{
 		attachPoints = attaches;
@@ -51,6 +56,7 @@ public class muscle : MonoBehaviour
 	{
 		for (int i = 0; i < anchors.Count; i++)
 		{
+			// changes position when bones position changes
 			if (position [i] != anchors[i].transform.position)
 				changePosition (i, anchors[i].transform.position);
 		}
