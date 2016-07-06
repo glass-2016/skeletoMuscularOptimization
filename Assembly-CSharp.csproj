@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\UImanager.cs" />
+     <Compile Include="Assets\Scripts\articulations.cs" />
      <Compile Include="Assets\Scripts\cameraPosition.cs" />
      <Compile Include="Assets\Scripts\manager.cs" />
      <Compile Include="Assets\Scripts\muscle.cs" />
