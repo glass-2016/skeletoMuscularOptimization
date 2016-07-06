@@ -22,6 +22,7 @@ public class musclesController : MonoBehaviour
 	public void addDirection(vec3i dir)
 	{
 		joint.axis += new Vector3 (dir.x, dir.y, dir.z);
+		joint.targetRotation = Quaternion.Euler(joint.axis);
 	}
 
 	// configure ConfigurableJoint
@@ -73,7 +74,7 @@ public class musclesController : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		if (debug)
+		if (debug && joint && joint.connectedBody)
 		{
 			anchors[0].transform.position = (joint.connectedBody.transform.position - transform.position) / 2.0f;
 			anchors[1].transform.position = -(joint.connectedBody.transform.position - transform.position) / 2.0f;
