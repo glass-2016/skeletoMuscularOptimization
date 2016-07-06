@@ -47,11 +47,13 @@ public class manager : MonoBehaviour
 	// play mode
 	public void play()
 	{
+		isPlaying = true;
 		for (int i = 0; i < list.Count; i++)
 		{
-			if (list[i].tag == "bones")
+			if (list [i].tag == "bones")
 				list [i].GetComponent<Rigidbody> ().isKinematic = false;
-			isPlaying = true;
+			else if (list [i].tag == "muscles")
+				list [i].GetComponent<muscle> ().controller.setForce (0.1f);
 		}
 	}
 
