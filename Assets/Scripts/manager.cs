@@ -34,8 +34,8 @@ public class manager : MonoBehaviour
 	public InputField scaleY;
 	public InputField scaleZ;
 
-	//either "none", "bone", "muscle" or "joint"
-	public string itemSelected;
+	// those are here to be read by other scripts
+	public string itemSelected; 	//either "none", "bone", "muscle"
 	public bool isPlaying;
 
 	void Start ()
@@ -50,6 +50,7 @@ public class manager : MonoBehaviour
 		{
 			if (list[i].tag == "bones")
 				list [i].GetComponent<Rigidbody> ().isKinematic = false;
+			isPlaying = true;
 		}
 	}
 
@@ -186,6 +187,27 @@ public class manager : MonoBehaviour
 		scaleX.text = currentObject.transform.localScale.x.ToString ();
 		scaleY.text = currentObject.transform.localScale.y.ToString ();
 		scaleZ.text = currentObject.transform.localScale.z.ToString ();
+
+		switch(currentObject.tag)
+		{
+		case "bones":
+			itemSelected = "bone";
+			if (currentObject.gameObject.transform.parent != null) {
+				itemSelected = "boneHasParent";
+			}
+			break;
+
+		case "muscles":
+			itemSelected = "muscle";
+			if (currentObject.gameObject.transform.parent != null) {
+				itemSelected = "muscleHasParent";
+			}
+			break;
+
+		default :
+			itemSelected = "none";
+			break;
+		}
 	}
 
 	// change colors and parameters value to newly selected object
@@ -209,6 +231,7 @@ public class manager : MonoBehaviour
 			}
 		}
 	}
+		
 
 	void Update () 
 	{
