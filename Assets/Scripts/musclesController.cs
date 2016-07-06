@@ -11,6 +11,7 @@ public class musclesController : MonoBehaviour
 	public bool debug = false;
 	public List<muscle> listMuscles;
 	private GameObject[] anchors;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -18,13 +19,19 @@ public class musclesController : MonoBehaviour
 		listMuscles = new List<muscle> ();
 	}
 
+	public void addDirection(vec3i dir)
+	{
+		joint.axis += new Vector3 (dir.x, dir.y, dir.z);
+	}
+
 	// configure ConfigurableJoint
 	void addRigidBody(Rigidbody rb)
 	{
 		joint.connectedBody = rb;
 		joint.enableCollision = true;
-		joint.anchor = rb.transform.position - transform.position;
-		joint.connectedAnchor = rb.transform.position - transform.position;
+		joint.autoConfigureConnectedAnchor = false;
+		joint.anchor = (rb.transform.position - transform.position) / 2.0f;
+		joint.connectedAnchor = -(rb.transform.position - transform.position) / 2.0f;
 		if (debug)
 		{
 			anchors[0] = Instantiate (anchorPrefab, joint.anchor, Quaternion.identity) as GameObject;
@@ -36,6 +43,8 @@ public class musclesController : MonoBehaviour
 		joint.angularXMotion = ConfigurableJointMotion.Free;
 		joint.angularYMotion = ConfigurableJointMotion.Free;
 		joint.angularZMotion = ConfigurableJointMotion.Free;
+		joint.axis = Vector3.zero;
+		joint.secondaryAxis = Vector3.zero;
 	}
 
 	// add connected muscle but isn't his controller
@@ -56,13 +65,18 @@ public class musclesController : MonoBehaviour
 		listMuscles.Add (tmp);
 	}
 		
-	public void setForce()
+	public void setForce(float force)
 	{
+		joint.targetVelocity += joint.axis * force;
 	}
 
 	// Update is called once per frame
 	void Update () 
 	{
-
+		if (debug)
+		{
+			anchors[0].transform.position = (joint.connectedBody.transform.position - transform.position) / 2.0f;
+			anchors[1].transform.position = -(joint.connectedBody.transform.position - transform.position) / 2.0f;
+		}
 	}
 }

@@ -2,9 +2,24 @@
 using System.Collections;
 using System.Collections.Generic;
 
+public class vec3i
+{
+	public int x;
+	public int y;
+	public int z;
+	public vec3i(int _x, int _y, int _z)
+	{
+		x = _x;
+		y = _y;
+		z = _z;
+	}
+};
+
 public class muscle : MonoBehaviour 
 {
 	public musclesController controller;
+	private vec3i direction;
+	public float force = 10f;
 	public List<GameObject> anchors;
 	private Vector3[] attachPoints;
 	// keep positions on bones models
@@ -36,7 +51,7 @@ public class muscle : MonoBehaviour
 	{
 		attachPoints [index] += value - attachPoints[index] + offsets[index];
 		transform.position = attachPoints[1] + (attachPoints [0] - attachPoints [1]) / 2.0f;
-//		transform.localScale = new Vector3(transform.localScale.x, (attachPoints [1].y - attachPoints [0].y) * 0.6f, transform.localScale.z);
+		transform.localScale = new Vector3(transform.localScale.x, (attachPoints [1].y - attachPoints [0].y) * 0.5f, transform.localScale.z);
 		transform.localRotation = Quaternion.FromToRotation(Vector3.up, attachPoints[0] - attachPoints[1]);
 	}
 
@@ -49,6 +64,9 @@ public class muscle : MonoBehaviour
 		transform.position = attaches[1] + ((attaches [0] - attaches [1]) / 2.0f);
 		transform.localScale = new Vector3(transform.localScale.x, (attachPoints [1].y - attachPoints [0].y) * 0.5f, transform.localScale.z);
 		transform.localRotation = Quaternion.FromToRotation(Vector3.up, attachPoints[0] - attachPoints[1]);
+		Vector3 tmpVec = (offsets [0] + offsets [1]);
+		direction = new vec3i (Mathf.FloorToInt(Mathf.Abs(tmpVec.x)), Mathf.FloorToInt(Mathf.Abs(tmpVec.y)), Mathf.FloorToInt(Mathf.Abs(tmpVec.z)));
+		controller.addDirection (direction);
 	}
 
 	// Update is called once per frame
@@ -60,5 +78,7 @@ public class muscle : MonoBehaviour
 			if (position [i] != anchors[i].transform.position)
 				changePosition (i, anchors[i].transform.position);
 		}
+		if (Input.GetKey (KeyCode.F))
+			controller.setForce (force);
 	}
 }
