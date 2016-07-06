@@ -7,11 +7,16 @@ public class vec3i
 	public int x;
 	public int y;
 	public int z;
+	public int[] values;
 	public vec3i(int _x, int _y, int _z)
 	{
 		x = _x;
 		y = _y;
 		z = _z;
+		values = new int[3];
+		values [0] = _x;
+		values [1] = _y;
+		values [2] = _z;
 	}
 };
 

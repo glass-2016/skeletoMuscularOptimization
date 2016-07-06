@@ -7,16 +7,16 @@ public class musclesController : MonoBehaviour
 {
 	private ConfigurableJoint joint = null;
 	// anchor prefab for joint anchors only for debug
-	public GameObject anchorPrefab;
+	public articulations anchorPrefab;
 	private Rigidbody rb;
 	public bool debug = false;
 	public List<muscle> listMuscles;
-	private GameObject[] anchors;
+	private articulations[] anchors;
 
 	// Use this for initialization
 	void Start () 
 	{
-		anchors = new GameObject[2];
+		anchors = new articulations[2];
 		listMuscles = new List<muscle> ();
 		rb = GetComponent<Rigidbody> ();
 	}
@@ -24,6 +24,15 @@ public class musclesController : MonoBehaviour
 	public void addDirection(vec3i dir)
 	{
 		joint.axis += new Vector3 (dir.z, dir.y, dir.x);
+		ConfigurableJointMotion[] axisTmp = new ConfigurableJointMotion[3];
+		for (int i = 0; i < 3; i++)
+		{
+			if (dir.values [2 - i] > 0)
+				axisTmp [i] = ConfigurableJointMotion.Free;
+			else
+				axisTmp [i] = ConfigurableJointMotion.Limited;
+		}
+		anchors [0].setAxis (axisTmp);
 		joint.targetRotation = Quaternion.Euler(joint.axis);
 	}
 
@@ -35,10 +44,11 @@ public class musclesController : MonoBehaviour
 		joint.autoConfigureConnectedAnchor = false;
 		joint.anchor = (rb.transform.position - transform.position) / 2.0f;
 		joint.connectedAnchor = -(rb.transform.position - transform.position) / 2.0f;
+		anchors[0] = Instantiate (anchorPrefab, joint.anchor, Quaternion.identity) as articulations;
+		anchors [0].setController (this);
 		if (debug)
 		{
-			anchors[0] = Instantiate (anchorPrefab, joint.anchor, Quaternion.identity) as GameObject;
-//			anchors[1] = Instantiate (anchorPrefab, joint.connectedAnchor, Quaternion.identity) as GameObject;
+			anchors[1] = Instantiate (anchorPrefab, joint.connectedAnchor, Quaternion.identity) as articulations;
 		}
 		joint.xMotion = ConfigurableJointMotion.Limited;
 		joint.yMotion = ConfigurableJointMotion.Limited;
@@ -74,13 +84,21 @@ public class musclesController : MonoBehaviour
 		rb.angularVelocity = joint.targetVelocity * Time.deltaTime;
 	}
 
+	public void setAxis(ConfigurableJointMotion[] type)
+	{
+		joint.angularXMotion = type [0];
+		joint.angularYMotion = type [1];
+		joint.angularZMotion = type [2];
+	}
+
 	// Update is called once per frame
 	void Update () 
 	{
-		if (debug && joint && joint.connectedBody)
+		if (joint && joint.connectedBody)
 		{
-			anchors[0].transform.position = transform.position + (joint.connectedBody.transform.position - transform.position) / 2.0f;
-//			anchors[1].transform.position = -(joint.connectedBody.transform.position - transform.position) / 2.0f;
+			anchors[0].gameObject.transform.position = transform.position + (joint.connectedBody.transform.position - transform.position) / 2.0f;
+			if (debug)
+				anchors[1].gameObject.transform.position = -(joint.connectedBody.transform.position - transform.position) / 2.0f;
 		}
 	}
 }
