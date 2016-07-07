@@ -25,6 +25,10 @@ public class muscle : MonoBehaviour
 	public musclesController controller;
 	private vec3i direction;
 	public float force = 10f;
+	public string key1 = "A";
+	public string key2 = "B";
+	private KeyCode kc1;
+	private KeyCode kc2;
 	public List<GameObject> anchors;
 	private Vector3[] attachPoints;
 	// keep positions on bones models
@@ -77,13 +81,45 @@ public class muscle : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+
+		//reading the string input chosen by the player and converting it to keycode
+		//trying to find if a number was entered
+		int asck1 = 0;
+		int asck2 = 0;
+
+		if (key1.Length < 2) {
+			asck1 = System.Convert.ToChar (key1);
+		}
+		if (key2.Length < 2) {
+			asck2 = System.Convert.ToChar (key2);
+		}
+
+		Debug.Log (asck1);
+
+		//excluding the utility Fkeys and converting to numpad if a number was entered
+		if ( asck1 > 47 && asck1 < 58 && !key1.Contains("F")) 
+		{
+			key1 = key1.Insert (0, "Keypad");
+		}
+
+		if ( asck2 > 47 && asck2 < 58 && !key2.Contains("F")) 
+		{
+			key2 = key2.Insert (0, "Keypad"); 
+		}
+		kc1 = (KeyCode)System.Enum.Parse (typeof(KeyCode), key1);
+		kc2 = (KeyCode)System.Enum.Parse (typeof(KeyCode), key2);
+
+
 		for (int i = 0; i < anchors.Count; i++)
 		{
 			// changes position when bones position changes
 			if (position [i] != anchors[i].transform.position)
 				changePosition (i, anchors[i].transform.position);
 		}
-		if (Input.GetKey (KeyCode.F))
+		if (kc1!= null && Input.GetKey (kc1))
 			controller.setForce (force);
+
+		if (kc2 !=null && Input.GetKey (kc2))
+			controller.setForce (-force);
 	}
 }

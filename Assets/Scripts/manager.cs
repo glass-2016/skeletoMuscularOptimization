@@ -37,6 +37,8 @@ public class manager : MonoBehaviour
 	public InputField scaleZ;
 	//muscles
 	public InputField muscleForce;
+	public InputField key1;
+	public InputField key2;
 	//articulations
 	public InputField rangeX;
 	public InputField rangeY;
@@ -83,6 +85,12 @@ public class manager : MonoBehaviour
 					float force = currentObject.gameObject.GetComponent<muscle> ().force;
 					float.TryParse (muscleForce.text, out force);
 					currentObject.gameObject.GetComponent<muscle> ().force = force;
+					currentObject.gameObject.GetComponent<muscle> ().key1 = key1.text.ToUpper();
+					currentObject.gameObject.GetComponent<muscle> ().key2 = key2.text.ToUpper();
+
+
+
+
 				}
 			
 			}
@@ -214,6 +222,8 @@ public class manager : MonoBehaviour
 		scaleY.text = "0.0";
 		scaleZ.text = "0.0";
 		muscleForce.text = "0.0";
+		key1.text = "0.0";
+		key2.text = "0.0";
 		rangeX.text = "0.0";
 		rangeY.text = "0.0";
 		rangeZ.text = "0.0";
@@ -237,6 +247,10 @@ public class manager : MonoBehaviour
 				return;
 			} else {
 				muscleForce.text = currentObject.gameObject.GetComponent<muscle> ().force.ToString();
+				key1.text = currentObject.gameObject.GetComponent<muscle> ().key1;
+				key2.text = currentObject.gameObject.GetComponent<muscle> ().key2;
+
+
 			}
 
 		}
@@ -286,9 +300,6 @@ public class manager : MonoBehaviour
 				break;
 			case "articulations":
 				itemSelected = "articulation";
-				if (currentObject.gameObject.transform.parent != null) {
-					itemSelected = "articulationHasParent";
-				}
 				break;
 			default :
 				itemSelected = "none";
