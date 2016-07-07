@@ -96,8 +96,6 @@ public class muscle : MonoBehaviour
 			asck2 = System.Convert.ToChar (key2);
 		}
 
-		Debug.Log (asck1);
-
 		//excluding the utility Fkeys and converting to numpad if a number was entered
 		if ( asck1 > 47 && asck1 < 58 && !key1.Contains("F")) 
 		{
@@ -118,10 +116,10 @@ public class muscle : MonoBehaviour
 			if (position [i] != anchors[i].transform.position)
 				changePosition (i, anchors[i].transform.position);
 		}
-		if (kc1!= null && Input.GetKey (kc1))
-			controller.setForce (force);
+		if (Input.GetKey (kc1))
+			controller.setForce (force, index);
 
-		if (kc2 !=null && Input.GetKey (kc2))
-			controller.setForce (-force);
+		if (Input.GetKey (kc2))
+			controller.setForce (-force, index);
 	}
 }

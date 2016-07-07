@@ -60,7 +60,25 @@ public class manager : MonoBehaviour
 		for (int i = 0; i < list.Count; i++)
 		{
 			if (list [i].tag == "bones")
+			{
+				if (list [i].GetComponent<musclesController> ().colliding)
+					return;
+			}
+			else if (list [i].tag == "articulations")
+			{
+				if (list [i].GetComponent<articulations> ().colliding)
+					return;
+			}	
+		}
+		for (int i = 0; i < list.Count; i++)
+		{
+			if (list [i].tag == "bones")
+			{
 				list [i].GetComponent<Rigidbody> ().isKinematic = false;
+				list [i].GetComponent<Collider> ().isTrigger = false;
+			}
+			else if (list[i].tag == "articulations")
+				list [i].GetComponent<Collider> ().isTrigger = false;
 			else if (list [i].tag == "muscles")
 			{
 				musclesController tmpController = list [i].GetComponent<muscle> ().controller;
@@ -178,8 +196,6 @@ public class manager : MonoBehaviour
 			list.Remove (tmp.gameObject);
 			if (tmp.controller == tmpController)
 			{
-				Debug.Log ("anchorsCount = " + tmpController.anchors.Count);
-				Debug.Log ("muscleIndex = " + tmp.index);
 				list.Remove (tmpController.anchors [tmp.index].gameObject);
 				if (tmp.anchors [0].GetComponent<musclesController> () == tmpController)
 					tmp.anchors [1].GetComponent<musclesController> ().listMuscles.Remove (tmp);
@@ -203,12 +219,16 @@ public class manager : MonoBehaviour
 
 	void deleteMuscle()
 	{
+		muscle tmpMuscle = currentObject.GetComponent<muscle> ();
+		list.Remove (currentObject);
+		list.Remove (tmpMuscle.controller.anchors[tmpMuscle.index].gameObject);
+		Destroy (tmpMuscle.controller.joint [tmpMuscle.index]);
+		Destroy (tmpMuscle.controller.anchors [tmpMuscle.index].gameObject);
+		Destroy (tmpMuscle);
+		tmpMuscle.controller.anchors.RemoveAt (tmpMuscle.index);
+		tmpMuscle.controller.listMuscles.RemoveAt (tmpMuscle.index);
 	}
-
-	void deleteArticulation()
-	{
-	}
-
+		
 	// delete current selected object
 	public void delete()
 	{
@@ -218,8 +238,6 @@ public class manager : MonoBehaviour
 				deleteBone ();
 			else if (currentObject.tag == "muscles")
 				deleteMuscle ();
-			else if (currentObject.tag == "articulations")
-				deleteArticulation ();
 			list.Remove (currentObject);
 			Destroy (currentObject.gameObject);
 			currentObject = null;

@@ -12,6 +12,7 @@ public class musclesController : MonoBehaviour
 	public List<muscle> listMuscles;
 	public List<articulations> anchors;
 	public int currentIndex = 0;
+	public bool colliding = false;
 
 	// Use this for initialization
 	void Start () 
@@ -123,5 +124,20 @@ public class musclesController : MonoBehaviour
 		{
 			anchors[i].gameObject.transform.position = transform.position + (joint[i].connectedBody.transform.position - transform.position) / 2.0f;
 		}
+	}
+
+	void OnTriggerStay(Collider other)
+	{
+		if (other.tag == "bones" || other.tag == "articulations")
+		{
+			Debug.Log ("Some bones collision!!!");
+			colliding = true;
+		}
+	}
+
+	void OnTriggerExit(Collider other)
+	{
+		if (other.tag == "bones" || other.tag == "articulations")
+			colliding = false;
 	}
 }

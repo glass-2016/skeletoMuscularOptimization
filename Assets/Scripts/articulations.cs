@@ -2,10 +2,11 @@
 using System.Collections;
 
 public class articulations : MonoBehaviour {
-	private musclesController controller;
+	public musclesController controller;
 	public ConfigurableJointMotion[] axis;
 	public Vector3 axisLimits;
-	private int index = 0;
+	public int index = 0;
+	public bool colliding = false;
 	// Use this for initialization
 	void Awake () 
 	{
@@ -13,11 +14,6 @@ public class articulations : MonoBehaviour {
 		axis [0] = ConfigurableJointMotion.Limited;
 		axis [1] = ConfigurableJointMotion.Limited;
 		axis [2] = ConfigurableJointMotion.Limited;
-	}
-
-	public int getIndex()
-	{
-		return (index);
 	}
 
 	public void setController(musclesController current, int i)
@@ -47,5 +43,20 @@ public class articulations : MonoBehaviour {
 	void Update () 
 	{
 	
+	}
+
+	void OnTriggerStay(Collider other)
+	{
+		if (other.tag == "bones" || other.tag == "articulations")
+		{
+			Debug.Log ("Some articulations collision!!!");
+			colliding = true;
+		}
+	}
+
+	void OnTriggerExit(Collider other)
+	{
+		if (other.tag == "bones" || other.tag == "articulations")
+			colliding = false;
 	}
 }
