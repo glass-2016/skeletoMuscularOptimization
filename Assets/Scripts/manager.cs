@@ -126,6 +126,18 @@ public class manager : MonoBehaviour
 		}
 	}
 
+	public void updateAxis()
+	{
+		if (currentObject)
+		{
+			float tmpX, tmpY, tmpZ = 0.0f;
+			float.TryParse(scaleX.text, out tmpX);
+			float.TryParse(scaleY.text, out tmpY);
+			float.TryParse(scaleZ.text, out tmpZ);
+			currentObject.GetComponent<articulations> ().setLimitsAxis (new Vector3(tmpX, tmpY, tmpZ));
+		}
+	}
+
 	public void updateRotation()
 	{
 		if (currentObject)
@@ -245,7 +257,12 @@ public class manager : MonoBehaviour
 					itemSelected = "muscleHasParent";
 				}
 				break;
-
+			case "articulations":
+				itemSelected = "articulation";
+				if (currentObject.gameObject.transform.parent != null) {
+					itemSelected = "articulationHasParent";
+				}
+				break;
 			default :
 				itemSelected = "none";
 				break;
@@ -266,7 +283,7 @@ public class manager : MonoBehaviour
 		{
 			RaycastHit hit; 
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
-			if (Physics.Raycast (ray, out hit) && (hit.collider.tag == "bones" || hit.collider.tag == "muscles"))
+			if (Physics.Raycast (ray, out hit) && (hit.collider.tag == "bones" || hit.collider.tag == "muscles" || hit.collider.tag == "articulations"))
 			{
 				if (searchParent && currentObject)
 				{

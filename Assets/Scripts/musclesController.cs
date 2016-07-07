@@ -21,18 +21,34 @@ public class musclesController : MonoBehaviour
 		rb = GetComponent<Rigidbody> ();
 	}
 
+	public void setLimitsAxis(Vector3 axisLimits)
+	{
+		SoftJointLimit tmp = joint.lowAngularXLimit;
+		tmp.limit = -axisLimits.x / 2.0f;
+		joint.lowAngularXLimit = tmp;
+		tmp = joint.highAngularXLimit;
+		tmp.limit = axisLimits.x / 2.0f;
+		joint.highAngularXLimit = tmp;
+		tmp = joint.angularYLimit;
+		tmp.limit = axisLimits.y;
+		tmp = joint.angularZLimit;
+		joint.angularYLimit = tmp;
+		tmp.limit = axisLimits.z;
+		joint.angularZLimit = tmp;
+	}
+
 	public void addDirection(vec3i dir)
 	{
 		joint.axis += new Vector3 (dir.z, dir.y, dir.x);
-		ConfigurableJointMotion[] axisTmp = new ConfigurableJointMotion[3];
-		for (int i = 0; i < 3; i++)
-		{
-			if (dir.values [2 - i] > 0)
-				axisTmp [i] = ConfigurableJointMotion.Free;
-			else
-				axisTmp [i] = ConfigurableJointMotion.Limited;
-		}
-		anchors [0].setAxis (axisTmp);
+//		ConfigurableJointMotion[] axisTmp = new ConfigurableJointMotion[3];
+//		for (int i = 0; i < 3; i++)
+//		{
+//			if (dir.values [2 - i] > 0)
+//				axisTmp [i] = ConfigurableJointMotion.Free;
+//			else
+//				axisTmp [i] = ConfigurableJointMotion.Limited;
+//		}
+//		anchors [0].setAxis (axisTmp);
 		joint.targetRotation = Quaternion.Euler(joint.axis);
 	}
 

@@ -53,9 +53,9 @@ public class cameraPosition : MonoBehaviour
 			// rotate camera around point
 			currentAngleX += Input.GetAxis("Mouse X") * xSpeed;
 			currentAngleY += Input.GetAxis("Mouse Y")* ySpeed;
-			//Rotate (currentAngleX, currentAngleY);
+			Rotate (currentAngleX, currentAngleY);
 			//Reversed because it works better
-			transform.localEulerAngles = new Vector3(currentAngleY, currentAngleX, 0);
+//			transform.localEulerAngles = new Vector3(currentAngleY, currentAngleX, 0);
 
 		}
 
@@ -93,7 +93,8 @@ public class cameraPosition : MonoBehaviour
 		if (zPos >= zMin && zPos <= zMax) 
 		{
 			transform.Translate (Vector3.forward * zoomAmount, Space.Self);
-
+			// adjust camera orbit point
+			distanceVector += Vector3.forward * zoomAmount;
 		}
 		if (zPos > zMax) 
 		{
