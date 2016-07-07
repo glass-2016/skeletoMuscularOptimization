@@ -11,7 +11,7 @@ public class musclesController : MonoBehaviour
 	private Rigidbody rb;
 	public bool debug = false;
 	public List<muscle> listMuscles;
-	private articulations[] anchors;
+	public articulations[] anchors;
 
 	// Use this for initialization
 	void Start () 

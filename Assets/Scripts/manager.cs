@@ -169,10 +169,14 @@ public class manager : MonoBehaviour
 				list.Remove (tmp.gameObject);
 				if (tmp.controller == tmpController)
 				{
+					list.Remove (tmpController.anchors[0].gameObject);
 					if (tmp.anchors [0].GetComponent<musclesController> () == tmpController)
 						tmp.anchors [1].GetComponent<musclesController> ().listMuscles.Remove (tmp);
 					else
 						tmp.anchors [0].GetComponent<musclesController> ().listMuscles.Remove (tmp);
+					Destroy (tmpController.anchors[0].gameObject);
+					if (tmpController.debug)
+						Destroy (tmpController.anchors[1].gameObject);
 				}
 				else
 					tmp.controller.listMuscles.Remove (tmp);
@@ -334,6 +338,7 @@ public class manager : MonoBehaviour
 					tmp.setAnchor (tmpController.gameObject);
 					currentObject = hit.collider.gameObject;
 					tmpController.addMuscle (tmp, currentObject.GetComponent<Rigidbody> ());
+					list.Add (tmpController.anchors[0].gameObject);
 					currentObject.GetComponent<musclesController> ().setMuscle (tmp);
 					tmp.setLimits (attaches, tmpController.gameObject.transform.position, currentObject.transform.position);
 					changeFocus ();

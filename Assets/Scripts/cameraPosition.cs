@@ -69,6 +69,7 @@ public class cameraPosition : MonoBehaviour
 		{
 			mouseDrag = Input.mousePosition - mouseDragBegin;
 			transform.Translate (mouseDrag.x*mouseSensibility,mouseDrag.y*mouseSensibility,0);
+			distanceVector += new Vector3 (mouseDrag.x * mouseSensibility, mouseDrag.y * mouseSensibility, 0);
 			//transform.Translate (currentPosY,currentPosX,0);
 			mouseDragBegin = Input.mousePosition;
 			
