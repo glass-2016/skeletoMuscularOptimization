@@ -23,7 +23,9 @@ public class manager : MonoBehaviour
 	private Vector3 oldPosition;
 	private Quaternion oldRotation;
 	private Vector3 oldScale;
+
 	// parameters fields
+	//bones
 	public InputField positionX;
 	public InputField positionY;
 	public InputField positionZ;
@@ -33,7 +35,12 @@ public class manager : MonoBehaviour
 	public InputField scaleX;
 	public InputField scaleY;
 	public InputField scaleZ;
+	//muscles
 	public InputField muscleForce;
+	//articulations
+	public InputField rangeX;
+	public InputField rangeY;
+	public InputField rangeZ;
 
 	// those are here to be read by other scripts
 	public string itemSelected; 	//either "none", "bone", "muscle"
@@ -202,6 +209,10 @@ public class manager : MonoBehaviour
 		scaleX.text = "0.0";
 		scaleY.text = "0.0";
 		scaleZ.text = "0.0";
+		muscleForce.text = "0.0";
+		rangeX.text = "0.0";
+		rangeY.text = "0.0";
+		rangeZ.text = "0.0";
 	}
 
 	void updateValues()
@@ -215,6 +226,18 @@ public class manager : MonoBehaviour
 		scaleX.text = currentObject.transform.localScale.x.ToString ();
 		scaleY.text = currentObject.transform.localScale.y.ToString ();
 		scaleZ.text = currentObject.transform.localScale.z.ToString ();
+
+		if (currentObject.tag == "muscles") 
+		{
+			if (currentObject.gameObject.GetComponent<muscle> () == null) {
+				return;
+			} else {
+				muscleForce.text = currentObject.gameObject.GetComponent<muscle> ().force.ToString();
+			}
+
+		}
+
+		//To do : ADD ARTICULATIONS WHEN NEEDED
 
 	}
 
