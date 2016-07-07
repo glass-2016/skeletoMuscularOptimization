@@ -283,7 +283,7 @@ public class manager : MonoBehaviour
 					currentObject = hit.collider.gameObject;
 					changeFocus ();
 				} 
-				else if (secondAttach)
+				else if (secondAttach && currentObject != hit.collider.gameObject)
 				{
 					// add second attach to object clicked and add muscle
 					attaches [1] = hit.point;
