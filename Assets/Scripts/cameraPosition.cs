@@ -6,8 +6,8 @@ public class cameraPosition : MonoBehaviour
 	private float currentAngleX = 0;
 	private float currentAngleY = 0;
 
-	private float currentPosX = 0;
-	private float currentPosY = 0;
+//	private float currentPosX = 0;
+//	private float currentPosY = 0;
 
 	// speed axis
 	public float xSpeed = 10f;

@@ -34,6 +34,7 @@ public class muscle : MonoBehaviour
 	// keep positions on bones models
 	private Vector3[] offsets;
 	private Vector3[] position;
+	public int index = 0;
 	// Use this for initialization
 	void Awake () 
 	{
@@ -50,9 +51,10 @@ public class muscle : MonoBehaviour
 	}
 
 	// set controller for configurableJoint
-	public void setController(musclesController currentController)
+	public void setController(musclesController currentController, int currentIndex)
 	{
 		controller = currentController;
+		index = currentIndex;
 	}
 
 	// update position with bone movement
@@ -74,8 +76,8 @@ public class muscle : MonoBehaviour
 		transform.rotation = Quaternion.FromToRotation(Vector3.up, attachPoints[0] - attachPoints[1]);
 		transform.localScale = new Vector3(transform.localScale.x, Vector3.Distance(attachPoints[0], attachPoints[1]) * 0.5f, transform.localScale.z);
 		Vector3 tmpVec = (offsets [0] + offsets [1]);
-		direction = new vec3i (Mathf.FloorToInt(Mathf.Abs(tmpVec.x)), Mathf.FloorToInt(Mathf.Abs(tmpVec.y)), Mathf.FloorToInt(Mathf.Abs(tmpVec.z)));
-		controller.addDirection (direction);
+		direction = new vec3i (Mathf.FloorToInt(tmpVec.x), Mathf.FloorToInt(tmpVec.y), Mathf.FloorToInt(tmpVec.z));
+		controller.addDirection (direction, index);
 	}
 
 	// Update is called once per frame

@@ -5,6 +5,7 @@ public class articulations : MonoBehaviour {
 	private musclesController controller;
 	public ConfigurableJointMotion[] axis;
 	public Vector3 axisLimits;
+	private int index = 0;
 	// Use this for initialization
 	void Awake () 
 	{
@@ -14,15 +15,21 @@ public class articulations : MonoBehaviour {
 		axis [2] = ConfigurableJointMotion.Limited;
 	}
 
-	public void setController(musclesController current)
+	public int getIndex()
 	{
+		return (index);
+	}
+
+	public void setController(musclesController current, int i)
+	{
+		index = i;
 		controller = current;
 	}
 
 	public void setLimitsAxis(Vector3 limits)
 	{
 		axisLimits = limits;
-		controller.setLimitsAxis (axisLimits);
+		controller.setLimitsAxis (axisLimits, index);
 	}
 
 	public void setAxis(ConfigurableJointMotion[] _axis)
@@ -33,7 +40,7 @@ public class articulations : MonoBehaviour {
 //				axis [i] = ConfigurableJointMotion.Free;
 //		}
 		axis = _axis;
-		controller.setAxis (axis);
+		controller.setAxis (axis, index);
 	}
 
 	// Update is called once per frame

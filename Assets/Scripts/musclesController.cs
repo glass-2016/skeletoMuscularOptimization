@@ -5,41 +5,42 @@ using System.Linq;
 
 public class musclesController : MonoBehaviour 
 {
-	private ConfigurableJoint joint = null;
+	public List<ConfigurableJoint> joint;
 	// anchor prefab for joint anchors only for debug
 	public articulations anchorPrefab;
 	private Rigidbody rb;
-	public bool debug = false;
 	public List<muscle> listMuscles;
-	public articulations[] anchors;
+	public List<articulations> anchors;
+	public int currentIndex = 0;
 
 	// Use this for initialization
 	void Start () 
 	{
-		anchors = new articulations[2];
+		joint = new List<ConfigurableJoint> ();
+		anchors = new List<articulations>();
 		listMuscles = new List<muscle> ();
 		rb = GetComponent<Rigidbody> ();
 	}
 
-	public void setLimitsAxis(Vector3 axisLimits)
+	public void setLimitsAxis(Vector3 axisLimits, int index)
 	{
-		SoftJointLimit tmp = joint.lowAngularXLimit;
+		SoftJointLimit tmp = joint[index].lowAngularXLimit;
 		tmp.limit = -axisLimits.x / 2.0f;
-		joint.lowAngularXLimit = tmp;
-		tmp = joint.highAngularXLimit;
+		joint[index].lowAngularXLimit = tmp;
+		tmp = joint[index].highAngularXLimit;
 		tmp.limit = axisLimits.x / 2.0f;
-		joint.highAngularXLimit = tmp;
-		tmp = joint.angularYLimit;
+		joint[index].highAngularXLimit = tmp;
+		tmp = joint[index].angularYLimit;
 		tmp.limit = axisLimits.y;
-		tmp = joint.angularZLimit;
-		joint.angularYLimit = tmp;
+		tmp = joint[index].angularZLimit;
+		joint[index].angularYLimit = tmp;
 		tmp.limit = axisLimits.z;
-		joint.angularZLimit = tmp;
+		joint[index].angularZLimit = tmp;
 	}
 
-	public void addDirection(vec3i dir)
+	public void addDirection(vec3i dir, int index)
 	{
-		joint.axis += new Vector3 (dir.z, dir.y, dir.x);
+		joint[index].axis += new Vector3 (dir.z, dir.x, dir.y);
 //		ConfigurableJointMotion[] axisTmp = new ConfigurableJointMotion[3];
 //		for (int i = 0; i < 3; i++)
 //		{
@@ -49,32 +50,42 @@ public class musclesController : MonoBehaviour
 //				axisTmp [i] = ConfigurableJointMotion.Limited;
 //		}
 //		anchors [0].setAxis (axisTmp);
-		joint.targetRotation = Quaternion.Euler(joint.axis);
+		joint[index].targetRotation = Quaternion.Euler(joint[index].axis);
+	}
+
+	bool checkAnchors(List<articulations> list, Vector3 anchor)
+	{
+		for (int i = 0; i < list.Count; i++)
+		{
+			if (list [i].transform.position == anchor)
+				return (false);
+		}
+		return (true);
 	}
 
 	// configure ConfigurableJoint
-	void addRigidBody(Rigidbody rb)
+	void addRigidBody(Rigidbody rb, int index)
 	{
-		joint.connectedBody = rb;
-		joint.enableCollision = true;
-		joint.autoConfigureConnectedAnchor = false;
-		joint.anchor = (rb.transform.position - transform.position) / 2.0f;
-		joint.connectedAnchor = -(rb.transform.position - transform.position) / 2.0f;
-		anchors[0] = Instantiate (anchorPrefab, joint.anchor, Quaternion.identity) as articulations;
-		anchors [0].setController (this);
-		if (debug)
+		joint[index].connectedBody = rb;
+		joint[index].enableCollision = true;
+		joint[index].autoConfigureConnectedAnchor = false;
+		joint[index].anchor = (rb.transform.position - transform.position) / 2.0f;
+		joint[index].connectedAnchor = -(rb.transform.position - transform.position) / 2.0f;
+		if (checkAnchors(rb.gameObject.GetComponent<musclesController> ().anchors, joint[index].anchor))
 		{
-			anchors[1] = Instantiate (anchorPrefab, joint.connectedAnchor, Quaternion.identity) as articulations;
+			anchors.Add(Instantiate (anchorPrefab, joint[index].anchor, Quaternion.identity) as articulations);
+			anchors[anchors.Count - 1].setController (this, index);
 		}
-		joint.xMotion = ConfigurableJointMotion.Limited;
-		joint.yMotion = ConfigurableJointMotion.Limited;
-		joint.zMotion = ConfigurableJointMotion.Limited;
-		joint.angularXMotion = ConfigurableJointMotion.Free;
-		joint.angularYMotion = ConfigurableJointMotion.Free;
-		joint.angularZMotion = ConfigurableJointMotion.Free;
-		joint.axis = Vector3.zero;
-		joint.secondaryAxis = Vector3.zero;
+		joint[index].xMotion = ConfigurableJointMotion.Limited;
+		joint[index].yMotion = ConfigurableJointMotion.Limited;
+		joint[index].zMotion = ConfigurableJointMotion.Limited;
+		joint[index].angularXMotion = ConfigurableJointMotion.Free;
+		joint[index].angularYMotion = ConfigurableJointMotion.Free;
+		joint[index].angularZMotion = ConfigurableJointMotion.Free;
+		joint[index].axis = Vector3.zero;
+		joint[index].secondaryAxis = Vector3.zero;
 	}
+
 
 	// add connected muscle but isn't his controller
 	public void setMuscle(muscle current)
@@ -85,36 +96,32 @@ public class musclesController : MonoBehaviour
 	// add muscle, set as controller and create joint if needed
 	public void addMuscle(muscle tmp, Rigidbody rb)
 	{
-		if (!joint)
-		{
-			joint = gameObject.AddComponent<ConfigurableJoint> ();
-			addRigidBody (rb);
-		}
-		tmp.setController (this);
+		joint.Add(gameObject.AddComponent<ConfigurableJoint> ());
+		addRigidBody (rb, currentIndex);
+		tmp.setController (this, currentIndex);
 		listMuscles.Add (tmp);
+		currentIndex++;
 	}
 		
-	public void setForce(float force)
+	public void setForce(float force, int index)
 	{
-		joint.targetVelocity += joint.axis * force;
-		rb.angularVelocity = joint.targetVelocity * Time.deltaTime;
+		joint[index].targetVelocity += joint[index].axis * force;
+		rb.angularVelocity = joint[index].targetVelocity * Time.deltaTime;
 	}
 
-	public void setAxis(ConfigurableJointMotion[] type)
+	public void setAxis(ConfigurableJointMotion[] type, int index)
 	{
-		joint.angularXMotion = type [0];
-		joint.angularYMotion = type [1];
-		joint.angularZMotion = type [2];
+		joint[index].angularXMotion = type [0];
+		joint[index].angularYMotion = type [1];
+		joint[index].angularZMotion = type [2];
 	}
 
 	// Update is called once per frame
 	void Update () 
 	{
-		if (joint && joint.connectedBody)
+		for (int i = 0; i < anchors.Count; i++)
 		{
-			anchors[0].gameObject.transform.position = transform.position + (joint.connectedBody.transform.position - transform.position) / 2.0f;
-			if (debug)
-				anchors[1].gameObject.transform.position = -(joint.connectedBody.transform.position - transform.position) / 2.0f;
+			anchors[i].gameObject.transform.position = transform.position + (joint[i].connectedBody.transform.position - transform.position) / 2.0f;
 		}
 	}
 }
