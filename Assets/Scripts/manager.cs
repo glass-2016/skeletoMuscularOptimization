@@ -194,24 +194,17 @@ public class manager : MonoBehaviour
 		{
 			muscle tmp = tmpController.listMuscles[tmpController.listMuscles.Count - 1];
 			list.Remove (tmp.gameObject);
-			if (tmp.controller == tmpController)
-			{
-				list.Remove (tmpController.anchors [tmp.index].gameObject);
-				if (tmp.anchors [0].GetComponent<musclesController> () == tmpController)
-					tmp.anchors [1].GetComponent<musclesController> ().listMuscles.Remove (tmp);
-				else
-					tmp.anchors [0].GetComponent<musclesController> ().listMuscles.Remove (tmp);
-				Destroy (tmpController.anchors [tmp.index].gameObject);
-			} 
+			list.Remove (tmp.controller.anchors [tmp.index].gameObject);
+			Destroy (tmp.controller.anchors [tmp.index].gameObject);
+			Destroy(tmp.controller.joint[tmp.index]);
+			tmp.controller.joint.RemoveAt (tmp.index);
+			tmp.controller.anchors.RemoveAt (tmp.index);
+			if (tmp.anchors [0].GetComponent<musclesController> () == tmpController)
+				tmp.anchors [1].GetComponent<musclesController> ().listMuscles.Remove (tmp);
 			else
-			{
-				list.Remove (tmp.controller.anchors [tmp.index].gameObject);
-				Destroy (tmp.controller.anchors [tmp.index].gameObject);
-				Destroy(tmp.controller.joint[tmp.index]);
-				tmp.controller.joint.RemoveAt (tmp.index);
-				tmp.controller.anchors.RemoveAt (tmp.index);
-			}
+				tmp.anchors [0].GetComponent<musclesController> ().listMuscles.Remove (tmp);
 			tmpController.listMuscles.Remove (tmp);
+			tmp.controller.currentIndex--;
 			Destroy (tmp.gameObject);
 		}
 		Destroy (tmpController.gameObject);
