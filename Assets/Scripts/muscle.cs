@@ -33,10 +33,9 @@ public class muscle : MonoBehaviour
 	}
 
 	// set controller for configurableJoint
-	public void setController(musclesController currentController, int currentIndex)
+	public void setController(musclesController currentController)
 	{
 		controller = currentController;
-		index = currentIndex;
 	}
 
 	// update position with bone movement
@@ -59,7 +58,7 @@ public class muscle : MonoBehaviour
 		transform.localScale = new Vector3(transform.localScale.x, Vector3.Distance(attachPoints[0], attachPoints[1]) * 0.5f, transform.localScale.z);
 		// define direction forces 
 		direction = -transform.right;
-		controller.addDirection (direction, index);
+		controller.addDirection (direction, this);
 	}
 
 	// Update is called once per frame
@@ -99,9 +98,9 @@ public class muscle : MonoBehaviour
 				changePosition (i, anchors[i].transform.position);
 		}
 		if (Input.GetKey (kc1))
-			controller.setForce (force, index);
+			controller.setForce (force, this);
 
 		if (Input.GetKey (kc2))
-			controller.setForce (-force, index);
+			controller.setForce (-force, this);
 	}
 }

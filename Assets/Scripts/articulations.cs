@@ -5,7 +5,7 @@ public class articulations : MonoBehaviour {
 	public musclesController controller;
 	public ConfigurableJointMotion[] axis;
 	public Vector3 axisLimits;
-	public int index = 0;
+	public muscle index;
 	public bool colliding = false;
 	// Use this for initialization
 	void Awake () 
@@ -16,7 +16,7 @@ public class articulations : MonoBehaviour {
 		axis [2] = ConfigurableJointMotion.Limited;
 	}
 
-	public void setController(musclesController current, int i)
+	public void setController(musclesController current, muscle i)
 	{
 		index = i;
 		controller = current;

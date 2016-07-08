@@ -5,25 +5,24 @@ using System.Linq;
 
 public class musclesController : MonoBehaviour 
 {
-	public List<ConfigurableJoint> joint;
+	public Dictionary<muscle, ConfigurableJoint> joint;
 	// anchor prefab for joint anchors only for debug
 	public articulations anchorPrefab;
 	private Rigidbody rb;
-	public List<muscle> listMuscles;
-	public List<articulations> anchors;
-	public int currentIndex = 0;
+	public Dictionary<int, muscle> listMuscles;
+	public Dictionary<muscle, articulations> anchors;
 	public bool colliding = false;
 
 	// Use this for initialization
 	void Start () 
 	{
-		joint = new List<ConfigurableJoint> ();
-		anchors = new List<articulations>();
-		listMuscles = new List<muscle> ();
+		joint = new Dictionary<muscle, ConfigurableJoint> ();
+		anchors = new Dictionary<muscle, articulations>();
+		listMuscles = new Dictionary<int, muscle> ();
 		rb = GetComponent<Rigidbody> ();
 	}
 
-	public void setLimitsAxis(Vector3 axisLimits, int index)
+	public void setLimitsAxis(Vector3 axisLimits, muscle index)
 	{
 		SoftJointLimit tmp = joint[index].lowAngularXLimit;
 		tmp.limit = -axisLimits.x / 2.0f;
@@ -39,7 +38,7 @@ public class musclesController : MonoBehaviour
 		joint[index].angularZLimit = tmp;
 	}
 
-	public void addDirection(Vector3 dir, int index)
+	public void addDirection(Vector3 dir, muscle index)
 	{
 		joint[index].axis += new Vector3 (dir.x, dir.y, dir.z);
 //		ConfigurableJointMotion[] axisTmp = new ConfigurableJointMotion[3];
@@ -54,18 +53,18 @@ public class musclesController : MonoBehaviour
 		joint[index].targetRotation = Quaternion.Euler(joint[index].axis);
 	}
 
-	bool checkAnchors(List<articulations> list, Vector3 anchor)
+	bool checkAnchors(Dictionary<muscle, articulations> list, Vector3 anchor)
 	{
-		for (int i = 0; i < list.Count; i++)
+		foreach (KeyValuePair<muscle, articulations> tmpMuscle in list)
 		{
-			if (list [i].transform.position == anchor)
+			if (tmpMuscle.Value.transform.position == anchor)
 				return (false);
 		}
 		return (true);
 	}
 
 	// configure ConfigurableJoint
-	void addRigidBody(Rigidbody rb, int index)
+	void addRigidBody(Rigidbody rb, muscle index)
 	{
 		joint[index].connectedBody = rb;
 		joint[index].enableCollision = true;
@@ -74,8 +73,8 @@ public class musclesController : MonoBehaviour
 		joint[index].connectedAnchor = -(rb.transform.position - transform.position) / 2.0f;
 		if (checkAnchors(rb.gameObject.GetComponent<musclesController> ().anchors, joint[index].anchor))
 		{
-			anchors.Add(Instantiate (anchorPrefab, joint[index].anchor, Quaternion.identity) as articulations);
-			anchors[anchors.Count - 1].setController (this, index);
+			anchors.Add(index, Instantiate (anchorPrefab, joint[index].anchor, Quaternion.identity) as articulations);
+			anchors[index].setController (this, index);
 		}
 		joint[index].xMotion = ConfigurableJointMotion.Limited;
 		joint[index].yMotion = ConfigurableJointMotion.Limited;
@@ -91,26 +90,25 @@ public class musclesController : MonoBehaviour
 	// add connected muscle but isn't his controller
 	public void setMuscle(muscle current)
 	{
-		listMuscles.Add (current);
+		listMuscles.Add (current.index, current);
 	}
 
 	// add muscle, set as controller and create joint if needed
 	public void addMuscle(muscle tmp, Rigidbody rb)
 	{
-		joint.Add(gameObject.AddComponent<ConfigurableJoint> ());
-		addRigidBody (rb, currentIndex);
-		tmp.setController (this, currentIndex);
-		listMuscles.Add (tmp);
-		currentIndex++;
+		joint.Add(tmp, gameObject.AddComponent<ConfigurableJoint> ());
+		addRigidBody (rb, tmp);
+		tmp.setController (this);
+		listMuscles.Add (tmp.index, tmp);
 	}
 		
-	public void setForce(float force, int index)
+	public void setForce(float force, muscle index)
 	{
 		joint[index].targetVelocity += joint[index].axis * force;
 		rb.angularVelocity = joint[index].targetVelocity * Time.deltaTime;
 	}
 
-	public void setAxis(ConfigurableJointMotion[] type, int index)
+	public void setAxis(ConfigurableJointMotion[] type, muscle index)
 	{
 		joint[index].angularXMotion = type [0];
 		joint[index].angularYMotion = type [1];
@@ -120,9 +118,9 @@ public class musclesController : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		for (int i = 0; i < anchors.Count; i++)
+		foreach (KeyValuePair<muscle, articulations> tmpMuscle in anchors)
 		{
-			anchors[i].gameObject.transform.position = transform.position + (joint[i].connectedBody.transform.position - transform.position) / 2.0f;
+			tmpMuscle.Value.gameObject.transform.position = transform.position + (joint[tmpMuscle.Key].connectedBody.transform.position - transform.position) / 2.0f;
 		}
 	}
 
