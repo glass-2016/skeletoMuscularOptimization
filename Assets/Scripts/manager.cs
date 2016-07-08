@@ -404,7 +404,16 @@ public class manager : MonoBehaviour
 				else
 				{
 					// select object
+					/*if (currentObject.GetComponent<bones> () != null) {
+						currentObject.GetComponent<bones> ().isSelected = false;
+					}*/
+
 					currentObject = hit.collider.gameObject;
+
+					/*if (currentObject.GetComponent<bones> ()!= null) {
+						currentObject.GetComponent<bones> ().isSelected = true;
+					}*/
+
 					changeFocus ();
 				}
 			}
