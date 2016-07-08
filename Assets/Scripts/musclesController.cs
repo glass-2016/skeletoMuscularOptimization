@@ -39,9 +39,9 @@ public class musclesController : MonoBehaviour
 		joint[index].angularZLimit = tmp;
 	}
 
-	public void addDirection(vec3i dir, int index)
+	public void addDirection(Vector3 dir, int index)
 	{
-		joint[index].axis += new Vector3 (dir.z, dir.x, dir.y);
+		joint[index].axis += new Vector3 (dir.x, dir.y, dir.z);
 //		ConfigurableJointMotion[] axisTmp = new ConfigurableJointMotion[3];
 //		for (int i = 0; i < 3; i++)
 //		{

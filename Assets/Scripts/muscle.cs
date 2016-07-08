@@ -2,28 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class vec3i
-{
-	public int x;
-	public int y;
-	public int z;
-	public int[] values;
-	public vec3i(int _x, int _y, int _z)
-	{
-		x = _x;
-		y = _y;
-		z = _z;
-		values = new int[3];
-		values [0] = _x;
-		values [1] = _y;
-		values [2] = _z;
-	}
-};
-
 public class muscle : MonoBehaviour 
 {
 	public musclesController controller;
-	private vec3i direction;
+	private Vector3 direction;
 	public float force = 10f;
 	public string key1 = "A";
 	public string key2 = "B";
@@ -75,8 +57,8 @@ public class muscle : MonoBehaviour
 		transform.position = attaches[1] + ((attaches [0] - attaches [1]) / 2.0f);
 		transform.rotation = Quaternion.FromToRotation(Vector3.up, attachPoints[0] - attachPoints[1]);
 		transform.localScale = new Vector3(transform.localScale.x, Vector3.Distance(attachPoints[0], attachPoints[1]) * 0.5f, transform.localScale.z);
-		Vector3 tmpVec = (offsets [0] + offsets [1]);
-		direction = new vec3i (Mathf.FloorToInt(tmpVec.x), Mathf.FloorToInt(tmpVec.y), Mathf.FloorToInt(tmpVec.z));
+		// define direction forces 
+		direction = -transform.right;
 		controller.addDirection (direction, index);
 	}
 
