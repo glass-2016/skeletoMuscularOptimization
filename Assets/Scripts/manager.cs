@@ -83,8 +83,14 @@ public class manager : MonoBehaviour
 			else if (list [i].tag == "muscles")
 			{
 				musclesController tmpController = list [i].GetComponent<muscle> ().controller;
-				foreach (KeyValuePair<int, muscle> tmpMuscle in tmpController.listMuscles)
-					tmpController.setForce (0.1f, tmpMuscle.Value);
+				foreach (KeyValuePair<int, articulations> tmpArticulations in tmpController.listArticulations)
+				{
+					foreach (KeyValuePair<int, muscle> tmpMuscle in tmpArticulations.Value.muscles)
+					{
+						if (tmpController == tmpMuscle.Value.controller)
+							tmpArticulations.Value.setForce (0.1f);
+					}
+				}
 			}
 		}
 	}
@@ -191,36 +197,52 @@ public class manager : MonoBehaviour
 	void deleteBone()
 	{
 		musclesController tmpController = currentObject.GetComponent<musclesController> ();
-		foreach (KeyValuePair<int, muscle> tmpMuscle in tmpController.listMuscles)
+		foreach (KeyValuePair<int, articulations> tmpArticulations in tmpController.listArticulations)
+		{
+			for (int i = 0; i < 2; i++)
+			{
+				if (tmpArticulations.Value.controllers [i] != tmpController)
+					tmpArticulations.Value.controllers [i].listArticulations.Remove (tmpArticulations.Key);
+			}
+			foreach (KeyValuePair<int, muscle> tmpMuscle in tmpArticulations.Value.muscles)
+			{
+				muscle tmp = tmpMuscle.Value;
+				list.Remove (tmp.gameObject);
+				Destroy (tmp.gameObject);
+			}
+			list.Remove (tmpArticulations.Value.gameObject);
+			tmpArticulations.Value.muscles.Clear ();
+			Destroy (tmpArticulations.Value.gameObject);
+		}
+		tmpController.listArticulations.Clear ();
+	}
+
+	void deleteArticulation()
+	{
+		articulations tmpArticulation = currentObject.GetComponent<articulations> ();
+		foreach (KeyValuePair<int, muscle> tmpMuscle in tmpArticulation.muscles)
 		{
 			muscle tmp = tmpMuscle.Value;
 			list.Remove (tmp.gameObject);
-			list.Remove (tmp.controller.anchors [tmp].gameObject);
-			Destroy (tmp.controller.anchors [tmp].gameObject);
-			Destroy(tmp.controller.joint[tmp]);
-			tmp.controller.joint.Remove (tmp);
-			tmp.controller.anchors.Remove (tmp);
-			if (tmp.anchors [0].GetComponent<musclesController> () == tmpController)
-				tmp.anchors [1].GetComponent<musclesController> ().listMuscles.Remove (tmp.index);
-			else
-				tmp.anchors [0].GetComponent<musclesController> ().listMuscles.Remove (tmp.index);
-//			tmpController.listMuscles.Remove (tmp.index);
 			Destroy (tmp.gameObject);
 		}
-		tmpController.listMuscles.Clear ();
-		Destroy (tmpController.gameObject);
+		tmpArticulation.muscles.Clear();
+		tmpArticulation.controllers [0].listArticulations.Remove (tmpArticulation.index);
+		tmpArticulation.controllers [1].listArticulations.Remove (tmpArticulation.index);
 	}
 
 	void deleteMuscle()
 	{
 		muscle tmpMuscle = currentObject.GetComponent<muscle> ();
 		list.Remove (currentObject);
-		list.Remove (tmpMuscle.controller.anchors[tmpMuscle].gameObject);
-		Destroy (tmpMuscle.controller.joint [tmpMuscle]);
-		Destroy (tmpMuscle.controller.anchors [tmpMuscle].gameObject);
 		Destroy (tmpMuscle);
-		tmpMuscle.controller.anchors.Remove (tmpMuscle);
-		tmpMuscle.controller.listMuscles.Remove (tmpMuscle.index);
+		tmpMuscle.currentArticulation.muscles.Remove (tmpMuscle.index);
+		if (tmpMuscle.currentArticulation.muscles.Count == 0)
+		{
+			Destroy (tmpMuscle.gameObject);
+			currentObject = tmpMuscle.currentArticulation.gameObject;
+			deleteArticulation ();
+		}
 	}
 		
 	// delete current selected object
@@ -232,6 +254,8 @@ public class manager : MonoBehaviour
 				deleteBone ();
 			else if (currentObject.tag == "muscles")
 				deleteMuscle ();
+			else if (currentObject.tag == "articulations")
+				deleteArticulation ();
 			list.Remove (currentObject);
 			Destroy (currentObject.gameObject);
 			currentObject = null;
@@ -384,18 +408,19 @@ public class manager : MonoBehaviour
 					attaches [1] = hit.point;
 					secondAttach = false;
 					muscle tmp = Instantiate (musclePrefab, attaches[0] + (attaches[1] - attaches[0]), Quaternion.identity) as muscle;
-					tmp.index = globalIndex;
-					globalIndex++;
 					list.Add (tmp.gameObject);
 					musclesController tmpController = currentObject.GetComponent<musclesController> ();
 					tmp.setAnchor (tmpController.gameObject);
 					currentObject = hit.collider.gameObject;
-					tmpController.addMuscle (tmp, currentObject.GetComponent<Rigidbody> ());
-					list.Add (tmpController.anchors[tmp].gameObject);
-					currentObject.GetComponent<musclesController> ().setMuscle (tmp);
+					articulations currentArticulations = tmpController.addAnchor (tmp, currentObject.GetComponent<Rigidbody> (), globalIndex);
+					globalIndex = currentArticulations.index + 1;
+					tmp.setArticulation (currentArticulations);
+					list.Add (currentArticulations.gameObject);
+					currentObject.GetComponent<musclesController> ().addArticulation (currentArticulations);
+					currentArticulations.setOtherController (currentObject.GetComponent<musclesController>());
 					tmp.setLimits (attaches, tmpController.gameObject.transform.position, currentObject.transform.position);
 					changeFocus ();
-					tmp.setAnchor (currentObject);
+//					tmp.setAnchor (currentObject);
 				}
 				else
 				{

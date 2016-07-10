@@ -12,6 +12,7 @@ public class muscle : MonoBehaviour
 	private KeyCode kc1;
 	private KeyCode kc2;
 	public List<GameObject> anchors;
+	public articulations currentArticulation;
 	private Vector3[] attachPoints;
 	// keep positions on bones models
 	private Vector3[] offsets;
@@ -32,6 +33,11 @@ public class muscle : MonoBehaviour
 		anchors.Add(current);
 	}
 
+	public void setArticulation(articulations current)
+	{
+		currentArticulation = current;
+	}
+
 	// set controller for configurableJoint
 	public void setController(musclesController currentController)
 	{
@@ -47,6 +53,11 @@ public class muscle : MonoBehaviour
 		transform.localScale = new Vector3(transform.localScale.x, Vector3.Distance(attachPoints[0], attachPoints[1]) * 0.5f, transform.localScale.z);
 	}
 
+	public void setIndex(int i)
+	{
+		index = i;
+	}
+
 	// configure prefabs to get attach to bones
 	public void setLimits(Vector3[] attaches, Vector3 pos1, Vector3 pos2)
 	{
@@ -58,7 +69,7 @@ public class muscle : MonoBehaviour
 		transform.localScale = new Vector3(transform.localScale.x, Vector3.Distance(attachPoints[0], attachPoints[1]) * 0.5f, transform.localScale.z);
 		// define direction forces 
 		direction = -transform.right;
-		controller.addDirection (direction, this);
+		currentArticulation.addDirection (direction);
 	}
 
 	// Update is called once per frame
@@ -98,9 +109,9 @@ public class muscle : MonoBehaviour
 				changePosition (i, anchors[i].transform.position);
 		}
 		if (Input.GetKey (kc1))
-			controller.setForce (force, this);
+			currentArticulation.setForce (force);
 
-		if (Input.GetKey (kc2))
-			controller.setForce (-force, this);
+//		if (Input.GetKey (kc2))
+//			currentArticulation.setForce (-force);
 	}
 }
