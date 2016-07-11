@@ -7,7 +7,7 @@ public class muscle : MonoBehaviour
 	public Vector3 direction;
 	public float force = 10f;
 	public string key1 = "A";
-	public string key2 = "B";
+//	public string key2 = "B";
 	private KeyCode kc1;
 	private KeyCode kc2;
 	public List<GameObject> anchors;
@@ -35,6 +35,7 @@ public class muscle : MonoBehaviour
 	public void setArticulation(articulations current)
 	{
 		currentArticulation = current;
+		key1 = ((char)(key1.ToCharArray()[0] + currentArticulation.index + currentArticulation.muscles.Count - 1)).ToString();
 	}
 
 	// update position with bone movement
@@ -60,8 +61,9 @@ public class muscle : MonoBehaviour
 		transform.position = attaches[1] + ((attaches [0] - attaches [1]) / 2.0f);
 		transform.rotation = Quaternion.FromToRotation(Vector3.up, attachPoints[0] - attachPoints[1]);
 		transform.localScale = new Vector3(transform.localScale.x, Vector3.Distance(attachPoints[0], attachPoints[1]) * 0.5f, transform.localScale.z);
-		// define direction forces 
-		direction = -transform.right;
+		// define direction forces
+		Vector3 tmp = new Vector3(-offsets[0].x, offsets[0].y, -offsets[0].z);
+		direction = Vector3.Cross(transform.up, tmp).normalized;
 		currentArticulation.addDirection (direction);
 	}
 
@@ -77,9 +79,9 @@ public class muscle : MonoBehaviour
 		if (key1.Length < 2) {
 			asck1 = System.Convert.ToChar (key1);
 		}
-		if (key2.Length < 2) {
-			asck2 = System.Convert.ToChar (key2);
-		}
+//		if (key2.Length < 2) {
+//			asck2 = System.Convert.ToChar (key2);
+//		}
 
 		//excluding the utility Fkeys and converting to numpad if a number was entered
 		if ( asck1 > 47 && asck1 < 58 && !key1.Contains("F")) 
@@ -87,12 +89,12 @@ public class muscle : MonoBehaviour
 			key1 = key1.Insert (0, "Keypad");
 		}
 
-		if ( asck2 > 47 && asck2 < 58 && !key2.Contains("F")) 
-		{
-			key2 = key2.Insert (0, "Keypad"); 
-		}
+//		if ( asck2 > 47 && asck2 < 58 && !key2.Contains("F")) 
+//		{
+//			key2 = key2.Insert (0, "Keypad"); 
+//		}
 		kc1 = (KeyCode)System.Enum.Parse (typeof(KeyCode), key1);
-		kc2 = (KeyCode)System.Enum.Parse (typeof(KeyCode), key2);
+//		kc2 = (KeyCode)System.Enum.Parse (typeof(KeyCode), key2);
 
 
 		for (int i = 0; i < anchors.Count; i++)
