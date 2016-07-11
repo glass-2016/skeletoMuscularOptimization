@@ -40,16 +40,7 @@ public class articulations : MonoBehaviour {
 
 	public void addDirection(Vector3 dir)
 	{
-		joint.axis += new Vector3 (dir.x, dir.y, dir.z);
-		ConfigurableJointMotion[] axisTmp = new ConfigurableJointMotion[3];
-		for (int i = 0; i < 3; i++)
-		{
-			if (dir[i] > 0.5)
-				axisTmp [i] = ConfigurableJointMotion.Limited;
-			else
-				axisTmp [i] = ConfigurableJointMotion.Locked;
-		}
-		axis = axisTmp;
+		joint.axis = (joint.axis + new Vector3 (dir.x, dir.y, dir.z)).normalized;
 		joint.targetRotation = Quaternion.Euler(joint.axis);
 	}
 
@@ -75,19 +66,19 @@ public class articulations : MonoBehaviour {
 		joint.xMotion = ConfigurableJointMotion.Limited;
 		joint.yMotion = ConfigurableJointMotion.Limited;
 		joint.zMotion = ConfigurableJointMotion.Limited;
-		joint.angularXMotion = ConfigurableJointMotion.Free;
-		joint.angularYMotion = ConfigurableJointMotion.Free;
-		joint.angularZMotion = ConfigurableJointMotion.Free;
+		joint.angularXMotion = ConfigurableJointMotion.Limited;
+		joint.angularYMotion = ConfigurableJointMotion.Limited;
+		joint.angularZMotion = ConfigurableJointMotion.Limited;
 		joint.secondaryAxis = Vector3.zero;
 		initLimitAxis ();
 	}
 
-	public void setForce(float force)
+	public void setForce(float force, muscle mscle)
 	{
 		//		rb.WakeUp ();
 		//		joint [index].connectedBody.WakeUp ();
 		//		joint[index].targetAngularVelocity += joint[index].axis * force;
-		joint.targetVelocity += joint.axis * force;
+		joint.targetVelocity += mscle.direction * force;
 		joint.connectedBody.angularVelocity = transform.TransformDirection(joint.targetVelocity) * Time.deltaTime;
 	}
 

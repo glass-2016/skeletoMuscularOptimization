@@ -82,15 +82,8 @@ public class manager : MonoBehaviour
 				list [i].GetComponent<Collider> ().isTrigger = false;
 			else if (list [i].tag == "muscles")
 			{
-				musclesController tmpController = list [i].GetComponent<muscle> ().controller;
-				foreach (KeyValuePair<int, articulations> tmpArticulations in tmpController.listArticulations)
-				{
-					foreach (KeyValuePair<int, muscle> tmpMuscle in tmpArticulations.Value.muscles)
-					{
-						if (tmpController == tmpMuscle.Value.controller)
-							tmpArticulations.Value.setForce (0.1f);
-					}
-				}
+				muscle tmpMuscle = list [i].GetComponent<muscle> ();
+				tmpMuscle.currentArticulation.setForce (0.1f, tmpMuscle);
 			}
 		}
 	}
