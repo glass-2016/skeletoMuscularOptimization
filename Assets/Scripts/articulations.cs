@@ -53,7 +53,7 @@ public class articulations : MonoBehaviour {
 		joint.targetRotation = Quaternion.Euler(joint.axis);
 	}
 
-	void addMuscle(muscle current)
+	public void addMuscle(muscle current)
 	{
 		muscles.Add (muscleIndex, current);
 		current.setIndex (muscleIndex);
@@ -61,14 +61,17 @@ public class articulations : MonoBehaviour {
 	}
 
 	// configure ConfigurableJoint
-	public void addRigidBody(Rigidbody rb, muscle current)
+	public void addRigidBody(musclesController first, musclesController other, int index)
 	{
 		joint = gameObject.AddComponent<ConfigurableJoint> ();
-		joint.connectedBody = rb;
+		joint.connectedBody = other.GetComponent<Rigidbody>();
 		joint.enableCollision = true;
 		joint.autoConfigureConnectedAnchor = false;
-		joint.anchor = (rb.transform.position - transform.position) / 2.0f;
-		joint.connectedAnchor = -(rb.transform.position - transform.position) / 2.0f;
+		setIndex (index);
+		setController (first, 0);
+		setController (other, 1);
+		joint.anchor = (Vector3.Max(first.transform.position, other.transform.position) - Vector3.Min(first.transform.position, other.transform.position)) / 2.0f;
+		joint.connectedAnchor = (Vector3.Min(first.transform.position, other.transform.position) - Vector3.Max(first.transform.position, other.transform.position)) / 2.0f;
 		joint.xMotion = ConfigurableJointMotion.Limited;
 		joint.yMotion = ConfigurableJointMotion.Limited;
 		joint.zMotion = ConfigurableJointMotion.Limited;
@@ -76,7 +79,7 @@ public class articulations : MonoBehaviour {
 		joint.angularYMotion = ConfigurableJointMotion.Free;
 		joint.angularZMotion = ConfigurableJointMotion.Free;
 		joint.secondaryAxis = Vector3.zero;
-		addMuscle (current);
+		initLimitAxis ();
 	}
 
 	public void setForce(float force)
@@ -88,29 +91,32 @@ public class articulations : MonoBehaviour {
 		joint.connectedBody.angularVelocity = transform.TransformDirection(joint.targetVelocity) * Time.deltaTime;
 	}
 
-	public void setControllerAndIndex(musclesController current, int i)
+	void setIndex(int i)
 	{
 		index = i;
-		controllers[0] = current;
+	}
+
+	void initLimitAxis()
+	{
 		setLimitsAxis (new Vector3(180, 180, 180));
 	}
 
-	public void setOtherController(musclesController current)
+	void setController(musclesController current, int index)
 	{
-		controllers [1] = current;
+		controllers [index] = current;
 	}
 
 	// Update is called once per frame
 	void Update () 
 	{
-	
+		transform.position = Vector3.Lerp(controllers[0].transform.position, controllers[1].transform.position, 0.5f);
 	}
 
 	void OnTriggerStay(Collider other)
 	{
 		if (other.tag == "bones" || other.tag == "articulations")
 		{
-			Debug.Log ("Some articulations collision!!!");
+//			Debug.Log ("Some articulations collision!!!");
 			colliding = true;
 		}
 	}

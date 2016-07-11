@@ -215,6 +215,8 @@ public class manager : MonoBehaviour
 			Destroy (tmpArticulations.Value.gameObject);
 		}
 		tmpController.listArticulations.Clear ();
+		list.Remove (tmpController.gameObject);
+		Destroy (tmpController.gameObject);
 	}
 
 	void deleteArticulation()
@@ -407,20 +409,21 @@ public class manager : MonoBehaviour
 					// add second attach to object clicked and add muscle
 					attaches [1] = hit.point;
 					secondAttach = false;
-					muscle tmp = Instantiate (musclePrefab, attaches[0] + (attaches[1] - attaches[0]), Quaternion.identity) as muscle;
-					list.Add (tmp.gameObject);
+					muscle tmpMuscle = Instantiate (musclePrefab, attaches[0] + (attaches[1] - attaches[0]), Quaternion.identity) as muscle;
+					list.Add (tmpMuscle.gameObject);
 					musclesController tmpController = currentObject.GetComponent<musclesController> ();
-					tmp.setAnchor (tmpController.gameObject);
+					tmpMuscle.setAnchor (tmpController.gameObject);
 					currentObject = hit.collider.gameObject;
-					articulations currentArticulations = tmpController.addAnchor (tmp, currentObject.GetComponent<Rigidbody> (), globalIndex);
+					musclesController otherController = hit.collider.gameObject.GetComponent<musclesController>();
+					articulations currentArticulations = tmpController.addAnchor (tmpMuscle, otherController, globalIndex);
+					if (!list.Contains(currentArticulations.gameObject))
+						list.Add (currentArticulations.gameObject);
+					otherController.addArticulation (currentArticulations);
 					globalIndex = currentArticulations.index + 1;
-					tmp.setArticulation (currentArticulations);
-					list.Add (currentArticulations.gameObject);
-					currentObject.GetComponent<musclesController> ().addArticulation (currentArticulations);
-					currentArticulations.setOtherController (currentObject.GetComponent<musclesController>());
-					tmp.setLimits (attaches, tmpController.gameObject.transform.position, currentObject.transform.position);
+					tmpMuscle.setArticulation (currentArticulations);
+					tmpMuscle.setLimits (attaches, tmpController.gameObject.transform.position, currentObject.transform.position);
 					changeFocus ();
-//					tmp.setAnchor (currentObject);
+					tmpMuscle.setAnchor (currentObject);
 				}
 				else
 				{
