@@ -58,7 +58,6 @@ public class manager : MonoBehaviour
 	public void play()
 	{
 		isPlaying = true;
-		deselect ();
 		for (int i = 0; i < list.Count; i++)
 		{
 			if (list [i].tag == "bones")
@@ -227,17 +226,6 @@ public class manager : MonoBehaviour
 		tmpArticulation.controllers [1].listArticulations.Remove (tmpArticulation.index);
 	}
 
-	void deselect()
-	{
-		currentObject = null;
-		for (int i = 0; i < list.Count; i++)
-		{
-			list [i].GetComponent<Renderer> ().material.color = Vector4.one;
-			if (list[i].tag == "bones")
-				list [i].GetComponent<bones> ().isSelected = false;
-		}
-	}
-
 	void deleteMuscle()
 	{
 		muscle tmpMuscle = currentObject.GetComponent<muscle> ();
@@ -333,7 +321,7 @@ public class manager : MonoBehaviour
 	// change colors and parameters value to newly selected object
 	void changeFocus()
 	{
-		currentObject.GetComponent<Renderer> ().material.color = Color.green;
+		currentObject.GetComponent<Renderer> ().material.color = Color.yellow;
 		oldPosition = currentObject.transform.position;
 		oldRotation = currentObject.transform.rotation;
 		oldScale = currentObject.transform.localScale;
@@ -392,25 +380,24 @@ public class manager : MonoBehaviour
 		updatePublicItem ();
 
 
-		if ((firstAttach || secondAttach) && currentObject.tag == "bones")
-			currentObject.GetComponent<bones> ().isSelected = false;
-			
+
 		if (Input.GetMouseButtonDown (0)) 
 		{
 			//removes the object manipulator if another is selected
-			if (currentObject)
-			{
-				if (currentObject.GetComponent<bones> ()) 
-				{
-					currentObject.GetComponent<bones> ().isSelected = false;
-				}
 
-			}
 
 			RaycastHit hit; 
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
 			if (Physics.Raycast (ray, out hit) && (hit.collider.tag == "bones" || hit.collider.tag == "muscles" || hit.collider.tag == "articulations"))
 			{
+				if (currentObject)
+				{
+					if (currentObject.GetComponent<bones> () && currentObject != hit.collider.gameObject) {
+						currentObject.GetComponent<bones> ().isSelected = false;
+					}
+
+				}
+
 				if (searchParent && currentObject)
 				{
 					// add parent to current object
@@ -467,7 +454,9 @@ public class manager : MonoBehaviour
 		if (Input.GetKeyDown (KeyCode.C))
 		{
 			// deselect current object
-			deselect();
+			currentObject = null;
+			for (int i = 0; i < list.Count; i++)
+				list [i].GetComponent<Renderer> ().material.color = Vector4.one;
 		}
 		if (currentObject && 
 			(oldPosition != currentObject.transform.position ||
