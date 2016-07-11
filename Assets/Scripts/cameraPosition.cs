@@ -60,12 +60,12 @@ public class cameraPosition : MonoBehaviour
 		}
 
 		//translate camera
-		if (Input.GetMouseButtonDown (0)) 
+		if (Input.GetMouseButtonDown (0) && Camera.main.GetComponent<manager>().isManipulating == false) 
 		{
 			mouseDragBegin = Input.mousePosition;
 		}
 
-		if (Input.GetMouseButton(0))
+		if (Input.GetMouseButton(0)  && Camera.main.GetComponent<manager>().isManipulating == false )
 		{
 			mouseDrag = Input.mousePosition - mouseDragBegin;
 			transform.Translate (mouseDrag.x*mouseSensibility,mouseDrag.y*mouseSensibility,0);

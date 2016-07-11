@@ -48,6 +48,7 @@ public class manager : MonoBehaviour
 	// those are here to be read by other scripts
 	public string itemSelected; 	//either "none", "bone", "muscle"
 	public bool isPlaying;
+	public bool isManipulating = false;
 
 	void Start ()
 	{
