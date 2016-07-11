@@ -58,6 +58,7 @@ public class manager : MonoBehaviour
 	public void play()
 	{
 		isPlaying = true;
+		deselect ();
 		for (int i = 0; i < list.Count; i++)
 		{
 			if (list [i].tag == "bones")
@@ -226,6 +227,17 @@ public class manager : MonoBehaviour
 		tmpArticulation.controllers [1].listArticulations.Remove (tmpArticulation.index);
 	}
 
+	void deselect()
+	{
+		currentObject = null;
+		for (int i = 0; i < list.Count; i++)
+		{
+			list [i].GetComponent<Renderer> ().material.color = Vector4.one;
+			if (list[i].tag == "bones")
+				list [i].GetComponent<bones> ().isSelected = false;
+		}
+	}
+
 	void deleteMuscle()
 	{
 		muscle tmpMuscle = currentObject.GetComponent<muscle> ();
@@ -380,13 +392,16 @@ public class manager : MonoBehaviour
 		updatePublicItem ();
 
 
-
+		if ((firstAttach || secondAttach) && currentObject.tag == "bones")
+			currentObject.GetComponent<bones> ().isSelected = false;
+			
 		if (Input.GetMouseButtonDown (0)) 
 		{
 			//removes the object manipulator if another is selected
 			if (currentObject)
 			{
-				if (currentObject.GetComponent<bones> ()) {
+				if (currentObject.GetComponent<bones> ()) 
+				{
 					currentObject.GetComponent<bones> ().isSelected = false;
 				}
 
@@ -452,9 +467,7 @@ public class manager : MonoBehaviour
 		if (Input.GetKeyDown (KeyCode.C))
 		{
 			// deselect current object
-			currentObject = null;
-			for (int i = 0; i < list.Count; i++)
-				list [i].GetComponent<Renderer> ().material.color = Vector4.one;
+			deselect();
 		}
 		if (currentObject && 
 			(oldPosition != currentObject.transform.position ||
