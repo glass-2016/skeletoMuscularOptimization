@@ -342,10 +342,13 @@ public class manager : MonoBehaviour
 
 	void updatePublicItem()
 	{
-		if (currentObject != null) {
+		if (currentObject) {
 			switch (currentObject.tag) {
 			case "bones":
 				itemSelected = "bone";
+				if (currentObject.GetComponent<bones> ()) {
+					currentObject.GetComponent<bones> ().isSelected = true;
+				}
 				if (currentObject.gameObject.transform.parent != null) {
 					itemSelected = "boneHasParent";
 				}
@@ -376,8 +379,19 @@ public class manager : MonoBehaviour
 	{
 		updatePublicItem ();
 
+
+
 		if (Input.GetMouseButtonDown (0)) 
 		{
+			//removes the object manipulator if another is selected
+			if (currentObject)
+			{
+				if (currentObject.GetComponent<bones> ()) {
+					currentObject.GetComponent<bones> ().isSelected = false;
+				}
+
+			}
+
 			RaycastHit hit; 
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
 			if (Physics.Raycast (ray, out hit) && (hit.collider.tag == "bones" || hit.collider.tag == "muscles" || hit.collider.tag == "articulations"))
