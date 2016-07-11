@@ -42,6 +42,7 @@ public class articulations : MonoBehaviour {
 	{
 		joint.axis = (joint.axis + new Vector3 (dir.x, dir.y, dir.z)).normalized;
 		joint.targetRotation = Quaternion.Euler(joint.axis);
+		setLimitsAxis (new Vector3(180 * joint.axis.x, 180 * joint.axis.y, 180 * joint.axis.z));
 	}
 
 	public void addMuscle(muscle current)

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 public class muscle : MonoBehaviour 
 {
-//	public musclesController controller;
 	public Vector3 direction;
 	public float force = 10f;
 	public string key1 = "A";
@@ -37,12 +36,6 @@ public class muscle : MonoBehaviour
 	{
 		currentArticulation = current;
 	}
-
-//	// set controller for configurableJoint
-//	public void setController(musclesController currentController)
-//	{
-//		controller = currentController;
-//	}
 
 	// update position with bone movement
 	void changePosition(int index, Vector3 value)

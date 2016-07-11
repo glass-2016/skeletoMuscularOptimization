@@ -8,7 +8,6 @@ public class musclesController : MonoBehaviour
 	public Dictionary<articulations, ConfigurableJoint> joint;
 	// anchor prefab for joint listArticulations only for debug
 	public articulations anchorPrefab;
-	private Rigidbody rb;
 	public Dictionary<int, articulations> listArticulations;
 	public bool colliding = false;
 
@@ -17,7 +16,6 @@ public class musclesController : MonoBehaviour
 	{
 		joint = new Dictionary<articulations, ConfigurableJoint> ();
 		listArticulations = new Dictionary<int, articulations>();
-		rb = GetComponent<Rigidbody> ();
 	}
 
 	articulations checklistArticulations(Dictionary<int, articulations> list, musclesController other)
