@@ -58,6 +58,7 @@ public class manager : MonoBehaviour
 	public void play()
 	{
 		isPlaying = true;
+		deselect ();
 		for (int i = 0; i < list.Count; i++)
 		{
 			if (list [i].tag == "bones")
@@ -73,13 +74,11 @@ public class manager : MonoBehaviour
 		}
 		for (int i = 0; i < list.Count; i++)
 		{
-			if (list [i].tag == "bones")
+			if (list [i].tag == "bones" || list [i].tag == "articulations")
 			{
 				list [i].GetComponent<Rigidbody> ().isKinematic = false;
 				list [i].GetComponent<Collider> ().isTrigger = false;
 			}
-			else if (list[i].tag == "articulations")
-				list [i].GetComponent<Collider> ().isTrigger = false;
 			else if (list [i].tag == "muscles")
 			{
 				muscle tmpMuscle = list [i].GetComponent<muscle> ();
@@ -240,6 +239,21 @@ public class manager : MonoBehaviour
 		}
 	}
 		
+	void deselect()
+	{
+		currentObject = null;
+		for (int i = 0; i < list.Count; i++)
+		{
+			if (list [i].tag == "bones")
+				list [i].GetComponent<musclesController> ().colliding = false;
+			else if (list [i].tag == "articulations")
+				list [i].GetComponent<articulations> ().colliding = false;
+			if (list [i].tag == "bones")
+				list [i].GetComponent<bones> ().isSelected = false;
+			list [i].GetComponent<Renderer> ().material.color = Vector4.one;
+		}
+	}
+
 	// delete current selected object
 	public void delete()
 	{
@@ -379,7 +393,11 @@ public class manager : MonoBehaviour
 	{
 		updatePublicItem ();
 
-
+		if ((firstAttach || secondAttach) && currentObject.tag == "bones")
+		{
+			currentObject.GetComponent<bones> ().isSelected = false;
+//			currentObject.GetComponent<bones> ().manipulator.SetActive (false);
+		}
 
 		if (Input.GetMouseButtonDown (0)) 
 		{
@@ -454,9 +472,7 @@ public class manager : MonoBehaviour
 		if (Input.GetKeyDown (KeyCode.C))
 		{
 			// deselect current object
-			currentObject = null;
-			for (int i = 0; i < list.Count; i++)
-				list [i].GetComponent<Renderer> ().material.color = Vector4.one;
+			deselect();
 		}
 		if (currentObject && 
 			(oldPosition != currentObject.transform.position ||

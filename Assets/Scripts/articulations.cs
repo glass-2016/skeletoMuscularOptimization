@@ -108,7 +108,7 @@ public class articulations : MonoBehaviour {
 	{
 		if (other.tag == "bones" || other.tag == "articulations")
 		{
-//			Debug.Log ("Some articulations collision!!!");
+			Debug.Log ("Some articulations collision!!!");
 			colliding = true;
 		}
 	}

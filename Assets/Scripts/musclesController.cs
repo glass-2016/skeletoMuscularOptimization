@@ -59,7 +59,7 @@ public class musclesController : MonoBehaviour
 	{
 		if (other.tag == "bones" || other.tag == "articulations")
 		{
-//			Debug.Log ("Some bones collision!!!");
+			Debug.Log ("Some bones collision!!!");
 			colliding = true;
 		}
 	}
