@@ -24,6 +24,9 @@ public class manager : MonoBehaviour
 	private Quaternion oldRotation;
 	private Vector3 oldScale;
 	private int globalIndex = 0;
+	//selected/unselected materials
+	public Material wireframe;
+	public Material white;
 
 	// parameters fields
 	//bones
@@ -336,6 +339,10 @@ public class manager : MonoBehaviour
 	// change colors and parameters value to newly selected object
 	void changeFocus()
 	{
+		if (currentObject.tag == "bones") 
+		{
+			currentObject.GetComponent<bones> ().selectRenderer (true);
+		}
 		currentObject.GetComponent<Renderer> ().material.color = Color.yellow;
 		oldPosition = currentObject.transform.position;
 		oldRotation = currentObject.transform.rotation;
@@ -344,13 +351,20 @@ public class manager : MonoBehaviour
 		List<Renderer> tmpList = currentObject.GetComponentsInChildren<Renderer> ().ToList();
 		for (int i = 0; i < list.Count; i++)
 		{
-			if (list [i] != currentObject)
+			if (list [i] != currentObject) {
+				if (list [i].tag == "bones") {
+					list [i].GetComponent<bones> ().selectRenderer (false);
+				}
+
+
+			}
+			else 
 			{
 				Renderer tmp = list [i].GetComponent<Renderer> ();
 				if (tmpList.Contains (tmp))
-					tmp.material.color = Color.red;
+					tmp.material = wireframe;
 				else
-					tmp.material.color = Vector4.one;	
+					tmp.material = white;
 			}
 		}
 	}
@@ -453,16 +467,8 @@ public class manager : MonoBehaviour
 				}
 				else
 				{
-					// select object
-					/*if (currentObject.GetComponent<bones> () != null) {
-						currentObject.GetComponent<bones> ().isSelected = false;
-					}*/
 
 					currentObject = hit.collider.gameObject;
-
-					/*if (currentObject.GetComponent<bones> ()!= null) {
-						currentObject.GetComponent<bones> ().isSelected = true;
-					}*/
 
 					changeFocus ();
 				}

@@ -13,6 +13,7 @@ public class bones : MonoBehaviour {
 	public GameObject positionner;
 	public GameObject rotationner;
 	public GameObject scaler;
+	public GameObject bone;
 	Vector3 selfPos;
 	Vector3 selfScale;
 	Quaternion selfRot;
@@ -153,12 +154,14 @@ void Positionner()
 		if (((collsX[0].Raycast(ray, out hit, 100.0F) || collsX[1].Raycast(ray, out hit, 100.0F))  && tool == "none") || tool == "scalerX")
 		{
 			Camera.main.GetComponent<manager> ().isManipulating = true;
+			manipulator.transform.parent = null;
 
 			tool = "scalerX";
 
 			float xMovement = Input.GetAxis("Mouse X") * moveSpeed;
 
 			this.transform.localScale = new Vector3 (selfScale.x + xMovement, selfScale.y, selfScale.z);
+			manipulator.transform.parent = this.transform;
 
 
 
@@ -169,6 +172,8 @@ void Positionner()
 		if (((collsY[0].Raycast(ray, out hit, 100.0F) ||collsY[1].Raycast(ray, out hit, 100.0F))  && tool == "none")  || tool == "scalerY")
 
 		{
+			manipulator.transform.parent = null;
+
 			Camera.main.GetComponent<manager> ().isManipulating = true;
 
 			tool = "scalerY";
@@ -177,6 +182,9 @@ void Positionner()
 
 			this.transform.localScale = new Vector3 (selfScale.x, selfScale.y + yMovement, selfScale.z);
 
+			manipulator.transform.parent = this.transform;
+
+
 		}
 		//Z
 		Collider[] collsZ = sz.GetComponentsInChildren<Collider>();
@@ -184,6 +192,8 @@ void Positionner()
 		if (((collsZ[0].Raycast(ray, out hit, 100.0F) ||collsZ[1].Raycast(ray, out hit, 100.0F))  && tool == "none") || tool == "scalerZ")
 
 		{
+			manipulator.transform.parent = null;
+
 			Camera.main.GetComponent<manager> ().isManipulating = true;
 
 			tool = "scalerZ";
@@ -191,6 +201,9 @@ void Positionner()
 			float zMovement = Input.GetAxis("Mouse X") * moveSpeed;
 
 			this.transform.localScale = new Vector3 (selfScale.x, selfScale.y, selfScale.z + zMovement);
+
+			manipulator.transform.parent = this.transform;
+
 		}
 	}
 
@@ -232,5 +245,10 @@ void Positionner()
 
 			this.transform.Rotate (this.transform.forward, zMovement, Space.World);
 		}
+	}
+
+	public void selectRenderer(bool a)
+	{
+		GL.wireframe = a;
 	}
 }

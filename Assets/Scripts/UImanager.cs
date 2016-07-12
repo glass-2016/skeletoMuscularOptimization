@@ -32,6 +32,18 @@ public class UImanager : MonoBehaviour
 		//C# does not want public untyped vars, so... sorry. goes there. 
 		var manager = GameObject.FindWithTag ("MainCamera").GetComponent<manager> ();
 
+		if (manager.isPlaying) 
+		{
+			setparent.SetActive (false);
+			resetparent.SetActive (false);
+			delete.SetActive (false);
+			bonescale.SetActive (false);
+			boneposition.SetActive (false);
+			bonerotation.SetActive (false);
+			muscleparameters.SetActive (false);
+			articulationparameters.SetActive (false);
+		}
+
 		if (!manager.isPlaying)
 		{
 			delete.SetActive (true);
