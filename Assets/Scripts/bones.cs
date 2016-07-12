@@ -104,7 +104,7 @@ void Positionner()
 	{
 
 
-		if ((px.GetComponent<Collider>().Raycast(ray, out hit, 100.0F)) || tool == "positionnerX")
+		if ((px.GetComponent<Collider>().Raycast(ray, out hit, 100.0F)) && tool == "none" || tool == "positionnerX")
 	
 		{
 			Camera.main.GetComponent<manager> ().isManipulating = true;
@@ -119,7 +119,7 @@ void Positionner()
 	
 		}
 
-		if ((py.GetComponent<Collider>().Raycast(ray, out hit, 100.0F)) || tool == "positionnerY")
+		if ((py.GetComponent<Collider>().Raycast(ray, out hit, 100.0F)) && tool == "none" || tool == "positionnerY")
 
 		{
 			Camera.main.GetComponent<manager> ().isManipulating = true;
@@ -132,7 +132,7 @@ void Positionner()
 
 		}
 
-		if ((pz.GetComponent<Collider>().Raycast(ray, out hit, 100.0F)) || tool == "positionnerZ")
+		if ((pz.GetComponent<Collider>().Raycast(ray, out hit, 100.0F))  && tool == "none" || tool == "positionnerZ")
 
 		{
 			Camera.main.GetComponent<manager> ().isManipulating = true;
@@ -150,7 +150,7 @@ void Positionner()
 	{
 		//X
 		Collider[] collsX = sx.GetComponentsInChildren<Collider>();
-		if (collsX[0].Raycast(ray, out hit, 100.0F) || collsX[1].Raycast(ray, out hit, 100.0F) || tool == "scalerX")
+		if (((collsX[0].Raycast(ray, out hit, 100.0F) || collsX[1].Raycast(ray, out hit, 100.0F))  && tool == "none") || tool == "scalerX")
 		{
 			Camera.main.GetComponent<manager> ().isManipulating = true;
 
@@ -166,7 +166,7 @@ void Positionner()
 		//Y
 		Collider[] collsY = sy.GetComponentsInChildren<Collider>();
 
-		if (collsY[0].Raycast(ray, out hit, 100.0F) ||collsY[1].Raycast(ray, out hit, 100.0F)  || tool == "scalerY")
+		if (((collsY[0].Raycast(ray, out hit, 100.0F) ||collsY[1].Raycast(ray, out hit, 100.0F))  && tool == "none")  || tool == "scalerY")
 
 		{
 			Camera.main.GetComponent<manager> ().isManipulating = true;
@@ -181,7 +181,7 @@ void Positionner()
 		//Z
 		Collider[] collsZ = sz.GetComponentsInChildren<Collider>();
 
-		if (collsZ[0].Raycast(ray, out hit, 100.0F) ||collsZ[1].Raycast(ray, out hit, 100.0F) || tool == "scalerZ")
+		if (((collsZ[0].Raycast(ray, out hit, 100.0F) ||collsZ[1].Raycast(ray, out hit, 100.0F))  && tool == "none") || tool == "scalerZ")
 
 		{
 			Camera.main.GetComponent<manager> ().isManipulating = true;
@@ -199,7 +199,7 @@ void Positionner()
 	void Rotationner()
 	{
 
-		if ((rx.GetComponentInChildren<Collider>().Raycast(ray, out hit, 100.0F)) || tool == "rotationnerX")
+		if ((rx.GetComponentInChildren<Collider>().Raycast(ray, out hit, 100.0F) && tool == "none") || tool == "rotationnerX")
 
 		{
 			tool = "rotationnerX";
@@ -212,7 +212,7 @@ void Positionner()
 
 		}
 
-		if ((ry.GetComponentInChildren<Collider>().Raycast(ray, out hit, 100.0F)) || tool == "rotationnerY")
+		if ((ry.GetComponentInChildren<Collider>().Raycast(ray, out hit, 100.0F) && tool == "none") || tool == "rotationnerY")
 
 		{
 			tool = "rotationnerY";
@@ -223,7 +223,7 @@ void Positionner()
 
 		}
 
-		if ((rz.GetComponentInChildren<Collider>().Raycast(ray, out hit, 100.0F)) || tool == "rotationnerZ")
+		if ((rz.GetComponentInChildren<Collider>().Raycast(ray, out hit, 100.0F)  && tool == "none") || tool == "rotationnerZ")
 
 		{
 			tool = "rotationnerZ";
