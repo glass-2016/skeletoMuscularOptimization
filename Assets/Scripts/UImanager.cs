@@ -16,7 +16,9 @@ public class UImanager : MonoBehaviour
 
 	public GameObject articulationparameters;
 
-	public GameObject playreset;
+	public GameObject play;
+	public GameObject stop;
+
 
 
 
@@ -42,12 +44,15 @@ public class UImanager : MonoBehaviour
 			bonerotation.SetActive (false);
 			muscleparameters.SetActive (false);
 			articulationparameters.SetActive (false);
+			play.SetActive (false);
+			stop.SetActive (true);
 		}
 
 		if (!manager.isPlaying)
 		{
 			delete.SetActive (true);
-
+			play.SetActive (true);
+			stop.SetActive (false);
 
 			switch(manager.itemSelected)
 			{

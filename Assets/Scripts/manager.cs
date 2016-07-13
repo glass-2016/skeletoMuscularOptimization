@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
+using UnityEngine.SceneManagement;
+
 
 public class manager : MonoBehaviour 
 {
@@ -13,6 +15,8 @@ public class manager : MonoBehaviour
 	public muscle musclePrefab;
 	// list of all objects added to scene
 	private List<GameObject> list;
+	//list to save when entering play mode
+	private List<GameObject> saveList;
 	// boolean to indicate parent mode
 	private bool searchParent = false;
 	// muscles attaches
@@ -62,6 +66,7 @@ public class manager : MonoBehaviour
 	void Start ()
 	{
 		list = new List<GameObject> ();
+		saveList = new List<GameObject> ();
 		listCollectibles = new List<collectibles>();
 		nbCollectible = maxCollectible;
 		counter.text = "";
@@ -69,9 +74,22 @@ public class manager : MonoBehaviour
 		terrain.gameObject.GetComponent<MeshCollider> ().sharedMesh = terrain.mesh;
 	}
 
+	public void reset()
+	{
+		SceneManager.LoadScene (SceneManager.GetActiveScene().buildIndex);
+	}
+
 	// play mode
 	public void play()
 	{
+		currentObject = null;
+		changeFocus ();
+		for (int i = 0; i < list.Count; i++) 
+		{
+			saveList.Add (Instantiate (list [i]));
+			saveList [i].SetActive (false);
+		}
+
 		isPlaying = true;
 		deselect ();
 		for (int i = 0; i < list.Count; i++)
@@ -106,6 +124,31 @@ public class manager : MonoBehaviour
 		}
 	}
 
+	public void playReset()
+	{
+		isPlaying = false;
+
+		for (int i = 0; i < listCollectibles.Count; i++) 
+		{
+			Destroy(listCollectibles[i].gameObject);
+		}
+		listCollectibles.Clear ();
+
+
+		for (int i = 0; i < list.Count; i++) 
+		{
+			Destroy(list[i]);
+		}
+		list.Clear ();
+			
+		for (int i = 0; i < saveList.Count; i++) 
+		{
+			list.Add (Instantiate (saveList [i]));
+			Destroy (saveList [i]);
+			list [i].SetActive (true);
+		}
+		saveList.Clear ();
+	}
 	public void updateScale()
 	{
 		if (currentObject)
@@ -354,12 +397,13 @@ public class manager : MonoBehaviour
 	// change colors and parameters value to newly selected object
 	void changeFocus()
 	{
-		currentObject.GetComponent<Renderer> ().material.color = Color.yellow;
-		oldPosition = currentObject.transform.position;
-		oldRotation = currentObject.transform.rotation;
-		oldScale = currentObject.transform.localScale;
-		updateValues ();
-		List<Renderer> tmpList = currentObject.GetComponentsInChildren<Renderer> ().ToList();
+		if (currentObject) {
+			currentObject.GetComponent<Renderer> ().material.color = Color.yellow;
+			oldPosition = currentObject.transform.position;
+			oldRotation = currentObject.transform.rotation;
+			oldScale = currentObject.transform.localScale;
+			updateValues ();
+		}
 		for (int i = 0; i < list.Count; i++)
 		{
 			if (list [i] != currentObject) 
