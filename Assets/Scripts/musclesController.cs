@@ -62,6 +62,8 @@ public class musclesController : MonoBehaviour
 //			Debug.Log ("Some bones collision!!!");
 			colliding = true;
 		}
+		else if (other.tag == "collectibles")
+			other.gameObject.SetActive (false);
 	}
 
 	void OnTriggerExit(Collider other)

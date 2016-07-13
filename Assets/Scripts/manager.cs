@@ -48,15 +48,25 @@ public class manager : MonoBehaviour
 	public InputField rangeX;
 	public InputField rangeY;
 	public InputField rangeZ;
-
+	public Text counter;
+	public int maxCollectible = 10;
+	private int nbCollectible;
+	private List<collectibles> listCollectibles; 
 	// those are here to be read by other scripts
 	public string itemSelected; 	//either "none", "bone", "muscle"
 	public bool isPlaying;
 	public bool isManipulating = false;
+	public collectibles collectiblePrefab;
+	public MeshFilter terrain;
 
 	void Start ()
 	{
 		list = new List<GameObject> ();
+		listCollectibles = new List<collectibles>();
+		nbCollectible = maxCollectible;
+		counter.text = "";
+		terrain.mesh = ProceduralToolkit.Examples.TerrainMesh.TerrainDraft (100, 100, Random.Range (0, 50), Random.Range (0, 50), 1000).ToMesh();
+		terrain.gameObject.GetComponent<MeshCollider> ().sharedMesh = terrain.mesh;
 	}
 
 	// play mode
@@ -89,6 +99,10 @@ public class manager : MonoBehaviour
 				muscle tmpMuscle = list [i].GetComponent<muscle> ();
 				tmpMuscle.currentArticulation.setForce (0.1f, tmpMuscle);
 			}
+		}
+		for (int i = 0; i < maxCollectible; i++)
+		{
+			listCollectibles.Add (Instantiate (collectiblePrefab, new Vector3 (Random.Range (-terrain.mesh.bounds.size.x / 2.0f, terrain.mesh.bounds.size.x / 2.0f), -3f, Random.Range (-terrain.mesh.bounds.size.z / 2.0f, terrain.mesh.bounds.size.z / 2.0f)), Quaternion.identity) as collectibles);
 		}
 	}
 
@@ -410,7 +424,16 @@ public class manager : MonoBehaviour
 	void Update () 
 	{
 		updatePublicItem ();
-
+		if (isPlaying)
+		{
+			nbCollectible = maxCollectible;
+			for (int i = 0; i < listCollectibles.Count; i++)
+			{
+				if (!listCollectibles [i].isActiveAndEnabled)
+					nbCollectible--;
+			}
+			counter.text = (maxCollectible - nbCollectible) + "/" + maxCollectible;
+		}
 		if ((firstAttach || secondAttach) && currentObject.tag == "bones")
 		{
 			currentObject.GetComponent<bones> ().isSelected = false;

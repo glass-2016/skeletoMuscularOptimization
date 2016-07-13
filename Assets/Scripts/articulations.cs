@@ -79,8 +79,8 @@ public class articulations : MonoBehaviour {
 		setIndex (index);
 		setController (first, 0);
 		setController (other, 1);
-		joint.anchor = (Vector3.Max(first.transform.position, other.transform.position) - Vector3.Min(first.transform.position, other.transform.position)) / 10.0f;
-		joint.connectedAnchor = (Vector3.Min(first.transform.position, other.transform.position) - Vector3.Max(first.transform.position, other.transform.position)) / 10.0f;
+		joint.anchor = (Vector3.Max(first.transform.position, other.transform.position) - Vector3.Min(first.transform.position, other.transform.position)) / 8.0f;
+		joint.connectedAnchor = (Vector3.Min(first.transform.position, other.transform.position) - Vector3.Max(first.transform.position, other.transform.position)) / 8.0f;
 		joint.xMotion = ConfigurableJointMotion.Limited;
 		joint.yMotion = ConfigurableJointMotion.Limited;
 		joint.zMotion = ConfigurableJointMotion.Limited;
@@ -133,7 +133,9 @@ public class articulations : MonoBehaviour {
 		{
 //			Debug.Log ("Some articulations collision!!!");
 			colliding = true;
-		}
+		} 
+		else if (other.tag == "collectibles")
+			other.gameObject.SetActive (false);
 	}
 
 	void OnTriggerExit(Collider other)
