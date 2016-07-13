@@ -354,10 +354,6 @@ public class manager : MonoBehaviour
 	// change colors and parameters value to newly selected object
 	void changeFocus()
 	{
-		if (currentObject.tag == "bones") 
-		{
-			currentObject.GetComponent<bones> ().selectRenderer (true);
-		}
 		currentObject.GetComponent<Renderer> ().material.color = Color.yellow;
 		oldPosition = currentObject.transform.position;
 		oldRotation = currentObject.transform.rotation;
@@ -368,10 +364,6 @@ public class manager : MonoBehaviour
 		{
 			if (list [i] != currentObject) 
 			{
-				if (list [i].tag == "bones") 
-				{
-					list [i].GetComponent<bones> ().selectRenderer (false);
-				}
 				Renderer tmp = list [i].GetComponent<Renderer> ();
 				if (list[i].tag == "muscles")
 					tmp.material = muscle;

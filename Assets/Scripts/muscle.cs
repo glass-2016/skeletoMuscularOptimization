@@ -65,7 +65,7 @@ public class muscle : MonoBehaviour
 		// define direction forces
 		direction = new Vector3(offsets[0].x * Mathf.Abs(offsets[1].x), offsets[0].y * Mathf.Abs(offsets[1].y), offsets[0].z * Mathf.Abs(offsets[1].z));
 		angularDirection = Vector3.Cross (-transform.up, direction);
-		currentArticulation.addDirection (angularDirection);
+		currentArticulation.addDirection (direction);
 	}
 
 	// Update is called once per frame
@@ -106,7 +106,8 @@ public class muscle : MonoBehaviour
 		}
 		if (Input.GetKey (kc1))
 			currentArticulation.setForce (force, this);
-
+		else
+			currentArticulation.setForce (0, this);
 //		if (Input.GetKey (kc2))
 //			currentArticulation.setForce (-force);
 	}
