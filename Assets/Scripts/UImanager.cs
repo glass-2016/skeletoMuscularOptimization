@@ -50,9 +50,6 @@ public class UImanager : MonoBehaviour
 
 		if (!manager.isPlaying)
 		{
-			play.SetActive (true);
-			stop.SetActive (false);
-
 			delete.SetActive (true);
 			play.SetActive (true);
 			stop.SetActive (false);
