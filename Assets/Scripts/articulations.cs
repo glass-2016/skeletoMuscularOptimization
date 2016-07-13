@@ -98,12 +98,12 @@ public class articulations : MonoBehaviour {
 		//		joint[index].targetAngularVelocity += joint[index].axis * force;
 		joint.targetAngularVelocity += mscle.angularDirection * force;
 		joint.targetVelocity += mscle.direction * force;
-		if (joint.targetVelocity.magnitude > 120f)
-			joint.targetVelocity = joint.targetVelocity.normalized * 120f;
-		if (joint.targetAngularVelocity.magnitude > 120f)
-			joint.targetAngularVelocity = joint.targetAngularVelocity.normalized * 120f;
+		if (joint.targetVelocity.magnitude > 150f)
+			joint.targetVelocity = joint.targetVelocity.normalized * 150f;
+		if (joint.targetAngularVelocity.magnitude > 150f)
+			joint.targetAngularVelocity = joint.targetAngularVelocity.normalized * 150f;
 		joint.connectedBody.angularVelocity = joint.targetAngularVelocity * Time.deltaTime;
-		joint.connectedBody.velocity = joint.targetVelocity * Time.deltaTime;
+//		joint.connectedBody.velocity = joint.targetVelocity * Time.deltaTime;
 	}
 
 	void setIndex(int i)
