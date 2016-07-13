@@ -83,15 +83,12 @@ public class bones : MonoBehaviour {
 				Positionner ();
 				Rotationner ();
 			}
+
 			
 	}
 
 				
 
-	void OnMouseEnter()
-	{
-		Camera.main.GetComponent<manager> ().isManipulating = true;
-	}
 
 	void OnMouseUp()
 	{
@@ -108,6 +105,8 @@ void Positionner()
 		if ((px.GetComponent<Collider>().Raycast(ray, out hit, 100.0F)) && tool == "none" || tool == "positionnerX")
 	
 		{
+			manipulator.transform.parent = null;
+
 			Camera.main.GetComponent<manager> ().isManipulating = true;
 
 			tool = "positionnerX";
@@ -115,6 +114,9 @@ void Positionner()
 			float xMovement = Input.GetAxis("Mouse X") * moveSpeed;
 
 				this.transform.position = new Vector3 (selfPos.x + xMovement, selfPos.y, selfPos.z);
+			manipulator.transform.position = this.transform.position;
+			manipulator.transform.parent = this.transform;
+
 
 
 	
@@ -123,6 +125,8 @@ void Positionner()
 		if ((py.GetComponent<Collider>().Raycast(ray, out hit, 100.0F)) && tool == "none" || tool == "positionnerY")
 
 		{
+			manipulator.transform.parent = null;
+
 			Camera.main.GetComponent<manager> ().isManipulating = true;
 
 			tool = "positionnerY";
@@ -130,12 +134,17 @@ void Positionner()
 			float yMovement = Input.GetAxis("Mouse Y") * moveSpeed;
 
 			this.transform.position = new Vector3 (selfPos.x, selfPos.y + yMovement, selfPos.z);
+			manipulator.transform.position = this.transform.position;
+			manipulator.transform.parent = this.transform;
+
 
 		}
 
 		if ((pz.GetComponent<Collider>().Raycast(ray, out hit, 100.0F))  && tool == "none" || tool == "positionnerZ")
 
 		{
+			manipulator.transform.parent = null;
+
 			Camera.main.GetComponent<manager> ().isManipulating = true;
 
 			tool = "positionnerZ";
@@ -143,6 +152,9 @@ void Positionner()
 			float zMovement = Input.GetAxis("Mouse X") * moveSpeed;
 
 			this.transform.position = new Vector3 (selfPos.x, selfPos.y, selfPos.z  - zMovement);
+			manipulator.transform.position = this.transform.position;
+			manipulator.transform.parent = this.transform;
+
 		}
 	}
 
@@ -162,6 +174,7 @@ void Positionner()
 
 			this.transform.localScale = new Vector3 (selfScale.x + xMovement, selfScale.y, selfScale.z);
 			manipulator.transform.parent = this.transform;
+
 
 
 
@@ -185,6 +198,7 @@ void Positionner()
 			manipulator.transform.parent = this.transform;
 
 
+
 		}
 		//Z
 		Collider[] collsZ = sz.GetComponentsInChildren<Collider>();
@@ -204,6 +218,7 @@ void Positionner()
 
 			manipulator.transform.parent = this.transform;
 
+
 		}
 	}
 
@@ -215,11 +230,15 @@ void Positionner()
 		if ((rx.GetComponentInChildren<Collider>().Raycast(ray, out hit, 100.0F) && tool == "none") || tool == "rotationnerX")
 
 		{
+			//manipulator.transform.parent = null;
+
 			tool = "rotationnerX";
 
 			float xMovement = Input.GetAxis("Mouse X") * moveSpeed*200;
 
 			this.transform.Rotate (this.transform.right, xMovement, Space.World);
+			//manipulator.transform.parent = this.transform;
+
 
 
 
@@ -228,27 +247,33 @@ void Positionner()
 		if ((ry.GetComponentInChildren<Collider>().Raycast(ray, out hit, 100.0F) && tool == "none") || tool == "rotationnerY")
 
 		{
+			//manipulator.transform.parent = null;
+
 			tool = "rotationnerY";
 
 			float yMovement = Input.GetAxis("Mouse Y") * moveSpeed*200;
 
 			this.transform.Rotate (this.transform.up, yMovement, Space.World);
+			//manipulator.transform.parent = this.transform;
+
+
 
 		}
 
 		if ((rz.GetComponentInChildren<Collider>().Raycast(ray, out hit, 100.0F)  && tool == "none") || tool == "rotationnerZ")
 
 		{
+			//manipulator.transform.parent = null;
+
 			tool = "rotationnerZ";
 
 			float zMovement = Input.GetAxis("Mouse X") * moveSpeed*200;
 
 			this.transform.Rotate (this.transform.forward, zMovement, Space.World);
+			//manipulator.transform.parent = this.transform;
+
+
 		}
 	}
-
-	public void selectRenderer(bool a)
-	{
-		GL.wireframe = a;
-	}
+		
 }
