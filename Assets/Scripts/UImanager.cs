@@ -54,7 +54,8 @@ public class UImanager : MonoBehaviour
 			stop.SetActive (false);
 
 			delete.SetActive (true);
-
+			play.SetActive (true);
+			stop.SetActive (false);
 
 			switch(manager.itemSelected)
 			{
