@@ -27,6 +27,7 @@ public class manager : MonoBehaviour
 	//selected/unselected materials
 	public Material wireframe;
 	public Material white;
+	public Material muscle;
 
 	// parameters fields
 	//bones
@@ -351,20 +352,22 @@ public class manager : MonoBehaviour
 		List<Renderer> tmpList = currentObject.GetComponentsInChildren<Renderer> ().ToList();
 		for (int i = 0; i < list.Count; i++)
 		{
-			if (list [i] != currentObject) {
-				if (list [i].tag == "bones") {
+			if (list [i] != currentObject) 
+			{
+				if (list [i].tag == "bones") 
+				{
 					list [i].GetComponent<bones> ().selectRenderer (false);
 				}
-
-
+				Renderer tmp = list [i].GetComponent<Renderer> ();
+				if (list[i].tag == "muscles")
+					tmp.material = muscle;
+				else
+					tmp.material = white;
 			}
 			else 
 			{
 				Renderer tmp = list [i].GetComponent<Renderer> ();
-				if (tmpList.Contains (tmp))
-					tmp.material = wireframe;
-				else
-					tmp.material = white;
+				tmp.material = wireframe;
 			}
 		}
 	}
