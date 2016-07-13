@@ -467,6 +467,7 @@ public class manager : MonoBehaviour
 					tmpMuscle.setLimits (attaches, tmpController.gameObject.transform.position, currentObject.transform.position);
 					changeFocus ();
 					tmpMuscle.setAnchor (currentObject);
+					currentArticulations.setLinearLimit (tmpController.gameObject, currentObject);
 				}
 				else
 				{

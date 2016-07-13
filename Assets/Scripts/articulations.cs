@@ -22,6 +22,23 @@ public class articulations : MonoBehaviour {
 		controllers = new musclesController[2];
 	}
 
+	public void setLinearLimit(GameObject first, GameObject other)
+	{
+		SoftJointLimit tmpLimit = joint.linearLimit;
+		Vector3 firstSize = first.GetComponent<Renderer> ().bounds.size;
+		Vector3 otherSize = other.GetComponent<Renderer> ().bounds.size;
+		tmpLimit.limit = Mathf.Max (new Vector3(firstSize.x * transform.up.x, firstSize.y * transform.up.y, firstSize.z * transform.up.z).magnitude,
+			new Vector3(otherSize.x * transform.up.x, otherSize.y * transform.up.y, otherSize.z * transform.up.z).magnitude);
+//		tmpLimit.limit = 1f;
+		tmpLimit.bounciness = 10f;
+		if (tmpLimit.limit > joint.linearLimit.limit)
+			joint.linearLimit = tmpLimit;
+		SoftJointLimitSpring tmpSpring = joint.linearLimitSpring;
+		tmpSpring.damper = 0.1f;
+		tmpSpring.spring = 20.0f;
+		joint.linearLimitSpring = tmpSpring;
+	}
+
 	public void setLimitsAxis(Vector3 axisLimits)
 	{
 		SoftJointLimit tmp = joint.lowAngularXLimit;
@@ -62,8 +79,8 @@ public class articulations : MonoBehaviour {
 		setIndex (index);
 		setController (first, 0);
 		setController (other, 1);
-		joint.anchor = (Vector3.Max(first.transform.position, other.transform.position) - Vector3.Min(first.transform.position, other.transform.position)) / 2.0f;
-		joint.connectedAnchor = (Vector3.Min(first.transform.position, other.transform.position) - Vector3.Max(first.transform.position, other.transform.position)) / 2.0f;
+		joint.anchor = (Vector3.Max(first.transform.position, other.transform.position) - Vector3.Min(first.transform.position, other.transform.position)) / 10.0f;
+		joint.connectedAnchor = (Vector3.Min(first.transform.position, other.transform.position) - Vector3.Max(first.transform.position, other.transform.position)) / 10.0f;
 		joint.xMotion = ConfigurableJointMotion.Limited;
 		joint.yMotion = ConfigurableJointMotion.Limited;
 		joint.zMotion = ConfigurableJointMotion.Limited;
@@ -79,10 +96,14 @@ public class articulations : MonoBehaviour {
 		//		rb.WakeUp ();
 		//		joint [index].connectedBody.WakeUp ();
 		//		joint[index].targetAngularVelocity += joint[index].axis * force;
-		joint.targetAngularVelocity += mscle.direction * force;
+		joint.targetAngularVelocity += mscle.angularDirection * force;
+		joint.targetVelocity += mscle.direction * force;
+		if (joint.targetVelocity.magnitude > 120f)
+			joint.targetVelocity = joint.targetVelocity.normalized * 120f;
 		if (joint.targetAngularVelocity.magnitude > 120f)
 			joint.targetAngularVelocity = joint.targetAngularVelocity.normalized * 120f;
 		joint.connectedBody.angularVelocity = joint.targetAngularVelocity * Time.deltaTime;
+		joint.connectedBody.velocity = joint.targetVelocity * Time.deltaTime;
 	}
 
 	void setIndex(int i)

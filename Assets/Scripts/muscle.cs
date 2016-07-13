@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class muscle : MonoBehaviour 
 {
 	public Vector3 direction;
+	public Vector3 angularDirection;
 	public float force = 10f;
 	public string key1 = "A";
 //	public string key2 = "B";
@@ -62,9 +63,9 @@ public class muscle : MonoBehaviour
 		transform.rotation = Quaternion.FromToRotation(Vector3.up, attachPoints[0] - attachPoints[1]);
 		transform.localScale = new Vector3(transform.localScale.x, Vector3.Distance(attachPoints[0], attachPoints[1]) * 0.5f, transform.localScale.z);
 		// define direction forces
-		Vector3 tmp = new Vector3(-offsets[0].x, offsets[0].y, -offsets[0].z);
-		direction = Vector3.Cross(transform.up, tmp).normalized;
-		currentArticulation.addDirection (direction);
+		direction = new Vector3(offsets[0].x * Mathf.Abs(offsets[1].x), offsets[0].y * Mathf.Abs(offsets[1].y), offsets[0].z * Mathf.Abs(offsets[1].z));
+		angularDirection = Vector3.Cross (-transform.up, direction);
+		currentArticulation.addDirection (angularDirection);
 	}
 
 	// Update is called once per frame
