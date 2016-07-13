@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 
 Project("{9D658C42-B459-2AFE-58BA-B489A9FB2396}") = "Skeleto-muscular optimization", "Assembly-CSharp.csproj", "{51261AAC-986A-6C1D-F7A3-B19EEA53A569}"
 EndProject
+Project("{9D658C42-B459-2AFE-58BA-B489A9FB2396}") = "Skeleto-muscular optimization", "Assembly-CSharp-Editor.csproj", "{BDBC3759-20C1-55B9-9D43-3B08C8531FBD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{51261AAC-986A-6C1D-F7A3-B19EEA53A569}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51261AAC-986A-6C1D-F7A3-B19EEA53A569}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51261AAC-986A-6C1D-F7A3-B19EEA53A569}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDBC3759-20C1-55B9-9D43-3B08C8531FBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDBC3759-20C1-55B9-9D43-3B08C8531FBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDBC3759-20C1-55B9-9D43-3B08C8531FBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDBC3759-20C1-55B9-9D43-3B08C8531FBD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

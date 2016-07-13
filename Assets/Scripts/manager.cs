@@ -13,6 +13,8 @@ public class manager : MonoBehaviour
 	public muscle musclePrefab;
 	// list of all objects added to scene
 	private List<GameObject> list;
+	//also a list of objects, saving their initial parameters when entering play mode
+	private List<GameObject> saveList;
 	// boolean to indicate parent mode
 	private bool searchParent = false;
 	// muscles attaches
@@ -62,6 +64,7 @@ public class manager : MonoBehaviour
 	void Start ()
 	{
 		list = new List<GameObject> ();
+		saveList = new List<GameObject> ();
 		listCollectibles = new List<collectibles>();
 		nbCollectible = maxCollectible;
 		counter.text = "";
@@ -72,6 +75,7 @@ public class manager : MonoBehaviour
 	// play mode
 	public void play()
 	{
+		saveList = list;
 		isPlaying = true;
 		deselect ();
 		for (int i = 0; i < list.Count; i++)
@@ -104,6 +108,11 @@ public class manager : MonoBehaviour
 		{
 			listCollectibles.Add (Instantiate (collectiblePrefab, new Vector3 (Random.Range (-terrain.mesh.bounds.size.x / 2.0f, terrain.mesh.bounds.size.x / 2.0f), -3f, Random.Range (-terrain.mesh.bounds.size.z / 2.0f, terrain.mesh.bounds.size.z / 2.0f)), Quaternion.identity) as collectibles);
 		}
+	}
+
+	public void resetPlay()
+	{
+		list.Clear ();
 	}
 
 	public void updateScale()
@@ -354,10 +363,7 @@ public class manager : MonoBehaviour
 	// change colors and parameters value to newly selected object
 	void changeFocus()
 	{
-		if (currentObject.tag == "bones") 
-		{
-			currentObject.GetComponent<bones> ().selectRenderer (true);
-		}
+
 		currentObject.GetComponent<Renderer> ().material.color = Color.yellow;
 		oldPosition = currentObject.transform.position;
 		oldRotation = currentObject.transform.rotation;
@@ -368,10 +374,7 @@ public class manager : MonoBehaviour
 		{
 			if (list [i] != currentObject) 
 			{
-				if (list [i].tag == "bones") 
-				{
-					list [i].GetComponent<bones> ().selectRenderer (false);
-				}
+
 				Renderer tmp = list [i].GetComponent<Renderer> ();
 				if (list[i].tag == "muscles")
 					tmp.material = muscle;
