@@ -59,6 +59,19 @@ public class articulations : MonoBehaviour {
 	{
 		joint.axis = (joint.axis + new Vector3 (Mathf.Abs(dir.x), Mathf.Abs(dir.y), Mathf.Abs(dir.z))).normalized;
 		joint.targetRotation = Quaternion.Euler(joint.axis);
+		for (int i = 0; i < 2; i++)
+		{
+			Rigidbody rb = controllers [i].GetComponent<Rigidbody> ();
+			RigidbodyConstraints constraints = rb.constraints;
+			constraints = RigidbodyConstraints.None;
+			if (axisLimits.x < 0.5)
+				constraints |= RigidbodyConstraints.FreezeRotationX;
+			if (axisLimits.y < 0.5)
+				constraints |= RigidbodyConstraints.FreezeRotationY;
+			if (axisLimits.z < 0.5)
+				constraints |= RigidbodyConstraints.FreezeRotationZ;
+			rb.constraints = constraints;
+		}
 		setLimitsAxis (new Vector3(180 * joint.axis.x, 180 * joint.axis.y, 180 * joint.axis.z));
 	}
 
@@ -102,8 +115,8 @@ public class articulations : MonoBehaviour {
 			joint.targetVelocity = joint.targetVelocity.normalized * 150f;
 		if (joint.targetAngularVelocity.magnitude > 150f)
 			joint.targetAngularVelocity = joint.targetAngularVelocity.normalized * 150f;
-		joint.connectedBody.angularVelocity = joint.targetAngularVelocity * Time.deltaTime;
-//		joint.connectedBody.velocity = joint.targetVelocity * Time.deltaTime;
+//		joint.connectedBody.angularVelocity = joint.targetAngularVelocity * Time.deltaTime;
+		joint.connectedBody.velocity = joint.targetVelocity * Time.deltaTime;
 	}
 
 	void setIndex(int i)

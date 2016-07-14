@@ -63,15 +63,19 @@ public class muscle : MonoBehaviour
 		transform.rotation = Quaternion.FromToRotation(Vector3.up, attachPoints[0] - attachPoints[1]);
 		transform.localScale = new Vector3(transform.localScale.x, Vector3.Distance(attachPoints[0], attachPoints[1]) * 0.5f, transform.localScale.z);
 		// define direction forces
-		direction = new Vector3(offsets[0].x * Mathf.Abs(offsets[1].x), offsets[0].y * Mathf.Abs(offsets[1].y), offsets[0].z * Mathf.Abs(offsets[1].z));
-		angularDirection = Vector3.Cross (-transform.up, direction);
+		Vector3 tmp = new Vector3(offsets[0].x * Mathf.Abs(offsets[1].x), offsets[0].y * Mathf.Abs(offsets[1].y), offsets[0].z * Mathf.Abs(offsets[1].z)).normalized;
+		angularDirection = Vector3.Cross (-transform.up, tmp).normalized;
+		Debug.Log (angularDirection);
+		direction = transform.up;
+//		direction = new Vector3(-transform.up.x * (offsets[1].x - Mathf.Abs(offsets[0].x)), -transform.up.y * (offsets[1].y - Mathf.Abs(offsets[0].y)), -transform.up.z * (offsets[1].z - Mathf.Abs(offsets[0].z))).normalized;
 		currentArticulation.addDirection (angularDirection);
 	}
 
 	// Update is called once per frame
 	void Update () 
 	{
-
+//		direction = new Vector3(-transform.up.x * (offsets[1].x - Mathf.Abs(offsets[0].x)), -transform.up.y * (offsets[1].y - Mathf.Abs(offsets[0].y)), -transform.up.z * (offsets[1].z - Mathf.Abs(offsets[0].z))).normalized;
+		direction = transform.up;
 		//reading the string input chosen by the player and converting it to keycode
 		//trying to find if a number was entered
 		int asck1 = 0;
@@ -104,7 +108,7 @@ public class muscle : MonoBehaviour
 			if (position [i] != anchors[i].transform.position)
 				changePosition (i, anchors[i].transform.position);
 		}
-		if (Input.GetKey (kc1))
+		if (Input.GetKey (kc1) && transform.localScale.y > 0.5f)
 			currentArticulation.setForce (force, this);
 
 //		if (Input.GetKey (kc2))
