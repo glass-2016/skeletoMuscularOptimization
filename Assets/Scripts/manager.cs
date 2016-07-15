@@ -32,6 +32,7 @@ public class manager : MonoBehaviour
 	public Material wireframe;
 	public Material white;
 	public Material muscle;
+	public LineRenderer muscleFeedback;
 
 	// parameters fields
 	//bones
@@ -460,6 +461,28 @@ public class manager : MonoBehaviour
 	void Update () 
 	{
 		updatePublicItem ();
+		if (firstAttach)
+		{
+			RaycastHit hit; 
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
+			if (Physics.Raycast (ray, out hit))
+			{
+				muscleFeedback.enabled = true;
+				muscleFeedback.SetPosition (0, hit.point - Vector3.up / 4.0f);
+				muscleFeedback.SetPosition (1, hit.point + Vector3.up / 4.0f);
+			} else
+				muscleFeedback.enabled = false;
+				
+		} else if (secondAttach)
+		{
+			RaycastHit hit; 
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
+			if (Physics.Raycast (ray, out hit))
+				muscleFeedback.SetPosition (1, hit.point);
+			else
+				muscleFeedback.SetPosition (1, attaches[0] + Vector3.up / 4.0f);
+		} else
+			muscleFeedback.enabled = false;
 		if (isPlaying)
 		{
 			nbCollectible = maxCollectible;
@@ -502,6 +525,8 @@ public class manager : MonoBehaviour
 					// add first attach to object clicked
 					attaches [0] = hit.point;
 					firstAttach = false;
+					muscleFeedback.SetPosition (0, attaches[0]);
+					muscleFeedback.SetPosition (1, attaches[0] + Vector3.up / 4.0f);
 					secondAttach = true;
 					currentObject = hit.collider.gameObject;
 					changeFocus ();
