@@ -57,12 +57,12 @@ public class musclesController : MonoBehaviour
 	{
 	}
 
-	void OnColliderStay(Collision other)
+	void OnCollisionStay(Collision other)
 	{
 		colliding = true;
 	}
 
-	void OnColliderExit(Collision other)
+	void OnCollisionExit(Collision other)
 	{
 		colliding = false;
 	}

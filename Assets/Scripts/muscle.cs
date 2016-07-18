@@ -60,11 +60,11 @@ public class muscle : MonoBehaviour
 	{
 		Vector3 tmp = Vector3.zero;
 		if (Mathf.Abs (offsets [0].x) + Mathf.Abs (offsets [1].x) > Mathf.Abs (offsets [0].y) + Mathf.Abs (offsets [1].y) && Mathf.Abs (offsets [0].x) + Mathf.Abs (offsets [1].x) > Mathf.Abs (offsets [0].z) + Mathf.Abs (offsets [1].z))
-			tmp = Vector3.up * (offsets [0].x + offsets [1].x);
+			tmp = Vector3.forward * (offsets [0].x + offsets [1].x);
 		else if (Mathf.Abs(offsets[0].y) + Mathf.Abs (offsets [1].y) > Mathf.Abs(offsets[0].x) + Mathf.Abs (offsets [1].x) && Mathf.Abs(offsets[0].y) + Mathf.Abs (offsets [1].y) > Mathf.Abs(offsets[0].z) + Mathf.Abs (offsets [1].z))
-			tmp = Vector3.forward * (offsets [0].y + offsets [1].y);
+			tmp = Vector3.right * (offsets [0].y + offsets [1].y);
 		else
-			tmp = Vector3.right * (offsets [0].z + offsets [1].z);
+			tmp = Vector3.up * (offsets [0].z + offsets [1].z);
 		angularDirection = Vector3.Cross (transform.up, tmp).normalized;
 	}
 

@@ -106,7 +106,7 @@ public class articulations : MonoBehaviour {
 
 	void Rotate(float force, muscle mscle)
 	{
-		if (!joint.connectedBody.GetComponent<musclesController>().colliding)
+//		if (!joint.connectedBody.GetComponent<musclesController>().colliding)
 			joint.connectedBody.transform.RotateAround (transform.position, mscle.angularDirection, force);
 	}
 
@@ -118,6 +118,8 @@ public class articulations : MonoBehaviour {
 			joint.targetVelocity = joint.targetVelocity.normalized * 150f;
 		if (joint.targetAngularVelocity.magnitude > 150f)
 			joint.targetAngularVelocity = joint.targetAngularVelocity.normalized * 150f;
+//		joint.connectedBody.velocity += joint.targetVelocity * Time.deltaTime;
+//		joint.connectedBody.angularVelocity += joint.targetAngularVelocity * Time.deltaTime;
 		Rotate (force, mscle);
 	}
 
