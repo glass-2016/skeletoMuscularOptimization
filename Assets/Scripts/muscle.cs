@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class muscle : MonoBehaviour 
 {
@@ -18,6 +19,8 @@ public class muscle : MonoBehaviour
 	private Vector3[] offsets;
 	private Vector3[] position;
 	public int index = 0;
+	private float reverse = 1.0f;
+	private bool changedReverse = false; 
 	// Use this for initialization
 	void Awake () 
 	{
@@ -63,11 +66,15 @@ public class muscle : MonoBehaviour
 		transform.rotation = Quaternion.FromToRotation(Vector3.up, attachPoints[0] - attachPoints[1]);
 		transform.localScale = new Vector3(transform.localScale.x, Vector3.Distance(attachPoints[0], attachPoints[1]) * 0.5f, transform.localScale.z);
 		// define direction forces
-		Vector3 tmp = new Vector3(offsets[0].x * Mathf.Abs(offsets[1].x), offsets[0].y * Mathf.Abs(offsets[1].y), offsets[0].z * Mathf.Abs(offsets[1].z)).normalized;
-		angularDirection = Vector3.Cross (-transform.up, tmp).normalized;
-		Debug.Log (angularDirection);
-		direction = transform.up;
-//		direction = new Vector3(-transform.up.x * (offsets[1].x - Mathf.Abs(offsets[0].x)), -transform.up.y * (offsets[1].y - Mathf.Abs(offsets[0].y)), -transform.up.z * (offsets[1].z - Mathf.Abs(offsets[0].z))).normalized;
+		Vector3 tmp = Vector3.zero;
+		if (Mathf.Abs (offsets [0].x) + Mathf.Abs (offsets [1].x) > Mathf.Abs (offsets [0].y) + Mathf.Abs (offsets [1].y) && Mathf.Abs (offsets [0].x) + Mathf.Abs (offsets [1].x) > Mathf.Abs (offsets [0].z) + Mathf.Abs (offsets [1].z))
+			tmp = Vector3.up * (offsets [0].x + offsets [1].x);
+		else if (Mathf.Abs(offsets[0].y) + Mathf.Abs (offsets [1].y) > Mathf.Abs(offsets[0].x) + Mathf.Abs (offsets [1].x) && Mathf.Abs(offsets[0].y) + Mathf.Abs (offsets [1].y) > Mathf.Abs(offsets[0].z) + Mathf.Abs (offsets [1].z))
+			tmp = Vector3.forward * (offsets [0].y + offsets [1].y);
+		else
+			tmp = Vector3.right * (offsets [0].z + offsets [1].z);
+		angularDirection = Vector3.Cross (transform.up, tmp).normalized;
+		direction = transform.up * reverse;
 		currentArticulation.addDirection (angularDirection);
 	}
 
@@ -75,7 +82,7 @@ public class muscle : MonoBehaviour
 	void Update () 
 	{
 //		direction = new Vector3(-transform.up.x * (offsets[1].x - Mathf.Abs(offsets[0].x)), -transform.up.y * (offsets[1].y - Mathf.Abs(offsets[0].y)), -transform.up.z * (offsets[1].z - Mathf.Abs(offsets[0].z))).normalized;
-		direction = transform.up;
+		direction = transform.up * reverse;
 		//reading the string input chosen by the player and converting it to keycode
 		//trying to find if a number was entered
 		int asck1 = 0;
@@ -100,17 +107,23 @@ public class muscle : MonoBehaviour
 //		}
 		kc1 = (KeyCode)System.Enum.Parse (typeof(KeyCode), key1);
 //		kc2 = (KeyCode)System.Enum.Parse (typeof(KeyCode), key2);
-
-
+		float currentScale = transform.localScale.y;
 		for (int i = 0; i < anchors.Count; i++)
 		{
 			// changes position when bones position changes
-			if (position [i] != anchors[i].transform.position)
-				changePosition (i, anchors[i].transform.position);
+			if (position [i] != anchors [i].transform.position)
+				changePosition (i, anchors [i].transform.position);
 		}
+		if (currentScale < transform.localScale.y && !changedReverse)
+		{
+			changedReverse = true;
+			reverse = -reverse;
+		} else if (currentScale >= transform.localScale.y)
+			changedReverse = false;
 		if (Input.GetKey (kc1) && transform.localScale.y > 0.5f)
+		{
 			currentArticulation.setForce (force, this);
-
+		}
 //		if (Input.GetKey (kc2))
 //			currentArticulation.setForce (-force);
 	}

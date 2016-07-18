@@ -104,19 +104,21 @@ public class articulations : MonoBehaviour {
 		initLimitAxis ();
 	}
 
+	void Rotate(float force, muscle mscle)
+	{
+		if (!joint.connectedBody.GetComponent<musclesController>().colliding)
+			joint.connectedBody.transform.RotateAround (transform.position, mscle.angularDirection, force);
+	}
+
 	public void setForce(float force, muscle mscle)
 	{
-		//		rb.WakeUp ();
-		//		joint [index].connectedBody.WakeUp ();
-		//		joint[index].targetAngularVelocity += joint[index].axis * force;
 		joint.targetAngularVelocity += mscle.angularDirection * force;
 		joint.targetVelocity += mscle.direction * force;
 		if (joint.targetVelocity.magnitude > 150f)
 			joint.targetVelocity = joint.targetVelocity.normalized * 150f;
 		if (joint.targetAngularVelocity.magnitude > 150f)
 			joint.targetAngularVelocity = joint.targetAngularVelocity.normalized * 150f;
-//		joint.connectedBody.angularVelocity = joint.targetAngularVelocity * Time.deltaTime;
-		joint.connectedBody.velocity = joint.targetVelocity * Time.deltaTime;
+		Rotate (force, mscle);
 	}
 
 	void setIndex(int i)
@@ -137,7 +139,8 @@ public class articulations : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		transform.position = Vector3.Lerp(controllers[0].transform.position, controllers[1].transform.position, 0.5f);
+		transform.position = Vector3.Lerp(controllers [0].transform.position + joint.anchor, controllers[1].transform.position + joint.connectedAnchor, 0.5f); 
+//			Vector3.Lerp(controllers[0].transform.position, controllers[1].transform.position, 0.5f);
 	}
 
 	void OnTriggerStay(Collider other)
@@ -149,6 +152,16 @@ public class articulations : MonoBehaviour {
 		} 
 		else if (other.tag == "collectibles")
 			other.gameObject.SetActive (false);
+	}
+
+	void OnColliderStay(Collision other)
+	{
+		colliding = true;
+	}
+
+	void OnColliderExit(Collision other)
+	{
+		colliding = false;
 	}
 
 	void OnTriggerExit(Collider other)

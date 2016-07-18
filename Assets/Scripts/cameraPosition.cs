@@ -75,15 +75,15 @@ public class cameraPosition : MonoBehaviour
 			
 		}
 
-	/*	// translate camera
-		if (Input.GetKey (KeyCode.LeftArrow))
-			transform.Translate(Vector3.left * 0.1f, Space.Self);
-		if (Input.GetKey (KeyCode.RightArrow))
-			transform.Translate(-Vector3.left * 0.1f, Space.Self);
-		if (Input.GetKey (KeyCode.UpArrow))
-			transform.Translate(Vector3.forward * 0.1f, Space.Self);
-		if (Input.GetKey (KeyCode.DownArrow))
-			transform.Translate(-Vector3.forward * 0.1f, Space.Self); */
+		// translate camera
+//		if (Input.GetKey (KeyCode.LeftArrow))
+//			transform.Translate(Vector3.left * 0.1f, Space.Self);
+//		if (Input.GetKey (KeyCode.RightArrow))
+//			transform.Translate(-Vector3.left * 0.1f, Space.Self);
+//		if (Input.GetKey (KeyCode.UpArrow))
+//			transform.Translate(Vector3.forward * 0.1f, Space.Self);
+//		if (Input.GetKey (KeyCode.DownArrow))
+//			transform.Translate(-Vector3.forward * 0.1f, Space.Self);
 		
 		// zoom
 		float zoomAmount = Input.GetAxis ("Mouse ScrollWheel") * zSpeed;

@@ -116,7 +116,7 @@ public class manager : MonoBehaviour
 			else if (list [i].tag == "muscles")
 			{
 				muscle tmpMuscle = list [i].GetComponent<muscle> ();
-				tmpMuscle.currentArticulation.setForce (0.1f, tmpMuscle);
+//				tmpMuscle.currentArticulation.setForce (0.1f, tmpMuscle);
 			}
 		}
 		for (int i = 0; i < maxCollectible; i++)
@@ -493,7 +493,7 @@ public class manager : MonoBehaviour
 			}
 			counter.text = (maxCollectible - nbCollectible) + "/" + maxCollectible;
 		}
-		if ((firstAttach || secondAttach) && currentObject.tag == "bones")
+		if ((firstAttach || secondAttach) && currentObject && currentObject.tag == "bones")
 		{
 			currentObject.GetComponent<bones> ().isSelected = false;
 //			currentObject.GetComponent<bones> ().manipulator.SetActive (false);

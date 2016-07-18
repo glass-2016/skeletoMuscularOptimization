@@ -10,12 +10,14 @@ public class musclesController : MonoBehaviour
 	public articulations anchorPrefab;
 	public Dictionary<int, articulations> listArticulations;
 	public bool colliding = false;
+	public Vector3 size;
 
 	// Use this for initialization
 	void Start () 
 	{
 		joint = new Dictionary<articulations, ConfigurableJoint> ();
 		listArticulations = new Dictionary<int, articulations>();
+		size = GetComponent<Renderer> ().bounds.extents;
 	}
 
 	articulations checklistArticulations(Dictionary<int, articulations> list, musclesController other)
@@ -53,6 +55,16 @@ public class musclesController : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+	}
+
+	void OnColliderStay(Collision other)
+	{
+		colliding = true;
+	}
+
+	void OnColliderExit(Collision other)
+	{
+		colliding = false;
 	}
 
 	void OnTriggerStay(Collider other)
