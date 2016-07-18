@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
 using UnityEngine.SceneManagement;
-
+using UnityEngine.EventSystems;
 
 public class manager : MonoBehaviour 
 {
@@ -317,6 +317,29 @@ public class manager : MonoBehaviour
 		}
 	}
 
+	public bool searchTwoBones()
+	{
+		int j = 0;
+		for (int i = 0; i < list.Count; i++)
+		{
+			if (list [i].tag == "bones")
+				j++;
+			if (j >= 2)
+				return (true);
+		}
+		return (false);
+	}
+
+	public bool searchArticulations()
+	{
+		for (int i = 0; i < list.Count; i++)
+		{
+			if (list [i].tag == "articulations")
+				return (true);
+		}
+		return (false);
+	}
+
 	// delete current selected object
 	public void delete()
 	{
@@ -504,11 +527,12 @@ public class manager : MonoBehaviour
 			//removes the object manipulator if another is selected
 			RaycastHit hit; 
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
-			if (Physics.Raycast (ray, out hit) && (hit.collider.tag == "bones" || hit.collider.tag == "muscles" || hit.collider.tag == "articulations"))
+			if (Physics.Raycast (ray, out hit) && (hit.collider.tag == "bones" || hit.collider.tag == "muscles" || hit.collider.tag == "articulations" || hit.collider.tag == "manipulator"))
 			{
 				if (currentObject)
 				{
-					if (currentObject.GetComponent<bones> () && currentObject != hit.collider.gameObject) {
+					if (currentObject.GetComponent<bones> () && currentObject != hit.collider.gameObject)
+					{
 						currentObject.GetComponent<bones> ().isSelected = false;
 					}
 
@@ -519,31 +543,29 @@ public class manager : MonoBehaviour
 					// add parent to current object
 					currentObject.transform.parent = hit.collider.gameObject.transform;
 					searchParent = false;
-				} 
-				else if (firstAttach)
+				} else if (firstAttach)
 				{
 					// add first attach to object clicked
 					attaches [0] = hit.point;
 					firstAttach = false;
-					muscleFeedback.SetPosition (0, attaches[0]);
-					muscleFeedback.SetPosition (1, attaches[0] + Vector3.up / 4.0f);
+					muscleFeedback.SetPosition (0, attaches [0]);
+					muscleFeedback.SetPosition (1, attaches [0] + Vector3.up / 4.0f);
 					secondAttach = true;
 					currentObject = hit.collider.gameObject;
 					changeFocus ();
-				} 
-				else if (secondAttach && currentObject != hit.collider.gameObject)
+				} else if (secondAttach && currentObject != hit.collider.gameObject)
 				{
 					// add second attach to object clicked and add muscle
 					attaches [1] = hit.point;
 					secondAttach = false;
-					muscle tmpMuscle = Instantiate (musclePrefab, attaches[0] + (attaches[1] - attaches[0]), Quaternion.identity) as muscle;
+					muscle tmpMuscle = Instantiate (musclePrefab, attaches [0] + (attaches [1] - attaches [0]), Quaternion.identity) as muscle;
 					list.Add (tmpMuscle.gameObject);
 					musclesController tmpController = currentObject.GetComponent<musclesController> ();
 					tmpMuscle.setAnchor (tmpController.gameObject);
 					currentObject = hit.collider.gameObject;
-					musclesController otherController = hit.collider.gameObject.GetComponent<musclesController>();
+					musclesController otherController = hit.collider.gameObject.GetComponent<musclesController> ();
 					articulations currentArticulations = tmpController.addAnchor (tmpMuscle, otherController, globalIndex);
-					if (!list.Contains(currentArticulations.gameObject))
+					if (!list.Contains (currentArticulations.gameObject))
 						list.Add (currentArticulations.gameObject);
 					otherController.addArticulation (currentArticulations);
 					globalIndex = currentArticulations.index + 1;
@@ -552,14 +574,18 @@ public class manager : MonoBehaviour
 					changeFocus ();
 					tmpMuscle.setAnchor (currentObject);
 					currentArticulations.setLinearLimit (tmpController.gameObject, currentObject);
-				}
-				else
+				} else
 				{
-
 					currentObject = hit.collider.gameObject;
-
 					changeFocus ();
 				}
+			} 
+			else if (!EventSystem.current.IsPointerOverGameObject() && currentObject)
+			{
+				if (currentObject.tag == "bones")
+					currentObject.GetComponent<bones> ().isSelected = false;
+				currentObject = null;
+				changeFocus ();
 			}
 		}
 		if (Input.GetKeyDown (KeyCode.C))

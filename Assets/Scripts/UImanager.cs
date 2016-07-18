@@ -7,6 +7,8 @@ public class UImanager : MonoBehaviour
 	public GameObject setparent;
 	public GameObject resetparent;
 	public GameObject delete;
+	public GameObject addMuscle;
+	public GameObject addBones;
 
 	public GameObject bonescale;
 	public GameObject boneposition;
@@ -46,18 +48,27 @@ public class UImanager : MonoBehaviour
 			articulationparameters.SetActive (false);
 			play.SetActive (false);
 			stop.SetActive (true);
+			addBones.SetActive (false);
+			addMuscle.SetActive (false);
 		}
 
 		if (!manager.isPlaying)
 		{
 			delete.SetActive (true);
-			play.SetActive (true);
+			if (manager.searchTwoBones ())
+				addMuscle.SetActive (true);
+			else
+				addMuscle.SetActive (false);
+			if (manager.searchArticulations())
+				play.SetActive (true);
+			else
+				play.SetActive (false);
 			stop.SetActive (false);
 
 			switch(manager.itemSelected)
 			{
 			case "bone":
-				setparent.SetActive (true);
+				setparent.SetActive (false);
 				resetparent.SetActive (false);
 				bonescale.SetActive (true);
 				boneposition.SetActive (true);

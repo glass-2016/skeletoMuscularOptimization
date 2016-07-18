@@ -56,6 +56,18 @@ public class muscle : MonoBehaviour
 		index = i;
 	}
 
+	void updateAngularDirection()
+	{
+		Vector3 tmp = Vector3.zero;
+		if (Mathf.Abs (offsets [0].x) + Mathf.Abs (offsets [1].x) > Mathf.Abs (offsets [0].y) + Mathf.Abs (offsets [1].y) && Mathf.Abs (offsets [0].x) + Mathf.Abs (offsets [1].x) > Mathf.Abs (offsets [0].z) + Mathf.Abs (offsets [1].z))
+			tmp = Vector3.up * (offsets [0].x + offsets [1].x);
+		else if (Mathf.Abs(offsets[0].y) + Mathf.Abs (offsets [1].y) > Mathf.Abs(offsets[0].x) + Mathf.Abs (offsets [1].x) && Mathf.Abs(offsets[0].y) + Mathf.Abs (offsets [1].y) > Mathf.Abs(offsets[0].z) + Mathf.Abs (offsets [1].z))
+			tmp = Vector3.forward * (offsets [0].y + offsets [1].y);
+		else
+			tmp = Vector3.right * (offsets [0].z + offsets [1].z);
+		angularDirection = Vector3.Cross (transform.up, tmp).normalized;
+	}
+
 	// configure prefabs to get attach to bones
 	public void setLimits(Vector3[] attaches, Vector3 pos1, Vector3 pos2)
 	{
@@ -66,14 +78,7 @@ public class muscle : MonoBehaviour
 		transform.rotation = Quaternion.FromToRotation(Vector3.up, attachPoints[0] - attachPoints[1]);
 		transform.localScale = new Vector3(transform.localScale.x, Vector3.Distance(attachPoints[0], attachPoints[1]) * 0.5f, transform.localScale.z);
 		// define direction forces
-		Vector3 tmp = Vector3.zero;
-		if (Mathf.Abs (offsets [0].x) + Mathf.Abs (offsets [1].x) > Mathf.Abs (offsets [0].y) + Mathf.Abs (offsets [1].y) && Mathf.Abs (offsets [0].x) + Mathf.Abs (offsets [1].x) > Mathf.Abs (offsets [0].z) + Mathf.Abs (offsets [1].z))
-			tmp = Vector3.up * (offsets [0].x + offsets [1].x);
-		else if (Mathf.Abs(offsets[0].y) + Mathf.Abs (offsets [1].y) > Mathf.Abs(offsets[0].x) + Mathf.Abs (offsets [1].x) && Mathf.Abs(offsets[0].y) + Mathf.Abs (offsets [1].y) > Mathf.Abs(offsets[0].z) + Mathf.Abs (offsets [1].z))
-			tmp = Vector3.forward * (offsets [0].y + offsets [1].y);
-		else
-			tmp = Vector3.right * (offsets [0].z + offsets [1].z);
-		angularDirection = Vector3.Cross (transform.up, tmp).normalized;
+
 		direction = transform.up * reverse;
 		currentArticulation.addDirection (angularDirection);
 	}
@@ -81,6 +86,7 @@ public class muscle : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		updateAngularDirection ();
 //		direction = new Vector3(-transform.up.x * (offsets[1].x - Mathf.Abs(offsets[0].x)), -transform.up.y * (offsets[1].y - Mathf.Abs(offsets[0].y)), -transform.up.z * (offsets[1].z - Mathf.Abs(offsets[0].z))).normalized;
 		direction = transform.up * reverse;
 		//reading the string input chosen by the player and converting it to keycode
