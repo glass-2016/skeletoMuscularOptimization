@@ -393,9 +393,9 @@ public class manager : MonoBehaviour
 		positionX.text = currentObject.transform.position.x.ToString ();
 		positionY.text = currentObject.transform.position.y.ToString ();
 		positionZ.text = currentObject.transform.position.z.ToString ();
-		rotationX.text = currentObject.transform.rotation.x.ToString ();
-		rotationY.text = currentObject.transform.rotation.y.ToString ();
-		rotationZ.text = currentObject.transform.rotation.z.ToString ();
+		rotationX.text = currentObject.transform.rotation.eulerAngles.x.ToString ();
+		rotationY.text = currentObject.transform.rotation.eulerAngles.y.ToString ();
+		rotationZ.text = currentObject.transform.rotation.eulerAngles.z.ToString ();
 		scaleX.text = currentObject.transform.localScale.x.ToString ();
 		scaleY.text = currentObject.transform.localScale.y.ToString ();
 		scaleZ.text = currentObject.transform.localScale.z.ToString ();
@@ -531,7 +531,7 @@ public class manager : MonoBehaviour
 			{
 				if (currentObject)
 				{
-					if (currentObject.GetComponent<bones> () && currentObject != hit.collider.gameObject)
+					if (currentObject.GetComponent<bones> () && currentObject != hit.collider.gameObject && hit.collider.tag != "manipulator")
 					{
 						currentObject.GetComponent<bones> ().isSelected = false;
 					}
@@ -543,7 +543,8 @@ public class manager : MonoBehaviour
 					// add parent to current object
 					currentObject.transform.parent = hit.collider.gameObject.transform;
 					searchParent = false;
-				} else if (firstAttach)
+				} 
+				else if (firstAttach)
 				{
 					// add first attach to object clicked
 					attaches [0] = hit.point;
@@ -553,7 +554,8 @@ public class manager : MonoBehaviour
 					secondAttach = true;
 					currentObject = hit.collider.gameObject;
 					changeFocus ();
-				} else if (secondAttach && currentObject != hit.collider.gameObject)
+				} 
+				else if (secondAttach && currentObject != hit.collider.gameObject)
 				{
 					// add second attach to object clicked and add muscle
 					attaches [1] = hit.point;
@@ -574,7 +576,8 @@ public class manager : MonoBehaviour
 					changeFocus ();
 					tmpMuscle.setAnchor (currentObject);
 					currentArticulations.setLinearLimit (tmpController.gameObject, currentObject);
-				} else
+				} 
+				else if (hit.collider.tag != "manipulator")
 				{
 					currentObject = hit.collider.gameObject;
 					changeFocus ();
