@@ -59,23 +59,23 @@ public class cameraPosition : MonoBehaviour
 
 		}
 
-		//translate camera
-//		if (Input.GetMouseButtonDown (0) && Camera.main.GetComponent<manager>().isManipulating == false) 
-//		{
-//			mouseDragBegin = Input.mousePosition;
-//		}
-//
-//		if (Input.GetMouseButton(0)  && Camera.main.GetComponent<manager>().isManipulating == false )
-//		{
-//			mouseDrag = Input.mousePosition - mouseDragBegin;
-//			transform.Translate (mouseDrag.x*mouseSensibility,mouseDrag.y*mouseSensibility,0);
-//			distanceVector += new Vector3 (mouseDrag.x * mouseSensibility, mouseDrag.y * mouseSensibility, 0);
-//			//transform.Translate (currentPosY,currentPosX,0);
-//			mouseDragBegin = Input.mousePosition;
-//			
-//		}
+		//translate camera (mouse)
+		if (Input.GetMouseButtonDown (0) && Camera.main.GetComponent<manager>().isManipulating == false) 
+		{
+			mouseDragBegin = Input.mousePosition;
+		}
 
-		// translate camera
+		if (Input.GetMouseButton(0)  && Camera.main.GetComponent<manager>().isManipulating == false )
+		{
+			mouseDrag = Input.mousePosition - mouseDragBegin;
+			transform.Translate (mouseDrag.x*mouseSensibility,mouseDrag.y*mouseSensibility,0);
+			distanceVector += new Vector3 (mouseDrag.x * mouseSensibility, mouseDrag.y * mouseSensibility, 0);
+			//transform.Translate (currentPosY,currentPosX,0);
+			mouseDragBegin = Input.mousePosition;
+			
+		}
+
+		// translate camera (keyboard)
 		if (Input.GetKey (KeyCode.LeftArrow))
 			transform.Translate (Vector3.left * 0.1f, Space.Self);
 		if (Input.GetKey (KeyCode.RightArrow))

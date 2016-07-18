@@ -20,6 +20,7 @@ public class UImanager : MonoBehaviour
 
 	public GameObject play;
 	public GameObject stop;
+	public GameObject playmodeeffects;
 
 
 
@@ -38,6 +39,8 @@ public class UImanager : MonoBehaviour
 
 		if (manager.isPlaying) 
 		{
+			playmodeeffects.SetActive (true);
+
 			setparent.SetActive (false);
 			resetparent.SetActive (false);
 			delete.SetActive (false);
@@ -54,6 +57,8 @@ public class UImanager : MonoBehaviour
 
 		if (!manager.isPlaying)
 		{
+			playmodeeffects.SetActive (false);
+
 			delete.SetActive (true);
 			if (manager.searchTwoBones ())
 				addMuscle.SetActive (true);
@@ -108,7 +113,7 @@ public class UImanager : MonoBehaviour
 				articulationparameters.SetActive (false);
 				break;
 
-			case "articulation":
+			/*case "articulation":
 				setparent.SetActive (false);
 				resetparent.SetActive (false);
 				delete.SetActive (false);
@@ -117,7 +122,7 @@ public class UImanager : MonoBehaviour
 				bonerotation.SetActive (false);
 				muscleparameters.SetActive (false);
 				articulationparameters.SetActive (true);
-				break;
+				break; */
 				
 
 			case "none":
