@@ -13,32 +13,13 @@ public class articulations : MonoBehaviour {
 	public int index;
 	public bool colliding = false;
 	public float targetVelocity = 0;
+	private Vector3 direction = Vector3.one;
+
 	// Use this for initialization
 	void Awake () 
 	{
-//		axis = new ConfigurableJointMotion[3];
-//		axis [0] = ConfigurableJointMotion.Limited;
-//		axis [1] = ConfigurableJointMotion.Limited;
-//		axis [2] = ConfigurableJointMotion.Limited;
 		muscles = new Dictionary<int, muscle> ();
 		controllers = new musclesController[2];
-	}
-
-	public void setLinearLimit(GameObject first, GameObject other)
-	{
-//		SoftJointLimit tmpLimit = joint.linearLimit;
-//		Vector3 firstSize = first.GetComponent<Renderer> ().bounds.size;
-//		Vector3 otherSize = other.GetComponent<Renderer> ().bounds.size;
-//		tmpLimit.limit = Mathf.Max (new Vector3(firstSize.x * transform.up.x, firstSize.y * transform.up.y, firstSize.z * transform.up.z).magnitude,
-//			new Vector3(otherSize.x * transform.up.x, otherSize.y * transform.up.y, otherSize.z * transform.up.z).magnitude);
-////		tmpLimit.limit = 1f;
-//		tmpLimit.bounciness = 10f;
-//		if (tmpLimit.limit > joint.linearLimit.limit)
-//			joint.linearLimit = tmpLimit;
-//		SoftJointLimitSpring tmpSpring = joint.linearLimitSpring;
-//		tmpSpring.damper = 0.1f;
-//		tmpSpring.spring = 20.0f;
-//		joint.linearLimitSpring = tmpSpring;
 	}
 
 	public void setLimitsAxis(Vector2 axisLimits)
@@ -46,24 +27,21 @@ public class articulations : MonoBehaviour {
 		JointLimits tmpLimits = joint.limits;
 		tmpLimits.min = axisLimits.x;
 		tmpLimits.max = axisLimits.y;
-//		SoftJointLimit tmp = joint.lowAngularXLimit;
-//		tmp.limit = -axisLimits.x / 2.0f;
-//		joint.lowAngularXLimit = tmp;
-//		tmp = joint.highAngularXLimit;
-//		tmp.limit = axisLimits.x / 2.0f;
-//		joint.highAngularXLimit = tmp;
-//		tmp = joint.angularYLimit;
-//		tmp.limit = axisLimits.y;
-//		tmp = joint.angularZLimit;
-//		joint.angularYLimit = tmp;
-//		tmp.limit = axisLimits.z;
-//		joint.angularZLimit = tmp;
 	}
 
 	public void addDirection(Vector3 dir)
 	{
-		joint.axis = (joint.axis + new Vector3 (dir.x, dir.y, dir.z)).normalized;
-//		joint.targetRotation = Quaternion.Euler(joint.axis);
+		direction = new Vector3(Mathf.Max(direction.x - Mathf.Abs(dir.x), 0.0f), Mathf.Max(direction.y - Mathf.Abs(dir.y), 0.0f), Mathf.Max(direction.z - Mathf.Abs(dir.z), 0.0f));
+		Debug.Log ("direction = " + direction);
+		RigidbodyConstraints tmpConstraints = joint.connectedBody.constraints;
+		if (direction.x >= 0.75)
+			tmpConstraints |= RigidbodyConstraints.FreezeRotationX;
+		if (direction.y >= 0.75)
+			tmpConstraints |= RigidbodyConstraints.FreezeRotationY;
+		if (direction.z >= 0.75)
+			tmpConstraints |= RigidbodyConstraints.FreezeRotationZ;
+		joint.connectedBody.constraints = tmpConstraints;
+		joint.gameObject.GetComponent<Rigidbody> ().constraints = tmpConstraints;
 		setLimitsAxis (new Vector2(0, 180));
 	}
 
@@ -85,22 +63,8 @@ public class articulations : MonoBehaviour {
 		setIndex (index);
 		setController (first, 0);
 		setController (other, 1);
-		joint.anchor = (Vector3.Max(first.transform.position, other.transform.position) - Vector3.Min(first.transform.position, other.transform.position)) / 2.5f;
-		joint.connectedAnchor = (Vector3.Min(first.transform.position, other.transform.position) - Vector3.Max(first.transform.position, other.transform.position)) / 2.5f;
-//		joint.xMotion = ConfigurableJointMotion.Limited;
-//		joint.yMotion = ConfigurableJointMotion.Limited;
-//		joint.zMotion = ConfigurableJointMotion.Limited;
-//		joint.angularXMotion = ConfigurableJointMotion.Limited;
-//		joint.angularYMotion = ConfigurableJointMotion.Limited;
-//		joint.angularZMotion = ConfigurableJointMotion.Limited;
-//		joint.secondaryAxis = Vector3.zero;
-		initLimitAxis ();
-	}
-
-	void Rotate(float force, muscle mscle)
-	{
-//		if (!joint.connectedBody.GetComponent<musclesController>().colliding)
-			joint.connectedBody.transform.RotateAround (transform.position, mscle.angularDirection, force);
+		joint.anchor = (Vector3.Max(first.transform.position, other.transform.position) - Vector3.Min(first.transform.position, other.transform.position)) / 2.0f;
+		joint.connectedAnchor = (Vector3.Min(first.transform.position, other.transform.position) - Vector3.Max(first.transform.position, other.transform.position)) / 2.0f;
 	}
 
 	IEnumerator muscleDeactivate()
@@ -114,38 +78,18 @@ public class articulations : MonoBehaviour {
 	{
 		StopCoroutine ("muscleDeactivate");
 		useMotor = true;
-		targetVelocity += force;
+		targetVelocity = Mathf.Min(targetVelocity + force, 300);
 		JointMotor tmpMotor = joint.motor;
 		tmpMotor.force = force * 10;
 		tmpMotor.targetVelocity = targetVelocity;
 		joint.motor = tmpMotor;
 		joint.axis = mscle.angularDirection;
-//		joint.targetPosition = transform.position + mscle.angularDirection * force;
-//		joint.targetAngularVelocity = mscle.angularDirection * force;
-//		joint.targetVelocity = mscle.angularDirection * force;
-//		if (joint.targetVelocity.magnitude > 150f)
-//			joint.targetVelocity = joint.targetVelocity.normalized * 150f;
-//		if (joint.targetAngularVelocity.magnitude > 150f)
-//			joint.targetAngularVelocity = joint.targetAngularVelocity.normalized * 150f;
-////		joint.rotationDriveMode = RotationDriveMode.Slerp;
-//		joint.configuredInWorldSpace = true;
-////		JointDrive tmp = joint.slerpDrive;
-////		tmp.positionSpring = 20;
-////		joint.slerpDrive = tmp;
-//		joint.connectedBody.velocity = joint.targetVelocity * Time.deltaTime;
-//		joint.connectedBody.angularVelocity = joint.targetAngularVelocity * Time.deltaTime;
-//		Rotate (force, mscle);
 		StartCoroutine("muscleDeactivate");
 	}
 
 	void setIndex(int i)
 	{
 		index = i;
-	}
-
-	void initLimitAxis()
-	{
-		setLimitsAxis (new Vector3(180, 180, 180));
 	}
 
 	void setController(musclesController current, int index)

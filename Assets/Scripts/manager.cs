@@ -162,21 +162,13 @@ public class manager : MonoBehaviour
 
 			if(currentObject.tag == "muscles")
 			{
-				if (currentObject.gameObject.GetComponent<muscle> () == null) {
-					return;
-				} else {
-
+				if (currentObject.gameObject.GetComponent<muscle> ()) 
+				{
 					float force = currentObject.gameObject.GetComponent<muscle> ().force;
 					float.TryParse (muscleForce.text, out force);
 					currentObject.gameObject.GetComponent<muscle> ().force = force;
 					currentObject.gameObject.GetComponent<muscle> ().key1 = key1.text.ToUpper();
-//					currentObject.gameObject.GetComponent<muscle> ().key2 = key2.text.ToUpper();
-
-
-
-
 				}
-			
 			}
 		}
 	}
@@ -401,14 +393,10 @@ public class manager : MonoBehaviour
 
 		if (currentObject.tag == "muscles") 
 		{
-			if (currentObject.gameObject.GetComponent<muscle> () == null) {
-				return;
-			} else {
+			if (currentObject.gameObject.GetComponent<muscle> ())  
+			{
 				muscleForce.text = currentObject.gameObject.GetComponent<muscle> ().force.ToString();
 				key1.text = currentObject.gameObject.GetComponent<muscle> ().key1;
-//				key2.text = currentObject.gameObject.GetComponent<muscle> ().key2;
-
-
 			}
 
 		}
@@ -490,8 +478,8 @@ public class manager : MonoBehaviour
 			if (Physics.Raycast (ray, out hit))
 			{
 				muscleFeedback.enabled = true;
-				muscleFeedback.SetPosition (0, hit.point - Vector3.up / 4.0f);
-				muscleFeedback.SetPosition (1, hit.point + Vector3.up / 4.0f);
+				muscleFeedback.SetPosition (0, hit.point - Vector3.Cross(hit.normal, hit.barycentricCoordinate) / 5.0f);
+				muscleFeedback.SetPosition (1, hit.point + Vector3.Cross(hit.normal, hit.barycentricCoordinate) / 5.0f);
 			} else
 				muscleFeedback.enabled = false;
 				
@@ -502,7 +490,7 @@ public class manager : MonoBehaviour
 			if (Physics.Raycast (ray, out hit))
 				muscleFeedback.SetPosition (1, hit.point);
 			else
-				muscleFeedback.SetPosition (1, attaches[0] + Vector3.up / 4.0f);
+				muscleFeedback.SetPosition (1, attaches[0] + Vector3.Cross(hit.normal, hit.barycentricCoordinate) / 5.0f);
 		} else
 			muscleFeedback.enabled = false;
 		if (isPlaying)
@@ -574,7 +562,6 @@ public class manager : MonoBehaviour
 					tmpMuscle.setLimits (attaches, tmpController.gameObject.transform.position, currentObject.transform.position);
 					changeFocus ();
 					tmpMuscle.setAnchor (currentObject);
-					currentArticulations.setLinearLimit (tmpController.gameObject, currentObject);
 				} 
 				else if (hit.collider.tag != "manipulator")
 				{

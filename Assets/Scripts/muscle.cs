@@ -59,12 +59,12 @@ public class muscle : MonoBehaviour
 	{
 		Vector3 tmp = Vector3.zero;
 		if (Mathf.Abs (offsets [0].x) + Mathf.Abs (offsets [1].x) > Mathf.Abs (offsets [0].y) + Mathf.Abs (offsets [1].y) && Mathf.Abs (offsets [0].x) + Mathf.Abs (offsets [1].x) > Mathf.Abs (offsets [0].z) + Mathf.Abs (offsets [1].z))
-			tmp = Vector3.right * (offsets [0].x + offsets [1].x);
+			tmp = Vector3.forward * (offsets [0].x + offsets [1].x);
 		else if (Mathf.Abs(offsets[0].y) + Mathf.Abs (offsets [1].y) > Mathf.Abs(offsets[0].x) + Mathf.Abs (offsets [1].x) && Mathf.Abs(offsets[0].y) + Mathf.Abs (offsets [1].y) > Mathf.Abs(offsets[0].z) + Mathf.Abs (offsets [1].z))
-			tmp = Vector3.up * (offsets [0].y + offsets [1].y);
+			tmp = Vector3.right * (offsets [0].y + offsets [1].y);
 		else
-			tmp = Vector3.forward * (offsets [0].z + offsets [1].z);
-		angularDirection = Vector3.Cross (transform.up, tmp).normalized;
+			tmp = Vector3.up * (offsets [0].z + offsets [1].z);
+		angularDirection = Vector3.Cross (transform.up, -tmp).normalized;
 	}
 
 	// configure prefabs to get attach to bones
@@ -77,18 +77,16 @@ public class muscle : MonoBehaviour
 		transform.rotation = Quaternion.FromToRotation(Vector3.up, attachPoints[0] - attachPoints[1]);
 		transform.localScale = new Vector3(transform.localScale.x, Vector3.Distance(attachPoints[0], attachPoints[1]) * 0.5f, transform.localScale.z);
 		// define direction forces
-
-		direction = transform.up * reverse;
-		currentArticulation.addDirection (angularDirection);
+		updateAngularDirection();
+		direction = transform.right * reverse;
+		currentArticulation.addDirection (direction);
 	}
 
 	// Update is called once per frame
 	void Update () 
 	{
-		updateAngularDirection ();
-
 //		direction = new Vector3(-transform.up.x * (offsets[1].x - Mathf.Abs(offsets[0].x)), -transform.up.y * (offsets[1].y - Mathf.Abs(offsets[0].y)), -transform.up.z * (offsets[1].z - Mathf.Abs(offsets[0].z))).normalized;
-		direction = transform.up * reverse;
+		direction = transform.right * reverse;
 		//reading the string input chosen by the player and converting it to keycode
 		//trying to find if a number was entered
 		int asck1 = 0;
