@@ -40,8 +40,8 @@ public class cameraPosition : MonoBehaviour
 	{
 		Quaternion rotation = Quaternion.Euler(y, x, 0.0f);
 		Vector3 position = rotation * distanceVector + Vector3.forward;
-		transform.rotation = rotation;
-		transform.position = position;
+		transform.rotation = Quaternion.Lerp (transform.rotation, rotation, 0.5f);
+		transform.position = Vector3.Lerp (transform.position, position, 0.5f);
 	}
 
 	// Update is called once per frame
