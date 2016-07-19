@@ -27,21 +27,21 @@ public class articulations : MonoBehaviour {
 		JointLimits tmpLimits = joint.limits;
 		tmpLimits.min = axisLimits.x;
 		tmpLimits.max = axisLimits.y;
+//		joint.useLimits = true;
 	}
 
 	public void addDirection(Vector3 dir)
 	{
 		direction = new Vector3(Mathf.Max(direction.x - Mathf.Abs(dir.x), 0.0f), Mathf.Max(direction.y - Mathf.Abs(dir.y), 0.0f), Mathf.Max(direction.z - Mathf.Abs(dir.z), 0.0f));
-		Debug.Log ("direction = " + direction);
-		RigidbodyConstraints tmpConstraints = joint.connectedBody.constraints;
-		if (direction.x >= 0.75)
-			tmpConstraints |= RigidbodyConstraints.FreezeRotationX;
-		if (direction.y >= 0.75)
-			tmpConstraints |= RigidbodyConstraints.FreezeRotationY;
-		if (direction.z >= 0.75)
-			tmpConstraints |= RigidbodyConstraints.FreezeRotationZ;
-		joint.connectedBody.constraints = tmpConstraints;
-		joint.gameObject.GetComponent<Rigidbody> ().constraints = tmpConstraints;
+//		RigidbodyConstraints tmpConstraints = joint.connectedBody.constraints;
+//		if (direction.x >= 0.75)
+//			tmpConstraints |= RigidbodyConstraints.FreezeRotationX;
+//		if (direction.y >= 0.75)
+//			tmpConstraints |= RigidbodyConstraints.FreezeRotationY;
+//		if (direction.z >= 0.75)
+//			tmpConstraints |= RigidbodyConstraints.FreezeRotationZ;
+//		joint.connectedBody.constraints = tmpConstraints;
+//		joint.gameObject.GetComponent<Rigidbody> ().constraints = tmpConstraints;
 		setLimitsAxis (new Vector2(0, 180));
 	}
 
@@ -78,9 +78,10 @@ public class articulations : MonoBehaviour {
 	{
 		StopCoroutine ("muscleDeactivate");
 		useMotor = true;
-		targetVelocity = Mathf.Min(targetVelocity + force, 300);
+		targetVelocity = targetVelocity + force;
+		targetVelocity = Mathf.Min(targetVelocity + force, force * 100);
 		JointMotor tmpMotor = joint.motor;
-		tmpMotor.force = force * 10;
+		tmpMotor.force = force * 100;
 		tmpMotor.targetVelocity = targetVelocity;
 		joint.motor = tmpMotor;
 		joint.axis = mscle.angularDirection;
@@ -114,16 +115,6 @@ public class articulations : MonoBehaviour {
 		} 
 		else if (other.tag == "collectibles")
 			other.gameObject.SetActive (false);
-	}
-
-	void OnColliderStay(Collision other)
-	{
-		colliding = true;
-	}
-
-	void OnColliderExit(Collision other)
-	{
-		colliding = false;
 	}
 
 	void OnTriggerExit(Collider other)

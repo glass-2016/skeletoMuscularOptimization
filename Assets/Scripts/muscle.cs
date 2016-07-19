@@ -17,15 +17,16 @@ public class muscle : MonoBehaviour
 	// keep positions on bones models
 	private Vector3[] offsets;
 	private Vector3[] position;
+	private Vector3[] normals;
 	public int index = 0;
-	private float reverse = 1.0f;
-	private bool changedReverse = false; 
+
 	// Use this for initialization
 	void Awake () 
 	{
 		anchors = new List<GameObject> ();
 		position = new Vector3[2];
 		offsets = new Vector3[2];
+		normals = new Vector3[2];
 	}
 
 	// add bone as muscle anchor
@@ -57,36 +58,36 @@ public class muscle : MonoBehaviour
 
 	void updateAngularDirection()
 	{
-		Vector3 tmp = Vector3.zero;
-		if (Mathf.Abs (offsets [0].x) + Mathf.Abs (offsets [1].x) > Mathf.Abs (offsets [0].y) + Mathf.Abs (offsets [1].y) && Mathf.Abs (offsets [0].x) + Mathf.Abs (offsets [1].x) > Mathf.Abs (offsets [0].z) + Mathf.Abs (offsets [1].z))
-			tmp = Vector3.forward * (offsets [0].x + offsets [1].x);
-		else if (Mathf.Abs(offsets[0].y) + Mathf.Abs (offsets [1].y) > Mathf.Abs(offsets[0].x) + Mathf.Abs (offsets [1].x) && Mathf.Abs(offsets[0].y) + Mathf.Abs (offsets [1].y) > Mathf.Abs(offsets[0].z) + Mathf.Abs (offsets [1].z))
-			tmp = Vector3.right * (offsets [0].y + offsets [1].y);
-		else
-			tmp = Vector3.up * (offsets [0].z + offsets [1].z);
-		angularDirection = Vector3.Cross (-transform.forward, tmp).normalized;
+		Vector3 offset = new Vector3 (Mathf.Abs(attachPoints [0].x - attachPoints [1].x), Mathf.Abs(attachPoints [0].y - attachPoints [1].y), Mathf.Abs(attachPoints [0].z - attachPoints [1].z));
+		Debug.Log ("offsets = " + offset);
+		Debug.Log ("normals[0] = " + normals[0]);
+		Debug.Log ("normals[1] = " + normals[1]);
+		angularDirection = Vector3.Cross (offset.normalized, normals[0] + normals[1]);
+//		angularDirection = new Vector3 (Mathf.Abs(angularDirection.x), Mathf.Abs(angularDirection.y), Mathf.Abs(angularDirection.z));
 	}
 
 	// configure prefabs to get attach to bones
-	public void setLimits(Vector3[] attaches, Vector3 pos1, Vector3 pos2)
+	public void setLimits(Vector3[] attaches, Vector3 pos1, Vector3 pos2, Vector3 norm1, Vector3 norm2)
 	{
 		attachPoints = attaches;
 		offsets [0] = attaches [0] - pos1;
 		offsets [1] = attaches [1] - pos2;
+		normals [0] = norm1;
+		normals [1] = norm2;
 		transform.position = attaches[1] + ((attaches [0] - attaches [1]) / 2.0f);
 		transform.rotation = Quaternion.FromToRotation(Vector3.forward, attachPoints[0] - attachPoints[1]);
 		transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, Vector3.Distance(attachPoints[0], attachPoints[1]) * 1.25f);
 		// define direction forces
 		updateAngularDirection();
-		direction = transform.up * reverse;
-		currentArticulation.addDirection (direction);
+//		direction = transform.up * reverse;
+		currentArticulation.addDirection (angularDirection);
 	}
 
 	// Update is called once per frame
 	void Update () 
 	{
 //		direction = new Vector3(-transform.up.x * (offsets[1].x - Mathf.Abs(offsets[0].x)), -transform.up.y * (offsets[1].y - Mathf.Abs(offsets[0].y)), -transform.up.z * (offsets[1].z - Mathf.Abs(offsets[0].z))).normalized;
-		direction = transform.up * reverse;
+//		direction = transform.up * reverse;
 		//reading the string input chosen by the player and converting it to keycode
 		//trying to find if a number was entered
 		int asck1 = 0;
@@ -110,20 +111,10 @@ public class muscle : MonoBehaviour
 			if (position [i] != anchors [i].transform.position)
 				changePosition (i, anchors [i].transform.position);
 		}
-		if (currentScale < transform.localScale.y && !changedReverse)
-		{
-			changedReverse = true;
-			reverse = -reverse;
-		} else if (currentScale >= transform.localScale.y)
-			changedReverse = false;
+
 		if (Input.GetKey (kc1))
 		{
 			currentArticulation.setForce (force, this);
 		}
-//		else
-//		{
-//			currentArticulation.targetVelocity = 0;
-//			currentArticulation.useMotor = false;
-//		}
 	}
 }

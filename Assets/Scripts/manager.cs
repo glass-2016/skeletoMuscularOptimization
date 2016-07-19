@@ -23,6 +23,7 @@ public class manager : MonoBehaviour
 	private bool firstAttach = false;
 	private bool secondAttach = false;
 	private Vector3[] attaches = null;
+	private Vector3[] attachesNorm = null;
 	// indicator to update values of fields parameters
 	private Vector3 oldPosition;
 	private Quaternion oldRotation;
@@ -69,6 +70,8 @@ public class manager : MonoBehaviour
 		list = new List<GameObject> ();
 		saveList = new List<GameObject> ();
 		listCollectibles = new List<collectibles>();
+		attaches = new Vector3[2];
+		attachesNorm = new Vector3[2];
 		nbCollectible = maxCollectible;
 		counter.text = "";
 		terrain.mesh = ProceduralToolkit.Examples.TerrainMesh.TerrainDraft (100, 100, Random.Range (0, 50), Random.Range (0, 50), 1000).ToMesh();
@@ -201,7 +204,6 @@ public class manager : MonoBehaviour
 	{
 		if (currentObject)
 		{
-			attaches = new Vector3[2];
 			secondAttach = false;
 			searchParent = false;
 			firstAttach = true;
@@ -536,6 +538,7 @@ public class manager : MonoBehaviour
 				{
 					// add first attach to object clicked
 					attaches [0] = hit.point;
+					attachesNorm [0] = hit.normal;
 					firstAttach = false;
 					muscleFeedback.SetPosition (0, attaches [0]);
 					muscleFeedback.SetPosition (1, attaches [0] + Vector3.up / 4.0f);
@@ -547,6 +550,7 @@ public class manager : MonoBehaviour
 				{
 					// add second attach to object clicked and add muscle
 					attaches [1] = hit.point;
+					attachesNorm [1] = hit.normal;
 					secondAttach = false;
 					muscle tmpMuscle = Instantiate (musclePrefab, attaches [0] + (attaches [1] - attaches [0]), Quaternion.identity) as muscle;
 					list.Add (tmpMuscle.gameObject);
@@ -560,7 +564,7 @@ public class manager : MonoBehaviour
 					otherController.addArticulation (currentArticulations);
 					globalIndex = currentArticulations.index + 1;
 					tmpMuscle.setArticulation (currentArticulations);
-					tmpMuscle.setLimits (attaches, tmpController.gameObject.transform.position, currentObject.transform.position);
+					tmpMuscle.setLimits (attaches, tmpController.gameObject.transform.position, currentObject.transform.position, attachesNorm[0], attachesNorm[1]);
 					changeFocus ();
 					tmpMuscle.setAnchor (currentObject);
 				} 
