@@ -74,8 +74,8 @@ public class muscle : MonoBehaviour
 		offsets [0] = attaches [0] - pos1;
 		offsets [1] = attaches [1] - pos2;
 		transform.position = attaches[1] + ((attaches [0] - attaches [1]) / 2.0f);
-		transform.rotation = Quaternion.FromToRotation(Vector3.up, attachPoints[0] - attachPoints[1]);
-		transform.localScale = new Vector3(transform.localScale.x, Vector3.Distance(attachPoints[0], attachPoints[1]) * 0.5f, transform.localScale.z);
+		transform.rotation = Quaternion.FromToRotation(Vector3.forward, attachPoints[0] - attachPoints[1]);
+		transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, Vector3.Distance(attachPoints[0], attachPoints[1]) * 1.25f);
 		// define direction forces
 		updateAngularDirection();
 		direction = transform.right * reverse;
