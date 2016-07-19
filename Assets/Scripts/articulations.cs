@@ -27,7 +27,7 @@ public class articulations : MonoBehaviour {
 		JointLimits tmpLimits = joint.limits;
 		tmpLimits.min = axisLimits.x;
 		tmpLimits.max = axisLimits.y;
-//		joint.useLimits = true;
+		joint.useLimits = true;
 	}
 
 	public void addDirection(Vector3 dir)
@@ -42,7 +42,7 @@ public class articulations : MonoBehaviour {
 //			tmpConstraints |= RigidbodyConstraints.FreezeRotationZ;
 //		joint.connectedBody.constraints = tmpConstraints;
 //		joint.gameObject.GetComponent<Rigidbody> ().constraints = tmpConstraints;
-		setLimitsAxis (new Vector2(0, 180));
+//		setLimitsAxis (new Vector2(0, 180));
 	}
 
 	public void addMuscle(muscle current)
