@@ -60,11 +60,11 @@ public class muscle : MonoBehaviour
 	{
 		Vector3 tmp = Vector3.zero;
 		if (Mathf.Abs (offsets [0].x) + Mathf.Abs (offsets [1].x) > Mathf.Abs (offsets [0].y) + Mathf.Abs (offsets [1].y) && Mathf.Abs (offsets [0].x) + Mathf.Abs (offsets [1].x) > Mathf.Abs (offsets [0].z) + Mathf.Abs (offsets [1].z))
-			tmp = Vector3.forward * (offsets [0].x + offsets [1].x);
+			tmp = Vector3.right * (offsets [0].x + offsets [1].x);
 		else if (Mathf.Abs(offsets[0].y) + Mathf.Abs (offsets [1].y) > Mathf.Abs(offsets[0].x) + Mathf.Abs (offsets [1].x) && Mathf.Abs(offsets[0].y) + Mathf.Abs (offsets [1].y) > Mathf.Abs(offsets[0].z) + Mathf.Abs (offsets [1].z))
-			tmp = Vector3.right * (offsets [0].y + offsets [1].y);
+			tmp = Vector3.up * (offsets [0].y + offsets [1].y);
 		else
-			tmp = Vector3.up * (offsets [0].z + offsets [1].z);
+			tmp = Vector3.forward * (offsets [0].z + offsets [1].z);
 		angularDirection = Vector3.Cross (transform.up, tmp).normalized;
 	}
 
@@ -87,6 +87,7 @@ public class muscle : MonoBehaviour
 	void Update () 
 	{
 		updateAngularDirection ();
+
 //		direction = new Vector3(-transform.up.x * (offsets[1].x - Mathf.Abs(offsets[0].x)), -transform.up.y * (offsets[1].y - Mathf.Abs(offsets[0].y)), -transform.up.z * (offsets[1].z - Mathf.Abs(offsets[0].z))).normalized;
 		direction = transform.up * reverse;
 		//reading the string input chosen by the player and converting it to keycode
@@ -126,10 +127,15 @@ public class muscle : MonoBehaviour
 			reverse = -reverse;
 		} else if (currentScale >= transform.localScale.y)
 			changedReverse = false;
-		if (Input.GetKey (kc1) && transform.localScale.y > 0.5f)
+		if (Input.GetKey (kc1))
 		{
 			currentArticulation.setForce (force, this);
 		}
+//		else
+//		{
+//			currentArticulation.targetVelocity = 0;
+//			currentArticulation.useMotor = false;
+//		}
 //		if (Input.GetKey (kc2))
 //			currentArticulation.setForce (-force);
 	}
