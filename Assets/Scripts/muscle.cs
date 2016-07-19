@@ -90,7 +90,6 @@ public class muscle : MonoBehaviour
 		//reading the string input chosen by the player and converting it to keycode
 		//trying to find if a number was entered
 		int asck1 = 0;
-		int asck2 = 0;
 
 		if (key1.Length < 2) {
 			asck1 = System.Convert.ToChar (key1);
