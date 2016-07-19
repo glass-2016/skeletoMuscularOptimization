@@ -111,7 +111,8 @@ public class manager : MonoBehaviour
 			if (list [i].tag == "bones" || list [i].tag == "articulations")
 			{
 				list [i].GetComponent<Rigidbody> ().isKinematic = false;
-				list [i].GetComponent<Collider> ().isTrigger = false;
+				if (list[i].tag == "bones")
+					list [i].GetComponent<Collider> ().isTrigger = false;
 			}
 			else if (list [i].tag == "muscles")
 			{
@@ -573,6 +574,8 @@ public class manager : MonoBehaviour
 			{
 				if (currentObject.tag == "bones")
 					currentObject.GetComponent<bones> ().isSelected = false;
+				firstAttach = false;
+				secondAttach = false;
 				currentObject = null;
 				changeFocus ();
 			}
@@ -580,6 +583,8 @@ public class manager : MonoBehaviour
 		if (Input.GetKeyDown (KeyCode.C))
 		{
 			// deselect current object
+			firstAttach = false;
+			secondAttach = false;
 			deselect();
 		}
 		if (currentObject && 

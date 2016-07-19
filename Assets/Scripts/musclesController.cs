@@ -5,19 +5,21 @@ using System.Linq;
 
 public class musclesController : MonoBehaviour 
 {
-	public Dictionary<articulations, ConfigurableJoint> joint;
 	// anchor prefab for joint listArticulations only for debug
 	public articulations anchorPrefab;
 	public Dictionary<int, articulations> listArticulations;
 	public bool colliding = false;
+	private Rigidbody rb;
 	public Vector3 size;
 
 	// Use this for initialization
 	void Start () 
 	{
-		joint = new Dictionary<articulations, ConfigurableJoint> ();
 		listArticulations = new Dictionary<int, articulations>();
 		size = GetComponent<Renderer> ().bounds.extents;
+		rb = GetComponent<Rigidbody> ();
+		rb.maxAngularVelocity = 4;
+		rb.maxDepenetrationVelocity = 4;
 	}
 
 	articulations checklistArticulations(Dictionary<int, articulations> list, musclesController other)
@@ -55,6 +57,8 @@ public class musclesController : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		if (rb.velocity.magnitude > 4)
+			rb.velocity = rb.velocity.normalized * 4;
 	}
 
 	void OnCollisionStay(Collision other)
