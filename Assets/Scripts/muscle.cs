@@ -64,7 +64,7 @@ public class muscle : MonoBehaviour
 			tmp = Vector3.right * (offsets [0].y + offsets [1].y);
 		else
 			tmp = Vector3.up * (offsets [0].z + offsets [1].z);
-		angularDirection = Vector3.Cross (transform.up, -tmp).normalized;
+		angularDirection = Vector3.Cross (-transform.forward, tmp).normalized;
 	}
 
 	// configure prefabs to get attach to bones
@@ -78,7 +78,7 @@ public class muscle : MonoBehaviour
 		transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, Vector3.Distance(attachPoints[0], attachPoints[1]) * 1.25f);
 		// define direction forces
 		updateAngularDirection();
-		direction = transform.right * reverse;
+		direction = transform.up * reverse;
 		currentArticulation.addDirection (direction);
 	}
 
@@ -86,7 +86,7 @@ public class muscle : MonoBehaviour
 	void Update () 
 	{
 //		direction = new Vector3(-transform.up.x * (offsets[1].x - Mathf.Abs(offsets[0].x)), -transform.up.y * (offsets[1].y - Mathf.Abs(offsets[0].y)), -transform.up.z * (offsets[1].z - Mathf.Abs(offsets[0].z))).normalized;
-		direction = transform.right * reverse;
+		direction = transform.up * reverse;
 		//reading the string input chosen by the player and converting it to keycode
 		//trying to find if a number was entered
 		int asck1 = 0;
