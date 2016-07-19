@@ -9,7 +9,6 @@ public class muscle : MonoBehaviour
 	public Vector3 angularDirection;
 	public float force = 10f;
 	public string key1 = "A";
-//	public string key2 = "B";
 	private KeyCode kc1;
 	private KeyCode kc2;
 	public List<GameObject> anchors;
@@ -98,22 +97,15 @@ public class muscle : MonoBehaviour
 		if (key1.Length < 2) {
 			asck1 = System.Convert.ToChar (key1);
 		}
-//		if (key2.Length < 2) {
-//			asck2 = System.Convert.ToChar (key2);
-//		}
 
 		//excluding the utility Fkeys and converting to numpad if a number was entered
 		if ( asck1 > 47 && asck1 < 58 && !key1.Contains("F")) 
 		{
 			key1 = key1.Insert (0, "Keypad");
 		}
-
-//		if ( asck2 > 47 && asck2 < 58 && !key2.Contains("F")) 
-//		{
-//			key2 = key2.Insert (0, "Keypad"); 
-//		}
+			
 		kc1 = (KeyCode)System.Enum.Parse (typeof(KeyCode), key1);
-//		kc2 = (KeyCode)System.Enum.Parse (typeof(KeyCode), key2);
+
 		float currentScale = transform.localScale.y;
 		for (int i = 0; i < anchors.Count; i++)
 		{
@@ -136,7 +128,5 @@ public class muscle : MonoBehaviour
 //			currentArticulation.targetVelocity = 0;
 //			currentArticulation.useMotor = false;
 //		}
-//		if (Input.GetKey (kc2))
-//			currentArticulation.setForce (-force);
 	}
 }

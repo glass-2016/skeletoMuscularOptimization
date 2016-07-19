@@ -231,10 +231,11 @@ void Positionner()
 
 		{
 			//manipulator.transform.parent = null;
+			Camera.main.GetComponent<manager> ().isManipulating = true;
 
 			tool = "rotationnerX";
 
-			float xMovement = Input.GetAxis("Mouse X") * moveSpeed*200;
+			float xMovement = -Input.GetAxis("Mouse X") * moveSpeed*200;
 
 			this.transform.Rotate (this.transform.right, xMovement, Space.World);
 			//manipulator.transform.parent = this.transform;
@@ -248,10 +249,11 @@ void Positionner()
 
 		{
 			//manipulator.transform.parent = null;
+			Camera.main.GetComponent<manager> ().isManipulating = true;
 
 			tool = "rotationnerY";
 
-			float yMovement = Input.GetAxis("Mouse Y") * moveSpeed*200;
+			float yMovement = -Input.GetAxis("Mouse Y") * moveSpeed*200;
 
 			this.transform.Rotate (this.transform.up, yMovement, Space.World);
 			//manipulator.transform.parent = this.transform;
@@ -264,10 +266,11 @@ void Positionner()
 
 		{
 			//manipulator.transform.parent = null;
+			Camera.main.GetComponent<manager> ().isManipulating = true;
 
 			tool = "rotationnerZ";
 
-			float zMovement = Input.GetAxis("Mouse X") * moveSpeed*200;
+			float zMovement = -Input.GetAxis("Mouse X") * moveSpeed*200;
 
 			this.transform.Rotate (this.transform.forward, zMovement, Space.World);
 			//manipulator.transform.parent = this.transform;

@@ -41,8 +41,11 @@ public class articulations : MonoBehaviour {
 //		joint.linearLimitSpring = tmpSpring;
 	}
 
-	public void setLimitsAxis(Vector3 axisLimits)
+	public void setLimitsAxis(Vector2 axisLimits)
 	{
+		JointLimits tmpLimits = joint.limits;
+		tmpLimits.min = axisLimits.x;
+		tmpLimits.max = axisLimits.y;
 //		SoftJointLimit tmp = joint.lowAngularXLimit;
 //		tmp.limit = -axisLimits.x / 2.0f;
 //		joint.lowAngularXLimit = tmp;
@@ -59,9 +62,9 @@ public class articulations : MonoBehaviour {
 
 	public void addDirection(Vector3 dir)
 	{
-		joint.axis = (joint.axis + new Vector3 (Mathf.Abs(dir.x), Mathf.Abs(dir.y), Mathf.Abs(dir.z))).normalized;
+		joint.axis = (joint.axis + new Vector3 (dir.x, dir.y, dir.z)).normalized;
 //		joint.targetRotation = Quaternion.Euler(joint.axis);
-		setLimitsAxis (new Vector3(180 * joint.axis.x, 180 * joint.axis.y, 180 * joint.axis.z));
+		setLimitsAxis (new Vector2(0, 180));
 	}
 
 	public void addMuscle(muscle current)

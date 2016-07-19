@@ -232,8 +232,7 @@ public class manager : MonoBehaviour
 			float tmpX, tmpY, tmpZ = 0.0f;
 			float.TryParse(scaleX.text, out tmpX);
 			float.TryParse(scaleY.text, out tmpY);
-			float.TryParse(scaleZ.text, out tmpZ);
-			currentObject.GetComponent<articulations> ().setLimitsAxis (new Vector3(tmpX, tmpY, tmpZ));
+			currentObject.GetComponent<articulations> ().setLimitsAxis (new Vector2(tmpX, tmpY));
 		}
 	}
 
