@@ -1,19 +1,21 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
 
 public class mainTitle : MonoBehaviour {
+
+
 
 	public GameObject settingsPanel;
 
 	// Use this for initialization
-	void Start () {
-	
+	void Start () 
+	{
+
 	}
 	
 	// Update is called once per frame
-	void Update () {
-	
+	void Update () 
+	{
 	}
 
 	public void quit()
@@ -30,4 +32,6 @@ public class mainTitle : MonoBehaviour {
 	{
 		settingsPanel.SetActive (!settingsPanel.activeInHierarchy);
 	}
+
+
 }

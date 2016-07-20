@@ -113,6 +113,7 @@
      <Compile Include="Assets\Scripts\manager.cs" />
      <Compile Include="Assets\Scripts\muscle.cs" />
      <Compile Include="Assets\Scripts\musclesController.cs" />
+     <Compile Include="Assets\Scripts\playerSettings.cs" />
      <None Include="Assets\ProceduralToolkit\Shaders\Standard Vertex Color.shader" />
      <None Include="Assets\UCLAGameLab\Wireframe\Shaders\UCLA GameLab Wireframe Functions.cginc" />
      <None Include="Assets\UCLAGameLab\Wireframe\Shaders\UCLA GameLab Wireframe.shader" />

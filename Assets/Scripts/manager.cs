@@ -76,6 +76,9 @@ public class manager : MonoBehaviour
 		counter.text = "";
 		terrain.mesh = ProceduralToolkit.Examples.TerrainMesh.TerrainDraft (100, 100, Random.Range (0, 50), Random.Range (0, 50), 1000).ToMesh();
 		terrain.gameObject.GetComponent<MeshCollider> ().sharedMesh = terrain.mesh;
+
+		AudioListener.volume = PlayerPrefs.GetInt ("soundVolume");
+
 	}
 
 	public void reset()
