@@ -86,14 +86,76 @@ public class manager : MonoBehaviour
 		SceneManager.LoadScene (SceneManager.GetActiveScene().buildIndex);
 	}
 
+	HingeJoint CopyComponent(HingeJoint original, GameObject destination)
+	{
+		System.Type type = original.GetType();
+		HingeJoint copy = destination.AddComponent<HingeJoint>();
+		// Copied fields can be restricted with BindingFlags
+		System.Reflection.FieldInfo[] fields = type.GetFields(); 
+		foreach (System.Reflection.FieldInfo field in fields)
+		{
+			field.SetValue(copy, field.GetValue(original));
+		}
+		return copy;
+	}
+
 	// play mode
 	public void play()
 	{
 		currentObject = null;
 		changeFocus ();
+		saveList.Clear ();
 		for (int i = 0; i < list.Count; i++) 
 		{
 			saveList.Add (Instantiate (list [i]));
+		}
+		for (int i = 0; i < saveList.Count; i++)
+		{
+			if (saveList [i].tag == "bones")
+			{
+				musclesController tmpMuscleController = saveList [i].GetComponent<musclesController> ();
+				musclesController tmpController = list [i].GetComponent<musclesController> ();
+				Dictionary<int, articulations> tmpListArticulations = new Dictionary<int, articulations> ();
+				foreach (KeyValuePair<int, articulations> tmpArticulations in tmpController.listArticulations)
+				{
+					Debug.Log ("PSSST");
+					articulations tmpArt = saveList[list.IndexOf(tmpController.listArticulations[tmpArticulations.Key].gameObject)].GetComponent<articulations>();
+					Dictionary<int, muscle> tmpMuscles = new Dictionary<int, muscle> ();
+					if (tmpArt)
+					{
+						foreach (KeyValuePair<int, muscle> tmpMuscle in tmpArticulations.Value.muscles)
+						{
+							Debug.Log ("HEHO");
+							muscle tmp = saveList [list.IndexOf (tmpArticulations.Value.muscles [tmpMuscle.Key].gameObject)].GetComponent<muscle> ();
+							tmp.force = tmpMuscle.Value.force;
+							tmp.key1 = tmpMuscle.Value.key1;
+							tmp.angularDirection = tmpMuscle.Value.angularDirection;
+							tmp.currentArticulation = saveList [list.IndexOf (tmpArticulations.Value.gameObject)].GetComponent<articulations> ();
+							tmp.anchors = new List<GameObject> ();
+							tmp.anchors.Add (saveList [list.IndexOf (tmpArticulations.Value.controllers [0].gameObject)]);
+							tmp.anchors.Add (saveList [list.IndexOf (tmpArticulations.Value.controllers [1].gameObject)]);
+							tmp.attachPoints = tmpMuscle.Value.attachPoints;
+							tmp.offsets = tmpMuscle.Value.offsets;
+							tmp.position = tmpMuscle.Value.position;
+							tmp.normals = tmpMuscle.Value.normals;
+							tmp.index = tmpMuscle.Value.index;
+							tmpMuscles.Add (tmpMuscle.Key, tmp);
+						}
+					}
+					tmpArt.muscles = tmpMuscles;
+					tmpArt.muscleIndex = tmpArticulations.Value.muscleIndex;
+					tmpArt.index = tmpArticulations.Value.index;
+					tmpArt.addRigidBody (saveList [list.IndexOf (tmpArticulations.Value.controllers [1].gameObject)].GetComponent<musclesController> (),
+						saveList [list.IndexOf (tmpArticulations.Value.controllers [0].gameObject)].GetComponent<musclesController> (), tmpArt.index);
+//					tmpArt.joint = CopyComponent (tmpArticulations.Value.joint, saveList [list.IndexOf (tmpArticulations.Value.controllers[1].gameObject)]);
+//					tmpArt.joint = tmpArt.controllers[0].GetComponent<HingeJoint>();
+//					tmpArt.joint.connectedBody = saveList [list.IndexOf (tmpArticulations.Value.controllers [0].gameObject)].GetComponent<Rigidbody> ();
+					if (tmpArticulations.Value.axisLimits != Vector2.zero)
+						tmpArt.setLimitsAxis (tmpArticulations.Value.axisLimits);
+					tmpListArticulations.Add (tmpArticulations.Key, tmpArt);
+				}
+				tmpMuscleController.listArticulations = tmpListArticulations;
+			}
 			saveList [i].SetActive (false);
 		}
 
@@ -120,12 +182,8 @@ public class manager : MonoBehaviour
 				if (list[i].tag == "bones")
 					list [i].GetComponent<Collider> ().isTrigger = false;
 			}
-			else if (list [i].tag == "muscles")
-			{
-				muscle tmpMuscle = list [i].GetComponent<muscle> ();
-//				tmpMuscle.currentArticulation.setForce (0.1f, tmpMuscle);
-			}
 		}
+
 		for (int i = 0; i < maxCollectible; i++)
 		{
 			listCollectibles.Add (Instantiate (collectiblePrefab, new Vector3 (Random.Range (-terrain.mesh.bounds.size.x / 2.0f, terrain.mesh.bounds.size.x / 2.0f), -3f, Random.Range (-terrain.mesh.bounds.size.z / 2.0f, terrain.mesh.bounds.size.z / 2.0f)), Quaternion.identity) as collectibles);
@@ -142,20 +200,16 @@ public class manager : MonoBehaviour
 		}
 		listCollectibles.Clear ();
 
-
 		for (int i = 0; i < list.Count; i++) 
 		{
-			Destroy(list[i]);
+			DestroyObject(list[i]);
 		}
 		list.Clear ();
-			
-		for (int i = 0; i < saveList.Count; i++) 
+		list = new List<GameObject> (saveList);			
+		for (int i = 0; i < list.Count; i++) 
 		{
-			list.Add (Instantiate (saveList [i]));
-			Destroy (saveList [i]);
 			list [i].SetActive (true);
 		}
-		saveList.Clear ();
 	}
 	public void updateScale()
 	{
@@ -217,12 +271,9 @@ public class manager : MonoBehaviour
 
 	public void addMuscle()
 	{
-		if (currentObject)
-		{
-			secondAttach = false;
-			searchParent = false;
-			firstAttach = true;
-		}
+		secondAttach = false;
+		searchParent = false;
+		firstAttach = true;
 	}
 
 	public void setParent()

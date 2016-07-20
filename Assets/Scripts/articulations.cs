@@ -7,13 +7,13 @@ public class articulations : MonoBehaviour {
 //	public ConfigurableJointMotion[] axis;
 	public HingeJoint joint;
 	public Dictionary<int, muscle> muscles;
-	public Vector3 axisLimits;
-	private int muscleIndex = 0;
+	public Vector2 axisLimits;
+	public int muscleIndex = 0;
 	public bool useMotor = false;
 	public int index;
 	public bool colliding = false;
 	public float targetVelocity = 0;
-	private Vector3 direction = Vector3.one;
+	public Vector3 direction = Vector3.one;
 
 	// Use this for initialization
 	void Awake () 
@@ -22,8 +22,9 @@ public class articulations : MonoBehaviour {
 		controllers = new musclesController[2];
 	}
 
-	public void setLimitsAxis(Vector2 axisLimits)
+	public void setLimitsAxis(Vector2 limits)
 	{
+		axisLimits = limits;
 		JointLimits tmpLimits = joint.limits;
 		tmpLimits.min = axisLimits.x;
 		tmpLimits.max = axisLimits.y;
@@ -55,6 +56,8 @@ public class articulations : MonoBehaviour {
 	// configure ConfigurableJoint
 	public void addRigidBody(musclesController first, musclesController other, int index)
 	{
+		Destroy(first.GetComponent<HingeJoint>());
+		Destroy(other.GetComponent<HingeJoint>());
 		joint = first.gameObject.AddComponent<HingeJoint> ();
 		joint.connectedBody = other.GetComponent<Rigidbody>();
 		joint.enableCollision = true;
@@ -101,9 +104,12 @@ public class articulations : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		joint.useMotor = useMotor;
-		transform.position = Vector3.Lerp(controllers [0].transform.position + joint.anchor, controllers[1].transform.position + joint.connectedAnchor, 0.5f); 
-//			Vector3.Lerp(controllers[0].transform.position, controllers[1].transform.position, 0.5f);
+		if (controllers [0])
+		{
+			joint.useMotor = useMotor;
+			transform.position = Vector3.Lerp (controllers [0].transform.position + joint.anchor, controllers [1].transform.position + joint.connectedAnchor, 0.5f); 
+		}
+		//			Vector3.Lerp(controllers[0].transform.position, controllers[1].transform.position, 0.5f);
 	}
 
 	void OnTriggerStay(Collider other)
