@@ -71,6 +71,15 @@ public class musclesController : MonoBehaviour
 		colliding = false;
 	}
 
+	void OnTriggerEnter(Collider other)
+	{
+		if (other.tag == "bones" || other.tag == "articulations")
+		{
+						Debug.Log ("Some bones collision!!!");
+			colliding = true;
+		}
+	}
+
 	void OnTriggerStay(Collider other)
 	{
 		if (other.tag == "bones" || other.tag == "articulations")

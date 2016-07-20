@@ -11,7 +11,7 @@ public class manager : MonoBehaviour
 	// selected object
 	private GameObject currentObject = null;
 	// bone prefab
-	public GameObject bone;
+	public musclesController bone;
 	public muscle musclePrefab;
 	// list of all objects added to scene
 	private List<GameObject> list;
@@ -188,10 +188,22 @@ public class manager : MonoBehaviour
 		}
 	}
 
+	IEnumerator shift(musclesController tmpBone)
+	{
+		yield return new WaitForFixedUpdate();
+		while (tmpBone.colliding)
+		{
+			tmpBone.transform.position += tmpBone.transform.right;
+			yield return null;
+		}
+	}
+
 	// add bone
 	public void spawn()
 	{
-		list.Add(Instantiate (bone));
+		musclesController tmpBone = Instantiate<musclesController> (bone);
+		list.Add(tmpBone.gameObject);
+		StartCoroutine (shift(tmpBone));
 	}
 
 	public void removeParent()
