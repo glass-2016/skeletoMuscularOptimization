@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class UImanager : MonoBehaviour 
 {
@@ -9,6 +10,8 @@ public class UImanager : MonoBehaviour
 	public GameObject delete;
 	public GameObject addMuscle;
 	public GameObject addBones;
+	public GameObject menuPopUp;
+	public GameObject optionsPopUp;
 
 	public GameObject bonescale;
 	public GameObject boneposition;
@@ -149,6 +152,33 @@ public class UImanager : MonoBehaviour
 
 			}
 		}
+
+	}
+
+	public void menuOn()
+	{
+		menuPopUp.SetActive (true);
+	}
+
+	public void menuOff()
+	{
+		menuPopUp.SetActive (false);
+
+	}
+
+	public void menuYes()
+	{
+		SceneManager.LoadScene ("mainTitle");
+	}
+
+	public void optionsOn()
+	{
+		optionsPopUp.SetActive (true);
+	}
+
+	public void optionsOff()
+	{
+		optionsPopUp.SetActive (false);
 
 	}
 }
