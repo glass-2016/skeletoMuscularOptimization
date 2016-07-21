@@ -53,9 +53,8 @@ public class manager : MonoBehaviour
 	//articulations
 	public InputField rangeX;
 	public InputField rangeZ;
-	public Text counter;
 	public int maxCollectible = 10;
-	private int nbCollectible;
+	public int nbCollectible;
 	private List<collectibles> listCollectibles; 
 	// those are here to be read by other scripts
 	public string itemSelected; 	//either "none", "bone", "muscle"
@@ -73,7 +72,6 @@ public class manager : MonoBehaviour
 		attaches = new Vector3[2];
 		attachesNorm = new Vector3[2];
 		nbCollectible = maxCollectible;
-		counter.text = "";
 		terrain.mesh = ProceduralToolkit.Examples.TerrainMesh.TerrainDraft (100, 100, Random.Range (0, 50), Random.Range (0, 50), 1000).ToMesh();
 		terrain.gameObject.GetComponent<MeshCollider> ().sharedMesh = terrain.mesh;
 
@@ -616,7 +614,6 @@ public class manager : MonoBehaviour
 				if (!listCollectibles [i].isActiveAndEnabled)
 					nbCollectible--;
 			}
-			counter.text = (maxCollectible - nbCollectible) + "/" + maxCollectible;
 		}
 		if ((firstAttach || secondAttach) && currentObject && currentObject.tag == "bones")
 		{

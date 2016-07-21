@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
@@ -25,12 +26,15 @@ public class UImanager : MonoBehaviour
 	public GameObject stop;
 	public GameObject playmodeeffects;
 
+	public Text collCounter;
+
 
 
 
 
 	// Use this for initialization
 	void Start () {
+		collCounter.text = " ";
 
 	}
 	
@@ -56,10 +60,14 @@ public class UImanager : MonoBehaviour
 			stop.SetActive (true);
 			addBones.SetActive (false);
 			addMuscle.SetActive (false);
+
+			collCounter.text = (manager.maxCollectible - manager.nbCollectible) + "/" + manager.maxCollectible;
+
 		}
 
 		if (!manager.isPlaying)
 		{
+			collCounter.text = " ";
 			playmodeeffects.SetActive (false);
 			addBones.SetActive (true);
 
