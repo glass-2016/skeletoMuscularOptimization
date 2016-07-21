@@ -52,7 +52,6 @@ public class manager : MonoBehaviour
 //	public InputField key2;
 	//articulations
 	public InputField rangeX;
-	public InputField rangeY;
 	public InputField rangeZ;
 	public int maxCollectible = 10;
 	public int nbCollectible;
@@ -85,19 +84,6 @@ public class manager : MonoBehaviour
 		SceneManager.LoadScene (SceneManager.GetActiveScene().buildIndex);
 	}
 
-//	HingeJoint CopyComponent(HingeJoint original, GameObject destination)
-//	{
-//		System.Type type = original.GetType();
-//		HingeJoint copy = destination.AddComponent<HingeJoint>();
-//		// Copied fields can be restricted with BindingFlags
-//		System.Reflection.FieldInfo[] fields = type.GetFields(); 
-//		foreach (System.Reflection.FieldInfo field in fields)
-//		{
-//			field.SetValue(copy, field.GetValue(original));
-//		}
-//		return copy;
-//	}
-
 	IEnumerator waitToStart()
 	{
 		bool started = false;
@@ -129,8 +115,6 @@ public class manager : MonoBehaviour
 			if (saveList [i].tag == "articulations")
 			{
 				articulations tmpArt = saveList [i].GetComponent<articulations> ();
-				Destroy(saveList [list.IndexOf (list [i].GetComponent<articulations> ().controllers [0].gameObject)].GetComponent<HingeJoint>());
-				Destroy(saveList [list.IndexOf (list [i].GetComponent<articulations> ().controllers [1].gameObject)].GetComponent<HingeJoint>());
 				if (first)
 				{
 					tmpArt.addRigidBody (saveList [list.IndexOf (list [i].GetComponent<articulations> ().controllers [1].gameObject)].GetComponent<musclesController> (),
@@ -347,8 +331,8 @@ public class manager : MonoBehaviour
 		if (currentObject)
 		{
 			float tmpX, tmpY = 0.0f;
-			float.TryParse(scaleX.text, out tmpX);
-			float.TryParse(scaleY.text, out tmpY);
+			float.TryParse(rangeX.text, out tmpX);
+			float.TryParse(rangeZ.text, out tmpY);
 			currentObject.GetComponent<articulations> ().setLimitsAxis (new Vector2(tmpX, tmpY));
 		}
 	}
@@ -500,7 +484,6 @@ public class manager : MonoBehaviour
 		key1.text = "0.0";
 //		key2.text = "0.0";
 		rangeX.text = "0.0";
-		rangeY.text = "0.0";
 		rangeZ.text = "0.0";
 	}
 
@@ -515,6 +498,11 @@ public class manager : MonoBehaviour
 		scaleX.text = currentObject.transform.localScale.x.ToString ();
 		scaleY.text = currentObject.transform.localScale.y.ToString ();
 		scaleZ.text = currentObject.transform.localScale.z.ToString ();
+		if (currentObject && currentObject.tag == "articulations")
+		{
+			rangeX.text = currentObject.GetComponent<articulations> ().axisLimits.x.ToString ();
+			rangeZ.text = currentObject.GetComponent<articulations> ().axisLimits.y.ToString ();
+		}
 
 		if (currentObject.tag == "muscles") 
 		{

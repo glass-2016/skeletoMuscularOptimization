@@ -102,7 +102,6 @@ public class muscle : MonoBehaviour
 			
 		kc1 = (KeyCode)System.Enum.Parse (typeof(KeyCode), key1);
 
-		float currentScale = transform.localScale.y;
 		for (int i = 0; i < anchors.Count; i++)
 		{
 			// changes position when bones position changes

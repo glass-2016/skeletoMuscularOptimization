@@ -30,25 +30,31 @@ public class articulations : MonoBehaviour {
 
 	public void setLimitsAxis(Vector2 limits)
 	{
+		if (limits == Vector2.zero)
+			joint.useLimits = false;
 		axisLimits = limits;
 		JointLimits tmpLimits = joint.limits;
 		tmpLimits.min = axisLimits.x;
 		tmpLimits.max = axisLimits.y;
+		tmpLimits.bounciness = 0;
+		tmpLimits.contactDistance = 100;
+		joint.limits = tmpLimits;
 		joint.useLimits = true;
 	}
 
 	public void addDirection(Vector3 dir)
 	{
 		direction = new Vector3(Mathf.Max(direction.x - Mathf.Abs(dir.x), 0.0f), Mathf.Max(direction.y - Mathf.Abs(dir.y), 0.0f), Mathf.Max(direction.z - Mathf.Abs(dir.z), 0.0f));
-//		RigidbodyConstraints tmpConstraints = joint.connectedBody.constraints;
-//		if (direction.x >= 0.75)
-//			tmpConstraints |= RigidbodyConstraints.FreezeRotationX;
-//		if (direction.y >= 0.75)
-//			tmpConstraints |= RigidbodyConstraints.FreezeRotationY;
-//		if (direction.z >= 0.75)
-//			tmpConstraints |= RigidbodyConstraints.FreezeRotationZ;
-//		joint.connectedBody.constraints = tmpConstraints;
-//		joint.gameObject.GetComponent<Rigidbody> ().constraints = tmpConstraints;
+		direction -= controllers [0].transform.right;
+		RigidbodyConstraints tmpConstraints = joint.connectedBody.constraints;
+		if (direction.x >= 0.75)
+			tmpConstraints |= RigidbodyConstraints.FreezeRotationX;
+		if (direction.y >= 0.75)
+			tmpConstraints |= RigidbodyConstraints.FreezeRotationY;
+		if (direction.z >= 0.75)
+			tmpConstraints |= RigidbodyConstraints.FreezeRotationZ;
+		joint.connectedBody.constraints = tmpConstraints;
+		joint.gameObject.GetComponent<Rigidbody> ().constraints = tmpConstraints;
 //		setLimitsAxis (new Vector2(0, 180));
 	}
 
@@ -108,7 +114,7 @@ public class articulations : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		if (controllers [0] && controllers[1] && joint)
+		if (controllers [0])
 		{
 			joint.useMotor = useMotor;
 			transform.position = Vector3.Lerp (controllers [0].transform.position + joint.anchor, controllers [1].transform.position + joint.connectedAnchor, 0.5f); 

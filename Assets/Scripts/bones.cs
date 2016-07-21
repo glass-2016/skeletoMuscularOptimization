@@ -14,10 +14,8 @@ public class bones : MonoBehaviour {
 	public GameObject rotationner;
 	public GameObject scaler;
 	public GameObject bone;
-	Vector3 selfPos;
+
 	Vector3 selfScale;
-	Quaternion selfRot;
-	Vector3 mousePos;
 	GameObject px;
 	GameObject py;
 	GameObject pz;
@@ -59,11 +57,7 @@ public class bones : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		selfPos = this.transform.position;
 		selfScale = this.transform.localScale;
-		selfRot = this.transform.rotation;
-
-		mousePos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
 
 		if (isSelected) 
 		{
