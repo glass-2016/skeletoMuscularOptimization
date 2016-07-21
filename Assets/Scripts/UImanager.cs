@@ -61,6 +61,7 @@ public class UImanager : MonoBehaviour
 		if (!manager.isPlaying)
 		{
 			playmodeeffects.SetActive (false);
+			addBones.SetActive (true);
 
 			delete.SetActive (true);
 			if (manager.searchTwoBones ())
@@ -153,6 +154,10 @@ public class UImanager : MonoBehaviour
 			}
 		}
 
+		if(Input.GetKeyDown(KeyCode.Escape))
+		{
+			menuOn ();
+		}
 	}
 
 	public void menuOn()
