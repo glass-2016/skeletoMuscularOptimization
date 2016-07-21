@@ -129,6 +129,8 @@ public class manager : MonoBehaviour
 			if (saveList [i].tag == "articulations")
 			{
 				articulations tmpArt = saveList [i].GetComponent<articulations> ();
+				Destroy(saveList [list.IndexOf (list [i].GetComponent<articulations> ().controllers [0].gameObject)].GetComponent<HingeJoint>());
+				Destroy(saveList [list.IndexOf (list [i].GetComponent<articulations> ().controllers [1].gameObject)].GetComponent<HingeJoint>());
 				if (first)
 				{
 					tmpArt.addRigidBody (saveList [list.IndexOf (list [i].GetComponent<articulations> ().controllers [1].gameObject)].GetComponent<musclesController> (),
