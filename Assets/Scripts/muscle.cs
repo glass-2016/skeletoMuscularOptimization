@@ -17,6 +17,7 @@ public class muscle : MonoBehaviour
 	public Vector3[] position;
 	public Vector3[] normals;
 	public int index = 0;
+	public bool started = false;
 
 	// Use this for initialization
 	void Awake () 
@@ -25,6 +26,11 @@ public class muscle : MonoBehaviour
 		position = new Vector3[2];
 		offsets = new Vector3[2];
 		normals = new Vector3[2];
+	}
+
+	void Start()
+	{
+		started = true;
 	}
 
 	// add bone as muscle anchor

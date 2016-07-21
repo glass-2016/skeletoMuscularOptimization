@@ -11,15 +11,19 @@ public class musclesController : MonoBehaviour
 	public bool colliding = false;
 	private Rigidbody rb;
 	public Vector3 size;
-
+	public bool started = false; 
+	void Awake ()
+	{
+		listArticulations = new Dictionary<int, articulations>();
+	}
 	// Use this for initialization
 	void Start () 
 	{
-		listArticulations = new Dictionary<int, articulations>();
 		size = GetComponent<Renderer> ().bounds.extents;
 		rb = GetComponent<Rigidbody> ();
 		rb.maxAngularVelocity = 4;
 		rb.maxDepenetrationVelocity = 4;
+		started = true;
 	}
 
 	articulations checklistArticulations(Dictionary<int, articulations> list, musclesController other)
