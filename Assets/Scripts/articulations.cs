@@ -34,6 +34,9 @@ public class articulations : MonoBehaviour {
 		JointLimits tmpLimits = joint.limits;
 		tmpLimits.min = axisLimits.x;
 		tmpLimits.max = axisLimits.y;
+		tmpLimits.bounciness = 0;
+		tmpLimits.contactDistance = 100;
+		joint.limits = tmpLimits;
 		joint.useLimits = true;
 	}
 
