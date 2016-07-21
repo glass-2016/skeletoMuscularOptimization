@@ -62,8 +62,6 @@ public class articulations : MonoBehaviour {
 	// configure ConfigurableJoint
 	public void addRigidBody(musclesController first, musclesController other, int index)
 	{
-		Destroy(first.GetComponent<HingeJoint>());
-		Destroy(other.GetComponent<HingeJoint>());
 		joint = first.gameObject.AddComponent<HingeJoint> ();
 		joint.connectedBody = other.GetComponent<Rigidbody>();
 		joint.enableCollision = true;
@@ -110,7 +108,7 @@ public class articulations : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		if (controllers [0])
+		if (controllers [0] && controllers[1] && joint)
 		{
 			joint.useMotor = useMotor;
 			transform.position = Vector3.Lerp (controllers [0].transform.position + joint.anchor, controllers [1].transform.position + joint.connectedAnchor, 0.5f); 
