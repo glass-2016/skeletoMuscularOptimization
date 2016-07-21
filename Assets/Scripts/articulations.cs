@@ -79,8 +79,8 @@ public class articulations : MonoBehaviour {
 		setIndex (index);
 		setController (first, 0);
 		setController (other, 1);
-		joint.anchor = (Vector3.Max(first.transform.position, other.transform.position) - Vector3.Min(first.transform.position, other.transform.position)) / 2.0f;
-		joint.connectedAnchor = (Vector3.Min(first.transform.position, other.transform.position) - Vector3.Max(first.transform.position, other.transform.position)) / 2.0f;
+		joint.anchor = (Vector3.Max(first.transform.position, other.transform.position) - Vector3.Min(first.transform.position, other.transform.position)) / 3.0f;
+		joint.connectedAnchor = (Vector3.Min(first.transform.position, other.transform.position) - Vector3.Max(first.transform.position, other.transform.position)) / 3.0f;
 	}
 
 	IEnumerator muscleDeactivate()
