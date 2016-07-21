@@ -30,6 +30,8 @@ public class articulations : MonoBehaviour {
 
 	public void setLimitsAxis(Vector2 limits)
 	{
+		if (limits == Vector2.zero)
+			joint.useLimits = false;
 		axisLimits = limits;
 		JointLimits tmpLimits = joint.limits;
 		tmpLimits.min = axisLimits.x;
