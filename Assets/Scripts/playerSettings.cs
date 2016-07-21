@@ -10,17 +10,10 @@ public class playerSettings : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
-		if (PlayerPrefs.GetInt ("soundVolume") == null) 
-		{
-			PlayerPrefs.SetInt ("soundVolume", 100);
-			PlayerPrefs.Save ();
-		}
-
-		if (PlayerPrefs.GetInt ("mouseSensibility") == null) 
-		{
-			PlayerPrefs.SetInt ("mouseSensibility", 6);
-			PlayerPrefs.Save();
-		}
+		PlayerPrefs.SetInt ("soundVolume", 100);
+		PlayerPrefs.Save ();
+		PlayerPrefs.SetInt ("mouseSensibility", 6);
+		PlayerPrefs.Save();
 
 		soundSlider.value = PlayerPrefs.GetInt ("soundVolume");
 		mouseSlider.value = PlayerPrefs.GetInt ("mouseSensibility");

@@ -87,19 +87,6 @@ public class manager : MonoBehaviour
 		SceneManager.LoadScene (SceneManager.GetActiveScene().buildIndex);
 	}
 
-//	HingeJoint CopyComponent(HingeJoint original, GameObject destination)
-//	{
-//		System.Type type = original.GetType();
-//		HingeJoint copy = destination.AddComponent<HingeJoint>();
-//		// Copied fields can be restricted with BindingFlags
-//		System.Reflection.FieldInfo[] fields = type.GetFields(); 
-//		foreach (System.Reflection.FieldInfo field in fields)
-//		{
-//			field.SetValue(copy, field.GetValue(original));
-//		}
-//		return copy;
-//	}
-
 	IEnumerator waitToStart()
 	{
 		bool started = false;
@@ -126,13 +113,12 @@ public class manager : MonoBehaviour
 			}
 			yield return null;
 		}
+		Debug.Log ("PLOP");
 		for (int i = 0; i < saveList.Count; i++)
 		{
 			if (saveList [i].tag == "articulations")
 			{
 				articulations tmpArt = saveList [i].GetComponent<articulations> ();
-				Destroy(saveList [list.IndexOf (list [i].GetComponent<articulations> ().controllers [0].gameObject)].GetComponent<HingeJoint>());
-				Destroy(saveList [list.IndexOf (list [i].GetComponent<articulations> ().controllers [1].gameObject)].GetComponent<HingeJoint>());
 				if (first)
 				{
 					tmpArt.addRigidBody (saveList [list.IndexOf (list [i].GetComponent<articulations> ().controllers [1].gameObject)].GetComponent<musclesController> (),
@@ -148,6 +134,7 @@ public class manager : MonoBehaviour
 			}
 			yield return null;
 		}
+		Debug.Log ("touss touss");
 		StartCoroutine (wait());
 
 	}
