@@ -61,7 +61,7 @@ public class UImanager : MonoBehaviour
 		if (!manager.isPlaying)
 		{
 			playmodeeffects.SetActive (false);
-
+			addBones.SetActive (true);
 			delete.SetActive (true);
 			if (manager.searchTwoBones ())
 				addMuscle.SetActive (true);

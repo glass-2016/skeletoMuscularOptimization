@@ -167,6 +167,8 @@ public class manager : MonoBehaviour
 	{
 		currentObject = null;
 		changeFocus ();
+		deselect ();
+
 		saveList = new List<GameObject> ();
 
 		for (int i = 0; i < list.Count; i++) 
@@ -213,7 +215,6 @@ public class manager : MonoBehaviour
 		}
 		StartCoroutine (waitToStart());
 		isPlaying = true;
-		deselect ();
 		for (int i = 0; i < list.Count; i++)
 		{
 			if (list [i].tag == "bones")
@@ -263,6 +264,8 @@ public class manager : MonoBehaviour
 		{
 			list [i].SetActive (true);
 		}
+		currentObject = null;
+		changeFocus ();
 	}
 	public void updateScale()
 	{
