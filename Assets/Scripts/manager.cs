@@ -113,7 +113,6 @@ public class manager : MonoBehaviour
 			}
 			yield return null;
 		}
-		Debug.Log ("PLOP");
 		for (int i = 0; i < saveList.Count; i++)
 		{
 			if (saveList [i].tag == "articulations")
@@ -134,7 +133,6 @@ public class manager : MonoBehaviour
 			}
 			yield return null;
 		}
-		Debug.Log ("touss touss");
 		StartCoroutine (wait());
 
 	}
