@@ -64,6 +64,7 @@ public class manager : MonoBehaviour
 	public bool isManipulating = false;
 	public collectibles collectiblePrefab;
 	public MeshFilter terrain;
+	private bool first = true;
 
 	void Start ()
 	{
@@ -86,17 +87,79 @@ public class manager : MonoBehaviour
 		SceneManager.LoadScene (SceneManager.GetActiveScene().buildIndex);
 	}
 
-	HingeJoint CopyComponent(HingeJoint original, GameObject destination)
+//	HingeJoint CopyComponent(HingeJoint original, GameObject destination)
+//	{
+//		System.Type type = original.GetType();
+//		HingeJoint copy = destination.AddComponent<HingeJoint>();
+//		// Copied fields can be restricted with BindingFlags
+//		System.Reflection.FieldInfo[] fields = type.GetFields(); 
+//		foreach (System.Reflection.FieldInfo field in fields)
+//		{
+//			field.SetValue(copy, field.GetValue(original));
+//		}
+//		return copy;
+//	}
+
+	IEnumerator waitToStart()
 	{
-		System.Type type = original.GetType();
-		HingeJoint copy = destination.AddComponent<HingeJoint>();
-		// Copied fields can be restricted with BindingFlags
-		System.Reflection.FieldInfo[] fields = type.GetFields(); 
-		foreach (System.Reflection.FieldInfo field in fields)
+		bool started = false;
+		while (!started)
 		{
-			field.SetValue(copy, field.GetValue(original));
+			started = true;
+			for (int i = 0; i < saveList.Count; i++)
+			{
+				if (saveList [i].tag == "articulations")
+				{
+					if (!saveList [i].GetComponent<articulations> ().started)
+						started = false;
+				}
+				else if (saveList[i].tag == "bones")
+				{
+					if (!saveList [i].GetComponent<musclesController> ().started)
+						started = false;
+				}
+				else if (saveList[i].tag == "muscles")
+				{
+					if (!saveList [i].GetComponent<muscle> ().started)
+						started = false;
+				}
+			}
+			yield return null;
 		}
-		return copy;
+		for (int i = 0; i < saveList.Count; i++)
+		{
+			if (saveList [i].tag == "articulations")
+			{
+				articulations tmpArt = saveList [i].GetComponent<articulations> ();
+				if (first)
+				{
+					tmpArt.addRigidBody (saveList [list.IndexOf (list [i].GetComponent<articulations> ().controllers [1].gameObject)].GetComponent<musclesController> (),
+						saveList [list.IndexOf (list [i].GetComponent<articulations> ().controllers [0].gameObject)].GetComponent<musclesController> (), tmpArt.index);
+					first = false;
+				}
+				else
+					tmpArt.addRigidBody (saveList [list.IndexOf (list [i].GetComponent<articulations> ().controllers [0].gameObject)].GetComponent<musclesController> (),
+						saveList [list.IndexOf (list [i].GetComponent<articulations> ().controllers [1].gameObject)].GetComponent<musclesController> (), tmpArt.index);
+				
+				if (list[i].GetComponent<articulations>().axisLimits != Vector2.zero)
+					tmpArt.setLimitsAxis (list[i].GetComponent<articulations>().axisLimits);
+			}
+			yield return null;
+		}
+		StartCoroutine (wait());
+
+	}
+
+	IEnumerator wait()
+	{
+		yield return new WaitForFixedUpdate ();
+		for (int i = 0; i < saveList.Count; i++)
+		{
+			if (saveList [i].tag == "bones")
+				saveList [i].GetComponent<musclesController> ().GetComponent<Rigidbody> ().WakeUp ();
+			saveList [i].SetActive (false);
+		}
+
 	}
 
 	// play mode
@@ -104,7 +167,8 @@ public class manager : MonoBehaviour
 	{
 		currentObject = null;
 		changeFocus ();
-		saveList.Clear ();
+		saveList = new List<GameObject> ();
+
 		for (int i = 0; i < list.Count; i++) 
 		{
 			saveList.Add (Instantiate (list [i]));
@@ -118,47 +182,36 @@ public class manager : MonoBehaviour
 				Dictionary<int, articulations> tmpListArticulations = new Dictionary<int, articulations> ();
 				foreach (KeyValuePair<int, articulations> tmpArticulations in tmpController.listArticulations)
 				{
-					Debug.Log ("PSSST");
 					articulations tmpArt = saveList[list.IndexOf(tmpController.listArticulations[tmpArticulations.Key].gameObject)].GetComponent<articulations>();
 					Dictionary<int, muscle> tmpMuscles = new Dictionary<int, muscle> ();
-					if (tmpArt)
+					foreach (KeyValuePair<int, muscle> tmpMuscle in tmpArticulations.Value.muscles)
 					{
-						foreach (KeyValuePair<int, muscle> tmpMuscle in tmpArticulations.Value.muscles)
-						{
-							Debug.Log ("HEHO");
-							muscle tmp = saveList [list.IndexOf (tmpArticulations.Value.muscles [tmpMuscle.Key].gameObject)].GetComponent<muscle> ();
-							tmp.force = tmpMuscle.Value.force;
-							tmp.key1 = tmpMuscle.Value.key1;
-							tmp.angularDirection = tmpMuscle.Value.angularDirection;
-							tmp.currentArticulation = saveList [list.IndexOf (tmpArticulations.Value.gameObject)].GetComponent<articulations> ();
-							tmp.anchors = new List<GameObject> ();
-							tmp.anchors.Add (saveList [list.IndexOf (tmpArticulations.Value.controllers [0].gameObject)]);
-							tmp.anchors.Add (saveList [list.IndexOf (tmpArticulations.Value.controllers [1].gameObject)]);
-							tmp.attachPoints = tmpMuscle.Value.attachPoints;
-							tmp.offsets = tmpMuscle.Value.offsets;
-							tmp.position = tmpMuscle.Value.position;
-							tmp.normals = tmpMuscle.Value.normals;
-							tmp.index = tmpMuscle.Value.index;
-							tmpMuscles.Add (tmpMuscle.Key, tmp);
-						}
+						muscle tmp = saveList[list.IndexOf(tmpArticulations.Value.muscles[tmpMuscle.Key].gameObject)].GetComponent<muscle>();
+						tmp.force = tmpMuscle.Value.force;
+						tmp.key1 = tmpMuscle.Value.key1;
+						tmp.angularDirection = tmpMuscle.Value.angularDirection;
+						tmp.currentArticulation = saveList[list.IndexOf(tmpArticulations.Value.gameObject)].GetComponent<articulations>();
+						tmp.anchors = new List<GameObject> ();
+						tmp.anchors.Add (saveList[list.IndexOf(tmpArticulations.Value.controllers[0].gameObject)]);
+						tmp.anchors.Add (saveList[list.IndexOf(tmpArticulations.Value.controllers[1].gameObject)]);
+						tmp.attachPoints = tmpMuscle.Value.attachPoints;
+						tmp.offsets = tmpMuscle.Value.offsets;
+						tmp.position = tmpMuscle.Value.position;
+						tmp.normals = tmpMuscle.Value.normals;
+						tmp.index = tmpMuscle.Value.index;
+						tmpMuscles.Add (tmpMuscle.Key, tmp);
 					}
 					tmpArt.muscles = tmpMuscles;
 					tmpArt.muscleIndex = tmpArticulations.Value.muscleIndex;
 					tmpArt.index = tmpArticulations.Value.index;
-					tmpArt.addRigidBody (saveList [list.IndexOf (tmpArticulations.Value.controllers [1].gameObject)].GetComponent<musclesController> (),
-						saveList [list.IndexOf (tmpArticulations.Value.controllers [0].gameObject)].GetComponent<musclesController> (), tmpArt.index);
-//					tmpArt.joint = CopyComponent (tmpArticulations.Value.joint, saveList [list.IndexOf (tmpArticulations.Value.controllers[1].gameObject)]);
-//					tmpArt.joint = tmpArt.controllers[0].GetComponent<HingeJoint>();
-//					tmpArt.joint.connectedBody = saveList [list.IndexOf (tmpArticulations.Value.controllers [0].gameObject)].GetComponent<Rigidbody> ();
-					if (tmpArticulations.Value.axisLimits != Vector2.zero)
-						tmpArt.setLimitsAxis (tmpArticulations.Value.axisLimits);
 					tmpListArticulations.Add (tmpArticulations.Key, tmpArt);
+
 				}
+
 				tmpMuscleController.listArticulations = tmpListArticulations;
 			}
-			saveList [i].SetActive (false);
 		}
-
+		StartCoroutine (waitToStart());
 		isPlaying = true;
 		deselect ();
 		for (int i = 0; i < list.Count; i++)
@@ -205,7 +258,7 @@ public class manager : MonoBehaviour
 			DestroyObject(list[i]);
 		}
 		list.Clear ();
-		list = new List<GameObject> (saveList);			
+		list = saveList;			
 		for (int i = 0; i < list.Count; i++) 
 		{
 			list [i].SetActive (true);
@@ -290,7 +343,7 @@ public class manager : MonoBehaviour
 	{
 		if (currentObject)
 		{
-			float tmpX, tmpY, tmpZ = 0.0f;
+			float tmpX, tmpY = 0.0f;
 			float.TryParse(scaleX.text, out tmpX);
 			float.TryParse(scaleY.text, out tmpY);
 			currentObject.GetComponent<articulations> ().setLimitsAxis (new Vector2(tmpX, tmpY));

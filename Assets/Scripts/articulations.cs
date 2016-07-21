@@ -14,12 +14,18 @@ public class articulations : MonoBehaviour {
 	public bool colliding = false;
 	public float targetVelocity = 0;
 	public Vector3 direction = Vector3.one;
+	public bool started = false;
 
 	// Use this for initialization
 	void Awake () 
 	{
 		muscles = new Dictionary<int, muscle> ();
 		controllers = new musclesController[2];
+	}
+
+	void Start ()
+	{
+		started = true;
 	}
 
 	public void setLimitsAxis(Vector2 limits)
