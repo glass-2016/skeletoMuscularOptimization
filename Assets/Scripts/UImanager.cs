@@ -117,7 +117,7 @@ public class UImanager : MonoBehaviour
 				articulationparameters.SetActive (false);
 				break;
 
-			/*case "articulation":
+			case "articulation":
 				setparent.SetActive (false);
 				resetparent.SetActive (false);
 				delete.SetActive (false);
@@ -126,7 +126,7 @@ public class UImanager : MonoBehaviour
 				bonerotation.SetActive (false);
 				muscleparameters.SetActive (false);
 				articulationparameters.SetActive (true);
-				break; */
+				break; 
 				
 
 			case "none":

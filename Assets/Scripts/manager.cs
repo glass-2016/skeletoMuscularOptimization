@@ -52,7 +52,6 @@ public class manager : MonoBehaviour
 //	public InputField key2;
 	//articulations
 	public InputField rangeX;
-	public InputField rangeY;
 	public InputField rangeZ;
 	public Text counter;
 	public int maxCollectible = 10;
@@ -334,8 +333,8 @@ public class manager : MonoBehaviour
 		if (currentObject)
 		{
 			float tmpX, tmpY = 0.0f;
-			float.TryParse(scaleX.text, out tmpX);
-			float.TryParse(scaleY.text, out tmpY);
+			float.TryParse(rangeX.text, out tmpX);
+			float.TryParse(rangeZ.text, out tmpY);
 			currentObject.GetComponent<articulations> ().setLimitsAxis (new Vector2(tmpX, tmpY));
 		}
 	}
@@ -487,7 +486,6 @@ public class manager : MonoBehaviour
 		key1.text = "0.0";
 //		key2.text = "0.0";
 		rangeX.text = "0.0";
-		rangeY.text = "0.0";
 		rangeZ.text = "0.0";
 	}
 
@@ -502,6 +500,11 @@ public class manager : MonoBehaviour
 		scaleX.text = currentObject.transform.localScale.x.ToString ();
 		scaleY.text = currentObject.transform.localScale.y.ToString ();
 		scaleZ.text = currentObject.transform.localScale.z.ToString ();
+		if (currentObject && currentObject.tag == "articulations")
+		{
+			rangeX.text = currentObject.GetComponent<articulations> ().axisLimits.x.ToString ();
+			rangeZ.text = currentObject.GetComponent<articulations> ().axisLimits.y.ToString ();
+		}
 
 		if (currentObject.tag == "muscles") 
 		{
