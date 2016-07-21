@@ -624,7 +624,7 @@ public class manager : MonoBehaviour
 					changeFocus ();
 					tmpMuscle.setAnchor (currentObject);
 				} 
-				else if (hit.collider.tag != "manipulator")
+				else if (!searchParent && !firstAttach && !secondAttach && hit.collider.tag != "manipulator")
 				{
 					currentObject = hit.collider.gameObject;
 					changeFocus ();
