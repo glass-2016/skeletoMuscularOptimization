@@ -18,6 +18,7 @@ public class muscle : MonoBehaviour
 	public Vector3[] normals;
 	public int index = 0;
 	public bool started = false;
+	public bool onPlay = false;
 
 	// Use this for initialization
 	void Awake () 
@@ -80,7 +81,8 @@ public class muscle : MonoBehaviour
 		transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, Vector3.Distance(attachPoints[0], attachPoints[1]) * 1.25f);
 		// define direction forces
 		updateAngularDirection();
-		currentArticulation.addDirection (angularDirection);
+		if (onPlay)
+			currentArticulation.addDirection (angularDirection);
 	}
 
 	// Update is called once per frame
@@ -109,7 +111,7 @@ public class muscle : MonoBehaviour
 				changePosition (i, anchors [i].transform.position);
 		}
 
-		if (Input.GetKey (kc1))
+		if (onPlay && Input.GetKey (kc1))
 		{
 			currentArticulation.setForce (force, this);
 		}

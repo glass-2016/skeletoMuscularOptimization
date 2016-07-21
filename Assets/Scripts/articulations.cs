@@ -48,7 +48,7 @@ public class articulations : MonoBehaviour {
 	public void addDirection(Vector3 dir)
 	{
 		direction = new Vector3(Mathf.Max(direction.x - Mathf.Abs(dir.x), 0.0f), Mathf.Max(direction.y - Mathf.Abs(dir.y), 0.0f), Mathf.Max(direction.z - Mathf.Abs(dir.z), 0.0f));
-//		direction -= controllers [0].transform.right;
+		direction -= controllers [0].transform.right;
 		RigidbodyConstraints tmpConstraints = joint.connectedBody.constraints;
 		if (direction.x >= 0.75)
 			tmpConstraints |= RigidbodyConstraints.FreezeRotationX;
@@ -101,6 +101,7 @@ public class articulations : MonoBehaviour {
 		tmpMotor.targetVelocity = targetVelocity;
 		joint.motor = tmpMotor;
 		joint.axis = mscle.angularDirection;
+		Debug.Log (mscle.angularDirection);
 		StartCoroutine("muscleDeactivate");
 	}
 

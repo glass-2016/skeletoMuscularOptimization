@@ -62,7 +62,6 @@ public class manager : MonoBehaviour
 	public bool isManipulating = false;
 	public collectibles collectiblePrefab;
 	public MeshFilter terrain;
-	private bool first = true;
 
 	void Start ()
 	{
@@ -74,76 +73,12 @@ public class manager : MonoBehaviour
 		nbCollectible = maxCollectible;
 		terrain.mesh = ProceduralToolkit.Examples.TerrainMesh.TerrainDraft (100, 100, Random.Range (0, 50), Random.Range (0, 50), 1000).ToMesh();
 		terrain.gameObject.GetComponent<MeshCollider> ().sharedMesh = terrain.mesh;
-
 		AudioListener.volume = PlayerPrefs.GetInt ("soundVolume");
-
 	}
 
 	public void reset()
 	{
 		SceneManager.LoadScene (SceneManager.GetActiveScene().buildIndex);
-	}
-
-	IEnumerator waitToStart()
-	{
-		bool started = false;
-		while (!started)
-		{
-			started = true;
-			for (int i = 0; i < saveList.Count; i++)
-			{
-				if (saveList [i].tag == "articulations")
-				{
-					if (!saveList [i].GetComponent<articulations> ().started)
-						started = false;
-				}
-				else if (saveList[i].tag == "bones")
-				{
-					if (!saveList [i].GetComponent<musclesController> ().started)
-						started = false;
-				}
-				else if (saveList[i].tag == "muscles")
-				{
-					if (!saveList [i].GetComponent<muscle> ().started)
-						started = false;
-				}
-			}
-			yield return null;
-		}
-		for (int i = 0; i < saveList.Count; i++)
-		{
-			if (saveList [i].tag == "articulations")
-			{
-				articulations tmpArt = saveList [i].GetComponent<articulations> ();
-				if (first)
-				{
-					tmpArt.addRigidBody (saveList [list.IndexOf (list [i].GetComponent<articulations> ().controllers [1].gameObject)].GetComponent<musclesController> (),
-						saveList [list.IndexOf (list [i].GetComponent<articulations> ().controllers [0].gameObject)].GetComponent<musclesController> (), tmpArt.index);
-					first = false;
-				}
-				else
-					tmpArt.addRigidBody (saveList [list.IndexOf (list [i].GetComponent<articulations> ().controllers [0].gameObject)].GetComponent<musclesController> (),
-						saveList [list.IndexOf (list [i].GetComponent<articulations> ().controllers [1].gameObject)].GetComponent<musclesController> (), tmpArt.index);
-				
-				if (list[i].GetComponent<articulations>().axisLimits != Vector2.zero)
-					tmpArt.setLimitsAxis (list[i].GetComponent<articulations>().axisLimits);
-			}
-			yield return null;
-		}
-		StartCoroutine (wait());
-
-	}
-
-	IEnumerator wait()
-	{
-		yield return new WaitForFixedUpdate ();
-		for (int i = 0; i < saveList.Count; i++)
-		{
-			if (saveList [i].tag == "bones")
-				saveList [i].GetComponent<musclesController> ().GetComponent<Rigidbody> ().WakeUp ();
-			saveList [i].SetActive (false);
-		}
-
 	}
 
 	// play mode
@@ -175,29 +110,37 @@ public class manager : MonoBehaviour
 						muscle tmp = saveList[list.IndexOf(tmpArticulations.Value.muscles[tmpMuscle.Key].gameObject)].GetComponent<muscle>();
 						tmp.force = tmpMuscle.Value.force;
 						tmp.key1 = tmpMuscle.Value.key1;
-						tmp.angularDirection = tmpMuscle.Value.angularDirection;
 						tmp.currentArticulation = saveList[list.IndexOf(tmpArticulations.Value.gameObject)].GetComponent<articulations>();
 						tmp.anchors = new List<GameObject> ();
-						tmp.anchors.Add (saveList[list.IndexOf(tmpArticulations.Value.controllers[0].gameObject)]);
-						tmp.anchors.Add (saveList[list.IndexOf(tmpArticulations.Value.controllers[1].gameObject)]);
-						tmp.attachPoints = tmpMuscle.Value.attachPoints;
-						tmp.offsets = tmpMuscle.Value.offsets;
-						tmp.position = tmpMuscle.Value.position;
-						tmp.normals = tmpMuscle.Value.normals;
-						tmp.index = tmpMuscle.Value.index;
+						tmp.setAnchor (saveList[list.IndexOf(tmpArticulations.Value.controllers[0].gameObject)]);
+						tmp.setAnchor (saveList[list.IndexOf(tmpArticulations.Value.controllers[1].gameObject)]);
+						tmp.setLimits (tmpMuscle.Value.attachPoints, tmpMuscle.Value.attachPoints [0] + tmpMuscle.Value.offsets [0],
+							tmpMuscle.Value.attachPoints [1] + tmpMuscle.Value.offsets [1], tmpMuscle.Value.normals [0], tmpMuscle.Value.normals [1]);
+						tmp.setIndex(tmpMuscle.Value.index);
 						tmpMuscles.Add (tmpMuscle.Key, tmp);
 					}
 					tmpArt.muscles = tmpMuscles;
 					tmpArt.muscleIndex = tmpArticulations.Value.muscleIndex;
 					tmpArt.index = tmpArticulations.Value.index;
 					tmpListArticulations.Add (tmpArticulations.Key, tmpArt);
-
 				}
-
 				tmpMuscleController.listArticulations = tmpListArticulations;
 			}
 		}
-		StartCoroutine (waitToStart());
+		for (int i = 0; i < saveList.Count; i++)
+		{
+			if (saveList [i].tag == "articulations")
+			{
+				articulations tmpArt = saveList [i].GetComponent<articulations> ();
+				Destroy(saveList [list.IndexOf (list [i].GetComponent<articulations> ().controllers [0].gameObject)].GetComponent<HingeJoint> ());
+				tmpArt.addRigidBody (saveList [list.IndexOf (list [i].GetComponent<articulations> ().controllers [0].gameObject)].GetComponent<musclesController> (),
+					saveList [list.IndexOf (list [i].GetComponent<articulations> ().controllers [1].gameObject)].GetComponent<musclesController> (), tmpArt.index);
+				tmpArt.setLimitsAxis (list[i].GetComponent<articulations>().axisLimits);
+				foreach (KeyValuePair<int, muscle> tmpMuscle in tmpArt.muscles)
+					tmpArt.addDirection (tmpMuscle.Value.angularDirection);
+			}
+			saveList [i].transform.position -= new Vector3 (1000, 1000, 1000);
+		}
 		isPlaying = true;
 		for (int i = 0; i < list.Count; i++)
 		{
@@ -220,6 +163,8 @@ public class manager : MonoBehaviour
 				if (list[i].tag == "bones")
 					list [i].GetComponent<Collider> ().isTrigger = false;
 			}
+			else if (list [i].tag == "muscles")
+				list [i].GetComponent<muscle> ().onPlay = true;
 		}
 
 		for (int i = 0; i < maxCollectible; i++)
@@ -246,7 +191,7 @@ public class manager : MonoBehaviour
 		list = saveList;			
 		for (int i = 0; i < list.Count; i++) 
 		{
-			list [i].SetActive (true);
+			list [i].transform.position += new Vector3 (1000, 1000, 1000);
 		}
 		currentObject = null;
 		changeFocus ();
@@ -408,12 +353,14 @@ public class manager : MonoBehaviour
 		for (int i = 0; i < list.Count; i++)
 		{
 			if (list [i].tag == "bones")
+			{
 				list [i].GetComponent<musclesController> ().colliding = false;
+				list [i].GetComponent<bones> ().isSelected = false;
+			}
 			else if (list [i].tag == "articulations")
 				list [i].GetComponent<articulations> ().colliding = false;
-			if (list [i].tag == "bones")
-				list [i].GetComponent<bones> ().isSelected = false;
-			list [i].GetComponent<Renderer> ().material.color = Vector4.one;
+			if (list[i].tag != "muscles")
+				list [i].GetComponent<Renderer> ().material.color = Vector4.one;
 		}
 	}
 
