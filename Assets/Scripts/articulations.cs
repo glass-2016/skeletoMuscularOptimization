@@ -30,16 +30,19 @@ public class articulations : MonoBehaviour {
 
 	public void setLimitsAxis(Vector2 limits)
 	{
+		axisLimits = limits;
 		if (limits == Vector2.zero)
 			joint.useLimits = false;
-		axisLimits = limits;
-		JointLimits tmpLimits = joint.limits;
-		tmpLimits.min = axisLimits.x;
-		tmpLimits.max = axisLimits.y;
-		tmpLimits.bounciness = 0;
-		tmpLimits.contactDistance = 100;
-		joint.limits = tmpLimits;
-		joint.useLimits = true;
+		else
+		{
+			JointLimits tmpLimits = joint.limits;
+			tmpLimits.min = axisLimits.x;
+			tmpLimits.max = axisLimits.y;
+			tmpLimits.bounciness = 0;
+			tmpLimits.contactDistance = 100;
+			joint.limits = tmpLimits;
+			joint.useLimits = true;
+		}
 	}
 
 	public void addDirection(Vector3 dir)
