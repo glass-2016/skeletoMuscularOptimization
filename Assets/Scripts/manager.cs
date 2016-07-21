@@ -590,7 +590,7 @@ public class manager : MonoBehaviour
 					currentObject.transform.parent = hit.collider.gameObject.transform;
 					searchParent = false;
 				} 
-				else if (firstAttach)
+				else if (firstAttach && hit.collider.tag == "bones")
 				{
 					// add first attach to object clicked
 					attaches [0] = hit.point;
@@ -602,7 +602,7 @@ public class manager : MonoBehaviour
 					currentObject = hit.collider.gameObject;
 					changeFocus ();
 				} 
-				else if (secondAttach && currentObject != hit.collider.gameObject)
+				else if (secondAttach && currentObject != hit.collider.gameObject && hit.collider.tag == "bones")
 				{
 					// add second attach to object clicked and add muscle
 					attaches [1] = hit.point;
