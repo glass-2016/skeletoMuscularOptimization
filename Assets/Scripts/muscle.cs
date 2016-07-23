@@ -9,24 +9,25 @@ public class muscle : MonoBehaviour
 	public float force = 10f;
 	public string key1 = "A";
 	private KeyCode kc1;
-	public List<GameObject> anchors;
+	public GameObject[] anchors;
 	public articulations currentArticulation;
 	public Vector3[] attachPoints;
 	// keep positions on bones models
 	public Vector3[] offsets;
 	public Vector3[] position;
 	public Vector3[] normals;
-	public int index = 0;
+	public int indexMuscle = 0;
 	public bool started = false;
 	public bool onPlay = false;
 
 	// Use this for initialization
 	void Awake () 
 	{
-		anchors = new List<GameObject> ();
+		anchors = new GameObject[2];
 		position = new Vector3[2];
 		offsets = new Vector3[2];
 		normals = new Vector3[2];
+		attachPoints = new Vector3[2];
 	}
 
 	void Start()
@@ -35,10 +36,10 @@ public class muscle : MonoBehaviour
 	}
 
 	// add bone as muscle anchor
-	public void setAnchor(GameObject current)
+	public void setAnchor(GameObject current, int index)
 	{
-		position [anchors.Count] = current.transform.position;
-		anchors.Add(current);
+		position [index] = current.transform.position;
+		anchors[index] = current;
 	}
 
 	public void setArticulation(articulations current)
@@ -50,16 +51,19 @@ public class muscle : MonoBehaviour
 	// update position with bone movement
 	void changePosition(int index, Vector3 value)
 	{
+		Debug.Log (attachPoints[0]);
+		Debug.Log (attachPoints[1]);
+		Debug.Log ("index = " + index);
 		position [index] = value;
 		attachPoints [index] = value + offsets[index];
-		transform.position = attachPoints[1] + (attachPoints [0] - attachPoints [1]) / 2.0f;
+		transform.position = Vector3.Lerp (attachPoints[0], attachPoints[1], 0.5f);
 		transform.rotation = Quaternion.FromToRotation(Vector3.forward, attachPoints[0] - attachPoints[1]);
 		transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, Vector3.Distance(attachPoints[0], attachPoints[1]) * 1.25f);
 	}
 
 	public void setIndex(int i)
 	{
-		index = i;
+		indexMuscle = i;
 	}
 
 	void updateAngularDirection()
@@ -72,12 +76,13 @@ public class muscle : MonoBehaviour
 	// configure prefabs to get attach to bones
 	public void setLimits(Vector3[] attaches, Vector3 pos1, Vector3 pos2, Vector3 norm1, Vector3 norm2)
 	{
-		attachPoints = attaches;
+		attachPoints[0] = attaches[0];
+		attachPoints[1] = attaches[1];
 		offsets [0] = attaches [0] - pos1;
 		offsets [1] = attaches [1] - pos2;
 		normals [0] = norm1;
 		normals [1] = norm2;
-		transform.position = attaches[1] + ((attaches [0] - attaches [1]) / 2.0f);
+		transform.position = Vector3.Lerp (attachPoints[0], attachPoints[1], 0.5f);
 		transform.rotation = Quaternion.FromToRotation(Vector3.forward, attachPoints[0] - attachPoints[1]);
 		transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, Vector3.Distance(attachPoints[0], attachPoints[1]) * 1.25f);
 		// define direction forces
@@ -105,11 +110,11 @@ public class muscle : MonoBehaviour
 			
 		kc1 = (KeyCode)System.Enum.Parse (typeof(KeyCode), key1);
 
-		for (int i = 0; i < anchors.Count; i++)
+		for (int i = 0; i < 2; i++)
 		{
 			// changes position when bones position changes
 			if (position [i] != anchors [i].transform.position)
-				changePosition (i, anchors [i].transform.position);
+				changePosition ((i + 1) % 2, anchors [i].transform.position);
 		}
 
 		if (onPlay && Input.GetKey (kc1))

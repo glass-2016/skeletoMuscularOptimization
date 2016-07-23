@@ -41,7 +41,7 @@ public class articulations : MonoBehaviour {
 			tmpLimits.bounciness = 0;
 			tmpLimits.contactDistance = 100;
 			joint.limits = tmpLimits;
-			joint.useLimits = true;
+//			joint.useLimits = true;
 		}
 	}
 

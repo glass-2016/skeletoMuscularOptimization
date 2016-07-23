@@ -54,6 +54,7 @@ public class manager : MonoBehaviour
 	public InputField rangeX;
 	public InputField rangeZ;
 	public int maxCollectible = 10;
+	private GameObject oldAttach;
 	public int nbCollectible;
 	private List<collectibles> listCollectibles; 
 	// those are here to be read by other scripts
@@ -123,20 +124,19 @@ public class manager : MonoBehaviour
 						tmp.force = tmpMuscle.Value.force;
 						tmp.key1 = tmpMuscle.Value.key1;
 						tmp.currentArticulation = saveList[list.IndexOf(tmpArticulations.Value.gameObject)].GetComponent<articulations>();
-						tmp.anchors = new List<GameObject> ();
-						tmp.setAnchor (saveList[list.IndexOf(tmpArticulations.Value.controllers[0].gameObject)]);
-						tmp.setAnchor (saveList[list.IndexOf(tmpArticulations.Value.controllers[1].gameObject)]);
+						tmp.setAnchor (saveList[list.IndexOf(tmpArticulations.Value.controllers[0].gameObject)], 0);
+						tmp.setAnchor (saveList[list.IndexOf(tmpArticulations.Value.controllers[1].gameObject)], 1);
 						tmp.angularDirection = tmpMuscle.Value.angularDirection;
 
 						tmp.attachPoints = tmpMuscle.Value.attachPoints;
 						tmp.offsets = tmpMuscle.Value.offsets;
 						tmp.position = tmpMuscle.Value.position;
 						tmp.normals = tmpMuscle.Value.normals;
-						tmp.index = tmpMuscle.Value.index;
+						tmp.indexMuscle = tmpMuscle.Value.indexMuscle;
 
 //						tmp.setLimits (tmpMuscle.Value.attachPoints, tmpMuscle.Value.attachPoints [0] + tmpMuscle.Value.offsets [0],
 //							tmpMuscle.Value.attachPoints [1] + tmpMuscle.Value.offsets [1], tmpMuscle.Value.normals [0], tmpMuscle.Value.normals [1]);
-						tmp.setIndex(tmpMuscle.Value.index);
+						tmp.setIndex(tmpMuscle.Value.indexMuscle);
 						tmpMuscles.Add (tmpMuscle.Key, tmp);
 					}
 					tmpArt.muscles = tmpMuscles;
@@ -345,7 +345,7 @@ public class manager : MonoBehaviour
 		muscle tmpMuscle = currentObject.GetComponent<muscle> ();
 		list.Remove (currentObject);
 		Destroy (tmpMuscle);
-		tmpMuscle.currentArticulation.muscles.Remove (tmpMuscle.index);
+		tmpMuscle.currentArticulation.muscles.Remove (tmpMuscle.indexMuscle);
 		if (tmpMuscle.currentArticulation.muscles.Count == 0)
 		{
 			Destroy (tmpMuscle.gameObject);
@@ -607,6 +607,7 @@ public class manager : MonoBehaviour
 					muscleFeedback.SetPosition (1, attaches [0] + Vector3.up / 4.0f);
 					secondAttach = true;
 					currentObject = hit.collider.gameObject;
+					oldAttach = currentObject;
 					changeFocus ();
 				} 
 				else if (secondAttach && currentObject != hit.collider.gameObject && hit.collider.tag == "bones")
@@ -617,8 +618,8 @@ public class manager : MonoBehaviour
 					secondAttach = false;
 					muscle tmpMuscle = Instantiate (musclePrefab, attaches [0] + (attaches [1] - attaches [0]), Quaternion.identity) as muscle;
 					list.Add (tmpMuscle.gameObject);
-					musclesController tmpController = currentObject.GetComponent<musclesController> ();
-					tmpMuscle.setAnchor (tmpController.gameObject);
+					musclesController tmpController = oldAttach.GetComponent<musclesController> ();
+					tmpMuscle.setAnchor (tmpController.gameObject, 0);
 					currentObject = hit.collider.gameObject;
 					musclesController otherController = hit.collider.gameObject.GetComponent<musclesController> ();
 					articulations currentArticulations = tmpController.addAnchor (tmpMuscle, otherController, globalIndex);
@@ -627,9 +628,9 @@ public class manager : MonoBehaviour
 					otherController.addArticulation (currentArticulations);
 					globalIndex = currentArticulations.index + 1;
 					tmpMuscle.setArticulation (currentArticulations);
-					tmpMuscle.setLimits (attaches, tmpController.gameObject.transform.position, currentObject.transform.position, attachesNorm[0], attachesNorm[1]);
+					tmpMuscle.setLimits (attaches, tmpController.gameObject.transform.position, hit.collider.gameObject.transform.position, attachesNorm[0], attachesNorm[1]);
 					changeFocus ();
-					tmpMuscle.setAnchor (currentObject);
+					tmpMuscle.setAnchor (hit.collider.gameObject, 1);
 				} 
 				else if (!searchParent && !firstAttach && !secondAttach && hit.collider.tag != "manipulator")
 				{
