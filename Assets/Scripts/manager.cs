@@ -126,16 +126,8 @@ public class manager : MonoBehaviour
 						tmp.currentArticulation = saveList[list.IndexOf(tmpArticulations.Value.gameObject)].GetComponent<articulations>();
 						tmp.setAnchor (saveList[list.IndexOf(tmpArticulations.Value.controllers[0].gameObject)], 0);
 						tmp.setAnchor (saveList[list.IndexOf(tmpArticulations.Value.controllers[1].gameObject)], 1);
-						tmp.angularDirection = tmpMuscle.Value.angularDirection;
-
-						tmp.attachPoints = tmpMuscle.Value.attachPoints;
-						tmp.offsets = tmpMuscle.Value.offsets;
-						tmp.position = tmpMuscle.Value.position;
-						tmp.normals = tmpMuscle.Value.normals;
-						tmp.indexMuscle = tmpMuscle.Value.indexMuscle;
-
-//						tmp.setLimits (tmpMuscle.Value.attachPoints, tmpMuscle.Value.attachPoints [0] + tmpMuscle.Value.offsets [0],
-//							tmpMuscle.Value.attachPoints [1] + tmpMuscle.Value.offsets [1], tmpMuscle.Value.normals [0], tmpMuscle.Value.normals [1]);
+						tmp.setLimits (tmpMuscle.Value.attachPoints, tmpMuscle.Value.attachPoints [0] + tmpMuscle.Value.offsets [0],
+							tmpMuscle.Value.attachPoints [1] + tmpMuscle.Value.offsets [1], tmpMuscle.Value.normals [0], tmpMuscle.Value.normals [1]);
 						tmp.setIndex(tmpMuscle.Value.indexMuscle);
 						tmpMuscles.Add (tmpMuscle.Key, tmp);
 					}
