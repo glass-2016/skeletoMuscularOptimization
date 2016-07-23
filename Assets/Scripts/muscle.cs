@@ -51,7 +51,7 @@ public class muscle : MonoBehaviour
 	void changePosition(int index, Vector3 value)
 	{
 		position [index] = value;
-		attachPoints [index] += value - attachPoints[index] + offsets[index];
+		attachPoints [index] = value + offsets[index];
 		transform.position = attachPoints[1] + (attachPoints [0] - attachPoints [1]) / 2.0f;
 		transform.rotation = Quaternion.FromToRotation(Vector3.forward, attachPoints[0] - attachPoints[1]);
 		transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, Vector3.Distance(attachPoints[0], attachPoints[1]) * 1.25f);
