@@ -8,6 +8,7 @@ public class musclesController : MonoBehaviour
 	// anchor prefab for joint listArticulations only for debug
 	public articulations anchorPrefab;
 	public Dictionary<int, articulations> listArticulations;
+	private Renderer render;
 	public bool colliding = false;
 	private Rigidbody rb;
 	public Vector3 size;
@@ -19,6 +20,7 @@ public class musclesController : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
+		render = GetComponent<Renderer> ();
 		size = GetComponent<Renderer> ().bounds.extents;
 		rb = GetComponent<Rigidbody> ();
 		rb.maxAngularVelocity = 4;
@@ -65,30 +67,12 @@ public class musclesController : MonoBehaviour
 			rb.velocity = rb.velocity.normalized * 4;
 	}
 
-	void OnCollisionStay(Collision other)
-	{
-		colliding = true;
-	}
-
-	void OnCollisionExit(Collision other)
-	{
-		colliding = false;
-	}
-
-	void OnTriggerEnter(Collider other)
-	{
-		if (other.tag == "bones" || other.tag == "articulations")
-		{
-//						Debug.Log ("Some bones collision!!!");
-			colliding = true;
-		}
-	}
-
 	void OnTriggerStay(Collider other)
 	{
-		if (other.tag == "bones" || other.tag == "articulations")
+		if (other.tag == "bones")
 		{
 //			Debug.Log ("Some bones collision!!!");
+			render.material.color = Color.red;
 			colliding = true;
 		}
 		else if (other.tag == "collectibles")
@@ -97,7 +81,10 @@ public class musclesController : MonoBehaviour
 
 	void OnTriggerExit(Collider other)
 	{
-		if (other.tag == "bones" || other.tag == "articulations")
+		if (other.tag == "bones")
+		{
+			render.material.color = Color.white;
 			colliding = false;
+		}
 	}
 }

@@ -50,6 +50,7 @@ public class muscle : MonoBehaviour
 	// update position with bone movement
 	void changePosition(int index, Vector3 value)
 	{
+		position [index] = value;
 		attachPoints [index] += value - attachPoints[index] + offsets[index];
 		transform.position = attachPoints[1] + (attachPoints [0] - attachPoints [1]) / 2.0f;
 		transform.rotation = Quaternion.FromToRotation(Vector3.forward, attachPoints[0] - attachPoints[1]);

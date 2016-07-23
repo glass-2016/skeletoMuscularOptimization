@@ -87,7 +87,19 @@ public class manager : MonoBehaviour
 		currentObject = null;
 		changeFocus ();
 		deselect ();
-
+		for (int i = 0; i < list.Count; i++)
+		{
+			if (list [i].tag == "bones")
+			{
+				if (list [i].GetComponent<musclesController> ().colliding)
+					return;
+			}
+			else if (list [i].tag == "articulations")
+			{
+				if (list [i].GetComponent<articulations> ().colliding)
+					return;
+			}	
+		}
 		saveList = new List<GameObject> ();
 
 		for (int i = 0; i < list.Count; i++) 
@@ -114,8 +126,16 @@ public class manager : MonoBehaviour
 						tmp.anchors = new List<GameObject> ();
 						tmp.setAnchor (saveList[list.IndexOf(tmpArticulations.Value.controllers[0].gameObject)]);
 						tmp.setAnchor (saveList[list.IndexOf(tmpArticulations.Value.controllers[1].gameObject)]);
-						tmp.setLimits (tmpMuscle.Value.attachPoints, tmpMuscle.Value.attachPoints [0] + tmpMuscle.Value.offsets [0],
-							tmpMuscle.Value.attachPoints [1] + tmpMuscle.Value.offsets [1], tmpMuscle.Value.normals [0], tmpMuscle.Value.normals [1]);
+						tmp.angularDirection = tmpMuscle.Value.angularDirection;
+
+						tmp.attachPoints = tmpMuscle.Value.attachPoints;
+						tmp.offsets = tmpMuscle.Value.offsets;
+						tmp.position = tmpMuscle.Value.position;
+						tmp.normals = tmpMuscle.Value.normals;
+						tmp.index = tmpMuscle.Value.index;
+
+//						tmp.setLimits (tmpMuscle.Value.attachPoints, tmpMuscle.Value.attachPoints [0] + tmpMuscle.Value.offsets [0],
+//							tmpMuscle.Value.attachPoints [1] + tmpMuscle.Value.offsets [1], tmpMuscle.Value.normals [0], tmpMuscle.Value.normals [1]);
 						tmp.setIndex(tmpMuscle.Value.index);
 						tmpMuscles.Add (tmpMuscle.Key, tmp);
 					}
@@ -142,26 +162,13 @@ public class manager : MonoBehaviour
 			saveList [i].transform.position -= new Vector3 (1000, 1000, 1000);
 		}
 		isPlaying = true;
+
 		for (int i = 0; i < list.Count; i++)
 		{
 			if (list [i].tag == "bones")
 			{
-				if (list [i].GetComponent<musclesController> ().colliding)
-					return;
-			}
-			else if (list [i].tag == "articulations")
-			{
-				if (list [i].GetComponent<articulations> ().colliding)
-					return;
-			}	
-		}
-		for (int i = 0; i < list.Count; i++)
-		{
-			if (list [i].tag == "bones" || list [i].tag == "articulations")
-			{
 				list [i].GetComponent<Rigidbody> ().isKinematic = false;
-				if (list[i].tag == "bones")
-					list [i].GetComponent<Collider> ().isTrigger = false;
+				list [i].GetComponent<Collider> ().isTrigger = false;
 			}
 			else if (list [i].tag == "muscles")
 				list [i].GetComponent<muscle> ().onPlay = true;
@@ -584,7 +591,7 @@ public class manager : MonoBehaviour
 
 				}
 
-				if (searchParent && currentObject)
+				if (searchParent && currentObject && hit.collider.tag == "bones")
 				{
 					// add parent to current object
 					currentObject.transform.parent = hit.collider.gameObject.transform;
@@ -630,9 +637,9 @@ public class manager : MonoBehaviour
 					changeFocus ();
 				}
 			} 
-			else if (!EventSystem.current.IsPointerOverGameObject() && currentObject)
+			else if (!EventSystem.current.IsPointerOverGameObject())
 			{
-				if (currentObject.tag == "bones")
+				if (currentObject && currentObject.tag == "bones")
 					currentObject.GetComponent<bones> ().isSelected = false;
 				firstAttach = false;
 				secondAttach = false;

@@ -85,7 +85,7 @@ public class UImanager : MonoBehaviour
 			switch(manager.itemSelected)
 			{
 			case "bone":
-				setparent.SetActive (false);
+				setparent.SetActive (true);
 				resetparent.SetActive (false);
 				bonescale.SetActive (true);
 				boneposition.SetActive (true);
@@ -95,7 +95,7 @@ public class UImanager : MonoBehaviour
 				break;
 
 			case "muscle":
-				setparent.SetActive (true);
+				setparent.SetActive (false);
 				resetparent.SetActive (false);
 				bonescale.SetActive (false);
 				boneposition.SetActive (false);

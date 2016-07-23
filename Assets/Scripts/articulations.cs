@@ -79,8 +79,8 @@ public class articulations : MonoBehaviour {
 		setIndex (index);
 		setController (first, 0);
 		setController (other, 1);
-		joint.anchor = (Vector3.Max(first.transform.position, other.transform.position) - Vector3.Min(first.transform.position, other.transform.position)) / 3.0f;
-		joint.connectedAnchor = (Vector3.Min(first.transform.position, other.transform.position) - Vector3.Max(first.transform.position, other.transform.position)) / 3.0f;
+		joint.anchor = (Vector3.Max(first.transform.position, other.transform.position) - Vector3.Min(first.transform.position, other.transform.position)) / 1.75f;
+		joint.connectedAnchor = (Vector3.Min(first.transform.position, other.transform.position) - Vector3.Max(first.transform.position, other.transform.position)) / 1.75f;
 	}
 
 	IEnumerator muscleDeactivate()
@@ -124,22 +124,5 @@ public class articulations : MonoBehaviour {
 			transform.position = Vector3.Lerp (controllers [0].transform.position + joint.anchor, controllers [1].transform.position + joint.connectedAnchor, 0.5f); 
 		}
 		//			Vector3.Lerp(controllers[0].transform.position, controllers[1].transform.position, 0.5f);
-	}
-
-	void OnTriggerStay(Collider other)
-	{
-		if (other.tag == "bones" || other.tag == "articulations")
-		{
-//			Debug.Log ("Some articulations collision!!!");
-			colliding = true;
-		} 
-		else if (other.tag == "collectibles")
-			other.gameObject.SetActive (false);
-	}
-
-	void OnTriggerExit(Collider other)
-	{
-		if (other.tag == "bones" || other.tag == "articulations")
-			colliding = false;
 	}
 }
