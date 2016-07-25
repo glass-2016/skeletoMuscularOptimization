@@ -67,6 +67,18 @@ public class musclesController : MonoBehaviour
 			rb.velocity = rb.velocity.normalized * 4;
 	}
 
+	void OnCollisionEnter(Collision other)
+	{
+		if (other.gameObject.tag == "bones")
+			colliding = true;
+	}
+
+	void OnCollisionExit(Collision other)
+	{
+		if (other.gameObject.tag == "bones")
+			colliding = false;
+	}
+
 	void OnTriggerStay(Collider other)
 	{
 		if (other.tag == "bones")

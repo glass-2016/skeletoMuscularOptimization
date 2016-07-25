@@ -51,9 +51,6 @@ public class muscle : MonoBehaviour
 	// update position with bone movement
 	void changePosition(int index, Vector3 value)
 	{
-		Debug.Log (attachPoints[0]);
-		Debug.Log (attachPoints[1]);
-		Debug.Log ("index = " + index);
 		position [index] = value;
 		attachPoints [index] = value + offsets[index];
 		transform.position = Vector3.Lerp (attachPoints[0], attachPoints[1], 0.5f);
@@ -69,7 +66,7 @@ public class muscle : MonoBehaviour
 	void updateAngularDirection()
 	{
 		Vector3 offset = new Vector3 (Mathf.Abs(attachPoints [0].x - attachPoints [1].x), Mathf.Abs(attachPoints [0].y - attachPoints [1].y), Mathf.Abs(attachPoints [0].z - attachPoints [1].z));
-		angularDirection = Vector3.Cross (offset.normalized, normals[0] + normals[1]);
+		angularDirection = Vector3.Cross (offset.normalized, normals[0] + normals[1]).normalized;
 //		angularDirection = new Vector3 (Mathf.Abs(angularDirection.x), Mathf.Abs(angularDirection.y), Mathf.Abs(angularDirection.z));
 	}
 
