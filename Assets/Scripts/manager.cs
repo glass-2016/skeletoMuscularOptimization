@@ -13,6 +13,7 @@ public class manager : MonoBehaviour
 	// bone prefab
 	public musclesController bone;
 	public muscle musclePrefab;
+	public articulations artPrefab;
 	// list of all objects added to scene
 	private List<GameObject> list;
 	//list to save when entering play mode
@@ -102,10 +103,14 @@ public class manager : MonoBehaviour
 			}	
 		}
 		saveList = new List<GameObject> ();
-
 		for (int i = 0; i < list.Count; i++) 
 		{
-			saveList.Add (Instantiate (list [i]));
+			if (list[i].tag == "bones")
+				saveList.Add ((Instantiate (bone, list [i].transform.position, list[i].transform.rotation) as musclesController).gameObject);
+			else if (list[i].tag == "articulations")
+				saveList.Add ((Instantiate (artPrefab, list [i].transform.position, list[i].transform.rotation) as articulations).gameObject);
+			else if (list[i].tag == "muscles")
+				saveList.Add ((Instantiate (musclePrefab, list [i].transform.position, list[i].transform.rotation) as muscle).gameObject);
 		}
 		for (int i = 0; i < saveList.Count; i++)
 		{
@@ -151,7 +156,8 @@ public class manager : MonoBehaviour
 				foreach (KeyValuePair<int, muscle> tmpMuscle in tmpArt.muscles)
 					tmpArt.addDirection (tmpMuscle.Value.angularDirection);
 			}
-			saveList [i].transform.position -= new Vector3 (1000, 1000, 1000);
+			if (!saveList[i].transform.parent)
+				saveList [i].transform.position -= new Vector3 (1000, 1000, 1000);
 		}
 		isPlaying = true;
 
@@ -190,7 +196,8 @@ public class manager : MonoBehaviour
 		list = saveList;			
 		for (int i = 0; i < list.Count; i++) 
 		{
-			list [i].transform.position += new Vector3 (1000, 1000, 1000);
+			if (!list[i].transform.parent)
+				list [i].transform.position += new Vector3 (1000, 1000, 1000);
 		}
 		currentObject = null;
 		changeFocus ();
@@ -234,7 +241,7 @@ public class manager : MonoBehaviour
 		yield return new WaitForFixedUpdate();
 		while (tmpBone.colliding)
 		{
-			tmpBone.transform.position += tmpBone.transform.right;
+			tmpBone.transform.position += tmpBone.transform.right * 1.5f;
 			yield return null;
 		}
 	}
@@ -247,11 +254,11 @@ public class manager : MonoBehaviour
 		StartCoroutine (shift(tmpBone));
 	}
 
-	public void removeParent()
-	{
-		if (currentObject)
-			currentObject.transform.parent = null;
-	}
+//	public void removeParent()
+//	{
+//		if (currentObject)
+//			currentObject.transform.parent = null;
+//	}
 
 	public void addMuscle()
 	{
@@ -260,15 +267,15 @@ public class manager : MonoBehaviour
 		firstAttach = true;
 	}
 
-	public void setParent()
-	{
-		if (currentObject)
-		{
-			searchParent = true;
-			firstAttach = false;
-			secondAttach = false;
-		}
-	}
+//	public void setParent()
+//	{
+//		if (currentObject)
+//		{
+//			searchParent = true;
+//			firstAttach = false;
+//			secondAttach = false;
+//		}
+//	}
 
 	public void updateAxis()
 	{

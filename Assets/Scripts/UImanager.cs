@@ -6,8 +6,6 @@ using UnityEngine.SceneManagement;
 public class UImanager : MonoBehaviour 
 {
 	//buttons
-	public GameObject setparent;
-	public GameObject resetparent;
 	public GameObject delete;
 	public GameObject addMuscle;
 	public GameObject addBones;
@@ -48,8 +46,6 @@ public class UImanager : MonoBehaviour
 		{
 			playmodeeffects.SetActive (true);
 
-			setparent.SetActive (false);
-			resetparent.SetActive (false);
 			delete.SetActive (false);
 			bonescale.SetActive (false);
 			boneposition.SetActive (false);
@@ -85,8 +81,6 @@ public class UImanager : MonoBehaviour
 			switch(manager.itemSelected)
 			{
 			case "bone":
-				setparent.SetActive (true);
-				resetparent.SetActive (false);
 				bonescale.SetActive (true);
 				boneposition.SetActive (true);
 				bonerotation.SetActive (true);
@@ -95,8 +89,6 @@ public class UImanager : MonoBehaviour
 				break;
 
 			case "muscle":
-				setparent.SetActive (false);
-				resetparent.SetActive (false);
 				bonescale.SetActive (false);
 				boneposition.SetActive (false);
 				bonerotation.SetActive (false);
@@ -105,8 +97,6 @@ public class UImanager : MonoBehaviour
 				break;
 
 			case "boneHasParent":
-				setparent.SetActive (false);
-				resetparent.SetActive (true);
 				bonescale.SetActive (true);
 				boneposition.SetActive (true);
 				bonerotation.SetActive (true);
@@ -115,8 +105,6 @@ public class UImanager : MonoBehaviour
 				break;
 
 			case "muscleHasParent":
-				setparent.SetActive (false);
-				resetparent.SetActive (true);
 				bonescale.SetActive (false);
 				boneposition.SetActive (false);
 				bonerotation.SetActive (false);
@@ -125,8 +113,6 @@ public class UImanager : MonoBehaviour
 				break;
 
 			case "articulation":
-				setparent.SetActive (false);
-				resetparent.SetActive (false);
 				delete.SetActive (true);
 				bonescale.SetActive (false);
 				boneposition.SetActive (false);
@@ -137,8 +123,6 @@ public class UImanager : MonoBehaviour
 				
 
 			case "none":
-				setparent.SetActive (false);
-				resetparent.SetActive (false);
 				delete.SetActive (false);
 				bonescale.SetActive (false);
 				boneposition.SetActive (false);
@@ -148,8 +132,6 @@ public class UImanager : MonoBehaviour
 				break;
 
 			default:
-				setparent.SetActive (false);
-				resetparent.SetActive (false);
 				delete.SetActive (false);
 				bonescale.SetActive (false);
 				boneposition.SetActive (false);

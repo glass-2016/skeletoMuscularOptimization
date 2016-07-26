@@ -69,8 +69,12 @@ public class musclesController : MonoBehaviour
 
 	void OnCollisionEnter(Collision other)
 	{
-		if (other.gameObject.tag == "bones")
 			colliding = true;
+	}
+
+	void OnCollisionStay(Collision other)
+	{
+
 	}
 
 	void OnCollisionExit(Collision other)
